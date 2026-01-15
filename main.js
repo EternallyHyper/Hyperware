@@ -1,4 +1,4 @@
-javascript:(function (){
+javascript:(function(){
   if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
     link.id = 'fredoka-font-link';
@@ -7,39 +7,53 @@ javascript:(function (){
     document.head.appendChild(link);
   }
 
+alert("make sure you are in about:blank before you enter the password otherwise that won’t work");
+
 const themes = {
+   default: {
+      color1: '#63fd01',
+      color2: '#25fd01',
+      color3: '#002D62',
+      color4: '#001B44',
+      waves: ['#87ff63ff','#72f73eff','#3ee029ff']
+   },
    blue: {
       color1: '#01AEFD',
       color2: '#015AFD',
+      color3: '#002D62',
+      color4: '#001B44',
       waves: ['#63baff','#3ea7f7','#298ee0']
-   },
-   green: {
-      color1: '#63fd01',
-      color2: '#25fd01',
-      waves: ['#87ff63ff','#72f73eff','#3ee029ff']
    },
    orange: {
       color1: '#f7ab1dff',
       color2: '#eb6c04ff',
+      color3: '#002D62',
+      color4: '#001B44',
       waves: ['#fdba01ff','#f77e1dff','#e26817ff']
    },
    red: {
       color1: '#ff6363ff',
       color2: '#e03e3eff',
+      color3: '#002D62',
+      color4: '#001B44',
       waves: ['#ff6363ff','#e03e3eff','#b31515ff']
    },
    purple: {
       color1: '#b463ffff',
       color2: '#8d3ee0ff',
+      color3: '#002D62',
+      color4: '#001B44',
       waves: ['#b463ffff','#8d3ee0ff','#5a15b3ff']
    },
    christmas: {
       color1: '#00ff2aff',
       color2: '#ff0000ff',
+      color3: '#002D62',
+      color4: '#001B44',
       waves: ['#e0dbdbff','#f0f0f0ff','#fdfdfdff']
    }
 };
-const theme = themes.blue;
+const theme = themes.default;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -81,7 +95,21 @@ const theme = themes.blue;
       height: 100vh;
     }
 
-    .header {
+    .header1 {
+      position: fixed;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(to bottom, ${theme.color1}, ${theme.color2});
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      -webkit-user-select: none;
+      z-index: 100;
+    }
+
+    .header2 {
       position: fixed;
       top: 4.25em;
       width: 100%;
@@ -196,7 +224,7 @@ const theme = themes.blue;
     }
     #overlay-box h1 {
       font-size: 24px;
-      color: ${theme.color1};
+      color: #01AEFD;
       margin-bottom: 16px;
     }
     #overlay-box p {
@@ -263,6 +291,110 @@ const theme = themes.blue;
   svg.appendChild(g);
   document.body.appendChild(svg);
 
+  var guiWidth = 600,
+  guiHeight = 375,
+  borderRadius = 20,
+  guiDiv = document.createElement('div');
+
+  var password = 'password';
+  var panelVisible = true;
+  
+  guiDiv.style.position = 'fixed';
+  guiDiv.style.top = '50%';
+  guiDiv.style.left = '50%';
+  guiDiv.style.transform = 'translate(-50%, -50%)';
+  guiDiv.style.width = guiWidth + 'px';
+  guiDiv.style.height = guiHeight + 'px';
+  guiDiv.style.borderRadius = borderRadius + 'px';
+  guiDiv.style.overflow = 'hidden';
+  guiDiv.style.zIndex = 9999;
+  guiDiv.style.background = '#111';
+  guiDiv.style.textAlign = 'center';
+  guiDiv.style.fontFamily = 'Verdana, sans-serif';
+
+  var title = document.createElement('div');
+  title.className = 'header1';
+  title.textContent = 'Hyperware';
+  title.style.marginTop = '70px';
+  title.style.fontSize = '3em';
+  title.style.padding = '0.5em 0';
+
+  var inputBox = document.createElement('input');
+  inputBox.style.position = 'absolute';
+  inputBox.style.left = '50%';
+  inputBox.style.top = '170px';
+  inputBox.style.transform = 'translateX(-50%)';
+  inputBox.style.width = '300px';
+  inputBox.style.height = '35px';
+  inputBox.style.border = '2px solid';
+  inputBox.style.borderColor = theme.color2;
+  inputBox.style.borderRadius = '15px';
+  inputBox.style.background = 'transparent';
+  inputBox.style.color = theme.color2;
+  inputBox.style.fontSize = '18px';
+  inputBox.style.paddingLeft = '10px';
+  inputBox.style.outline = 'none';
+  inputBox.style.textAlign = 'center';
+  inputBox.placeholder = 'Enter Password';
+  inputBox.type = 'password';
+
+  var graybg = document.createElement('div');
+  graybg.id = 'news-overlay';
+  graybg.style.position = 'fixed';
+  graybg.style.top = '0';
+  graybg.style.left = '0';
+  graybg.style.width = '100vw';
+  graybg.style.height = '100vh';
+  graybg.style.background = 'rgba(0,0,0,0.9)';
+  graybg.style.zIndex = '100';
+  graybg.style.display = 'flex';
+  graybg.style.justifyContent = 'center';
+  graybg.style.alignItems = 'center';
+  graybg.style.fontFamily = "'Fredoka', sans-serif";
+  document.body.appendChild(graybg);
+
+  inputBox.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      checkPassword();
+    }
+  });
+
+  function checkPassword() {
+    if (inputBox.value === password) {
+      closePanel();
+      showNewsPanel();
+    } else {
+      alert('Incorrect Password!');
+    }
+  }
+
+  function closePanel() {
+    if (guiDiv.parentNode) guiDiv.parentNode.removeChild(guiDiv);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === ']') {
+      panelVisible = !panelVisible;
+      guiDiv.style.display = panelVisible ? 'block' : 'none';
+    }
+  });
+
+  var passdesc = document.createElement('div');
+  passdesc.style.position = 'absolute';
+  passdesc.style.left = '50%';
+  passdesc.style.top = '215px';
+  passdesc.style.transform = 'translateX(-50%)';
+  passdesc.style.fontSize = '11px';
+  passdesc.style.fontWeight = 'bold';
+  passdesc.style.color = '#3D3636';
+  passdesc.innerText = 'Hyperware requires a password to hide from GoGuardian';
+
+  guiDiv.appendChild(title);
+  guiDiv.appendChild(inputBox);
+  guiDiv.appendChild(passdesc);
+  document.body.appendChild(guiDiv);
+  document.body.appendChild(graybg);
+
   const coverBox = document.createElement('div');
   coverBox.style.position = 'fixed';
   coverBox.style.left = '0';
@@ -278,15 +410,15 @@ const theme = themes.blue;
   document.body.appendChild(content);
 
   const header = document.createElement('div');
-  header.className = 'header';
-  header.textContent = 'Zephware';
+  header.className = 'header2';
+  header.textContent = 'Hyperware';
   header.style.fontSize = '4em';
   header.style.padding = '0.25em 0';
   document.body.appendChild(header);
 
   const description = document.createElement('div');
   description.className = 'description';
-  description.textContent = 'The Ultimate Bookmarklet';
+  description.textContent = 'The Bookmarklet On Steroids';
   document.body.appendChild(description);
 
   const inputArea = document.createElement('div');
@@ -294,14 +426,14 @@ const theme = themes.blue;
 
   const labelText = document.createElement('div');
   labelText.className = 'label-text';
-  labelText.textContent = 'I wish to access';
+  labelText.textContent = 'I want to access';
   labelText.setAttribute('for', 'selector');
   inputArea.appendChild(labelText);
 
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Games', 'Schoology Games', 'Messages', 'Library', 'Learning Tools', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Games', 'Library', 'News', 'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -314,44 +446,44 @@ const theme = themes.blue;
   button.textContent = 'Go';
   inputArea.appendChild(button);
 
-  const newsPages = [
+   const newsPages = [
   {
     title: "What's New?",
-    desc: "v1.2.0 : Week of January 4th, 2026",
+    desc: "v1.2.0 : Week of January 11th, 2026",
     images: [
-      { src: "https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/assets/themes/main/Current.png", alt: "" }
+      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg" }
     ],
     changes: [
-      { text: "Deleted Unblockers", desc: "dont wanna get in trouble for hosting these" },
-      { text: "Reverted to Main Theme", desc: "christmas is over" },
-      { text: "Library", desc: "soundboard reworked to library, has animes now" }
+      { text: "Library Expansion", desc: "video display change, currently adding more shows" },
+      { text: "News", desc: "felt like adding this as an option cause why not" }
     ]
   },
   {
     title: "What'd I Miss?",
-    desc: "v1.0.8 : Week of December 1st, 2025",
+    desc: "v1.1.9 : Week of January 4th, 2026",
     images: [
-      { src: "https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/assets/themes/main/Previous.png", alt: "" }
+      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png" }
     ],
     changes: [
-      { text: "Games Changes", desc: "Improved Data Saving, New Games, UI Changes, Removed Broken Games" }
+      { text: "Deleted Unblockers", desc: "never worked anyway" },
+      { text: "Reverted to Main Theme", desc: "no more christmas" },
+      { text: "Library", desc: "soundboard reworked to library, now has Animes" }
     ]
   },
   {
     title: "What's Next?",
-    desc: "v1.0.9 : Possible Additions Next Week!",
+    desc: "v1.2.1 : Coming Soon!",
     images: [
-      { src: "https://placehold.co/560x160/222/fff.png?text=Coming+Soon", alt: "Coming Soon" }
+      { src: 
+"https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
     ],
     changes: [
-      { text: "Learning Tools Completion", desc: "Added Calculator, Marker Tool, Ect." },
-      { text: "IXL+ Hacks", desc: "Payed $5 for IXL+" },
-      { text: "Gimkit Hacks", desc: "I'll look into it at some point, seems patched for now though." },
-      { text: "Themes", desc: "Pick from green, orange, red, and purple!" },
-      { text: "TinyTask Ripoff", desc: "basically tinytask for browsers idk when tho" },
-      { text: "Messages Relauch", desc: "its coming soon, trust me bro"}
+      { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
+      { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
+      { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
+      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
     ]
-  }
+  },
 ];
 
 function showNewsPanel() {
@@ -377,7 +509,7 @@ function showNewsPanel() {
 
   const panel = document.createElement('div');
   panel.style.width = '600px';
-  panel.style.height = '400px';
+  panel.style.height = '450px';
   panel.style.background = 'rgba(17,17,17,0.97)';
   panel.style.borderRadius = '24px';
   panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.4)';
@@ -548,9 +680,7 @@ function showNewsPanel() {
       pageDesc.style.display = 'none';
     }
     const imgs = newsPages[pageIdx].images;
-    imgIdx = (imgIdx + imgs.length) % imgs.length;
     img.src = imgs[imgIdx].src;
-    img.alt = imgs[imgIdx].alt || '';
     changesList.innerHTML = '';
     newsPages[pageIdx].changes.forEach(change => {
       const li = document.createElement('li');
@@ -608,25 +738,31 @@ function showNewsPanel() {
   render();
   overlay.focus();
  }
- showNewsPanel();
 
-  let lockedTabs = {};
+  let lockedTabs = { 'blooket hacks': true || false, 'learning tools' : true};
 
 button.addEventListener('click', () => {
     const val = select.value.toLowerCase();
-    if (val === 'learning tools') {
-        showInstructionsOverlay('https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/lt.js');
-        return;
-    }
-    if (val === 'blooket hacks') {
-        showInstructionsOverlay();
+    if (lockedTabs[val]) {
+        if (val === 'learning tools') {
+            showPasswordOverlay(() => {
+                showInstructionsOverlay('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/lt.js');
+            }, 'tookforeversry');
+        } else {
+            showPasswordOverlay(() => showInstructionsOverlay());
+        }
         return;
     }
 
-    if (val === 'messages' || val === 'schoology games') {
-        showInstructionsOverlay('https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/bridge.js');
+   if (val === 'schoology utilities') {
+   showInstructionsOverlay('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/bridge.js');
         return;
     }
+
+if (val === 'news') {
+  showNewsPanel();
+  return;
+}
 
     if (val === 'games' || val === 'library') {
         document.head.innerHTML = '';
@@ -634,7 +770,7 @@ button.addEventListener('click', () => {
         let file;
         if (val === 'games') file = 'games.js';
         else if (val === 'library') file = 'library.js';
-        fetch(`https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/${file}`)
+       fetch(`https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {
                 const script = document.createElement('script');
@@ -648,6 +784,69 @@ button.addEventListener('click', () => {
     }
 });
 
+function showPasswordOverlay(onSuccess, customPassword) {
+    const old = document.getElementById('overlay');
+    if (old) old.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    overlay.style.zIndex = '99999';
+    overlay.style.fontFamily = "'Fredoka', sans-serif";
+   overlay.innerHTML = `
+  <div id="overlay-box" style="font-family:'Fredoka',sans-serif;position:relative;">
+   <button id="password-x-close" style="
+      position:absolute;
+      top:12px;
+      right:12px;
+      background:none;
+      border:none;
+      font-size:22px;
+      cursor:pointer;
+      color:#aaa;
+      font-family:'Fredoka',sans-serif;
+    ">✕</button>
+
+    <h1 style="color:${theme.color1};">Password Required</h1>
+    <p>Enter the password to access this section.</p>
+
+    <input id="password-input" type="password" placeholder="Password"
+      style="font-size:16px;padding:8px 12px;border-radius:8px;border:1px solid #444;width:80%;margin-bottom:16px;outline:none;font-family:'Fredoka',sans-serif;" />
+    <br>
+
+    <button id="password-submit" style="font-family:'Fredoka',sans-serif;">Submit</button>
+
+    <div id="password-error" style="color:#ff5555;margin-top:10px;display:none;">
+      Incorrect password.
+    </div>
+  </div>
+`;
+
+
+
+    const input = overlay.querySelector('#password-input');
+    const submit = overlay.querySelector('#password-submit');
+    const error = overlay.querySelector('#password-error');
+    input.focus();
+    function unlock() {
+        const passwordToCheck = customPassword || "back2schoolggs";
+        if (input.value === passwordToCheck) {
+            overlay.remove();
+            onSuccess();
+        } else {
+            error.style.display = 'block';
+            input.value = '';
+            input.focus();
+        }
+    }
+    submit.onclick = unlock;
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') unlock();
+    });
+    document.body.appendChild(overlay);
+    document.getElementById('password-x-close').onclick = () => {
+  overlay.remove();
+};
+}
+
 function showInstructionsOverlay(customLink) {
     const old = document.getElementById('overlay');
     if (old) old.remove();
@@ -657,11 +856,11 @@ function showInstructionsOverlay(customLink) {
     overlay.style.fontFamily = "'Fredoka', sans-serif";
     overlay.innerHTML = `
       <div id="overlay-box" style="font-family:'Fredoka',sans-serif;">
-        <h1>Instructions</h1>
+        <h1 style="color:${theme.color1};">Instructions</h1>
         <ol id="instructions-list" style="text-align:center;margin:0 0 24px 0;padding-left:0;font-size:16px;list-style-position:inside;color:#fff;">
           <li style="margin:8px 0;">Create a bookmark</li>
           <li style="margin:8px 0;">Click the "Copy" button below</li>
-          <li style="margin:8px 0;">Do Cmd + C</li>
+          <li style="margin:8px 0;">Press Cmd + C (or Ctrl + C if you are on PC)</li>
           <li style="margin:8px 0;">Set the code as the url for the bookmark</li>
           <li style="margin:8px 0;">Hit save</li>
           <li style="margin:8px 0;">Try it out!</li>
@@ -674,7 +873,7 @@ function showInstructionsOverlay(customLink) {
     `;
     document.body.appendChild(overlay);
 
-    fetch(customLink || 'https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/blooket/min.js')
+    fetch(customLink || 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/blooket/min.js')
         .then(res => res.text())
         .then(code => {
             const pre = document.createElement('pre');
@@ -703,32 +902,42 @@ function showInstructionsOverlay(customLink) {
     };
 }
 
-  function setButtonStatus(status) {
-    const gradientOpen = `linear-gradient(to bottom, ${color1}, ${color2})`;
-    const gradientWIP = 'linear-gradient(to bottom, #002D62, #001B44)';
-    switch (status.toLowerCase()) {
-      case 'wip':
-        button.textContent = 'WIP';
-        button.disabled = true;
-        button.style.background = gradientWIP;
-        break;
-      case 'locked':
-        button.textContent = 'Go';
-        button.disabled = false;
-        button.style.background = gradientOpen;
-        break;
-      case 'open':
-      default:
-        button.textContent = 'Go';
-        button.disabled = false;
-        button.style.background = gradientOpen;
-        break;
-    }
+function setButtonStatus(status) {
+  const gradientOpen = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
+  const gradientWIP  = `linear-gradient(to bottom, ${theme.color3}, ${theme.color4})`;
+
+  switch (status.toLowerCase()) {
+    case 'wip':
+      button.textContent = 'WIP';
+      button.disabled = true;
+      button.style.background = gradientWIP;
+      button.style.cursor = 'not-allowed';
+      break;
+
+    case 'locked':
+      button.textContent = 'Go';
+      button.disabled = false;
+      button.style.background = gradientOpen;
+      button.style.cursor = 'pointer';
+      break;
+
+    case 'open':
+    default:
+      button.textContent = 'Go';
+      button.disabled = false;
+      button.style.background = gradientOpen;
+      button.style.cursor = 'pointer';
+      break;
   }
+}
+
+
 
   select.onchange = () => {
     const val = select.value.toLowerCase();
-    if (val === 'gimkit hacks') {
+    if (lockedTabs[val]) {
+      setButtonStatus('locked');
+    } else if (val === 'gimkit hacks' || val === 'marketplace') {
       setButtonStatus('wip');
     } else {
       setButtonStatus('open');
