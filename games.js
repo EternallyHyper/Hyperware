@@ -17,6 +17,11 @@
             });
     }
 
+    if (config.type === "gameBuild") {
+   window.open(config.url, "_blank");
+   return;
+    }
+
     function injectRuffle() {
     return new Promise((resolve) => {
         if (window.RufflePlayer) {
