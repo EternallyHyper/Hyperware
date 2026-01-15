@@ -502,15 +502,6 @@
                         const res = await fetch(url);
                         if (res.ok) html = await res.text();
                     } catch {}
-                    
-               async function launchGame(config) {
-    
-                button.onclick = () => {
-                  if (config.type === "gameBuild") {
-                    window.open(config.url, "_blank");
-                    return;
-                    }
-                  };
 
                     const iframe = document.createElement('iframe');
                     iframe.allow = "autoplay; fullscreen";
