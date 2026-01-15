@@ -502,7 +502,9 @@
                         const res = await fetch(url);
                         if (res.ok) html = await res.text();
                     } catch {}
-
+                    
+               async function launchGame(config) {
+    
                     if (config.type === "gameBuild") {
                     window.open(config.url, "_blank");
                     return;
