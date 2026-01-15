@@ -30,6 +30,19 @@
         });
     }
 
+    async function loadGameBuild(rawOrShorthandUrl) {
+	try {
+		let baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
+		if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+		const fetchCache = new Map();
+		const cachedFetch = (url) => {
+			if (fetchCache.has(url)) return fetchCache.get(url);
+			const p = fetch(url);
+			fetchCache.set(url, p);
+			return p;
+		};
+
     function saveGameProgress(gameUrl, dataObj) {
     const key = "zephware_" + gameUrl;
     localStorage.setItem(key, JSON.stringify(dataObj));
@@ -173,6 +186,19 @@
 
     let filteredConfigs = buttonConfigs.filter(cfg => !cfg.highlighted);
 
+	async function openBuiltGame(url, cfg) {
+		let builtUrl = url;
+		try {
+			if (cfg?.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+				builtUrl = await loadGameBuild(url);
+			}
+		} catch (e) {
+			console.error('Failed to load game build:', e);
+			throw e;
+		}
+		return builtUrl;
+	}
+        
     function TitleBar() {
         const bar = document.createElement('div');
         bar.style.width = '60%';
@@ -490,19 +516,48 @@
 
                 imgContainer.appendChild(label);
 
-                button.appendChild(imgContainer);
+			button.appendChild(imgContainer);
 
-                button.addEventListener('click', async () => {
-                    panel.remove();
-                    const url = config.url;
+			button.addEventListener('click', async () => {
+				panel.remove();
+				let url = config.url;
 
-                    let html = null;
+				try {
+					if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+						url = await loadGameBuild(url);
+					}
+				} catch (e) {
+					console.error('Failed to load game build:', e);
+					alert('Failed to load game. Try again.');
+					return;
+				}
 
-                    try {
-                        const res = await fetch(url);
-                        if (res.ok) html = await res.text();
-                    } catch {}
-
+				if (url && url.endsWith('.swf')) {
+					try {
+						await injectRuffle();
+						const ruffle = window.RufflePlayer.newest();
+						const player = ruffle.createPlayer();
+						player.style.cssText = 'width:100vw;height:100vh;position:fixed;top:0;left:0;z-index:100000;';
+						document.body.appendChild(player);
+						await enableRuffleSavePersistence(player, config.url || url);
+						player.load(url);
+					} catch (e) {
+						console.error('Ruffle error', e);
+						alert('Could not run SWF.');
+					}
+				} else {
+					const iframe = document.createElement('iframe');
+					iframe.src = url;
+					iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
+					iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals";
+					iframe.style.cssText = 'width:100vw;height:100vh;border:none;position:fixed;top:0;left:0;z-index:100000;';
+					document.body.appendChild(iframe);
+				}
+			});
+			container.appendChild(button);
+		});
+	}
+        
                     const iframe = document.createElement('iframe');
                     iframe.allow = "autoplay; fullscreen";
                     iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups";
