@@ -17,11 +17,6 @@
             });
     }
 
-    if (config.type === "gameBuild") {
-   window.open(config.url, "_blank");
-   return;
-    }
-
     function injectRuffle() {
     return new Promise((resolve) => {
         if (window.RufflePlayer) {
@@ -507,6 +502,11 @@
                         const res = await fetch(url);
                         if (res.ok) html = await res.text();
                     } catch {}
+
+                    if (config.type === "gameBuild") {
+                    window.open(config.url, "_blank");
+                    return;
+                    }
 
                     const iframe = document.createElement('iframe');
                     iframe.allow = "autoplay; fullscreen";
