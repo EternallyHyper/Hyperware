@@ -11,6 +11,10 @@ function preloadImage(src) {
 	return promise;
 }
 
+let buttonConfigs = [];
+let activeTag = null;
+let settingsPanel = null;
+
 function loadGameList() {
 	fetch('https://raw.githubusercontent.com/trulyzeph/zephware/main/data/gamelist.json')
 		.then(response => response.json())
@@ -252,7 +256,11 @@ styles.textContent = `
 		cursor: pointer;
 		transition: background 0.2s;
 	}
-	.optButton svg { width: 22px; height: 22px; }
+	.optButton svg path,
+    .optButton svg circle {
+		fill: #fff !important;
+        stroke: #fff !important;
+}
 	
 	#gradient {
 		background: linear-gradient(130deg, #053680ff, #204cacff);
@@ -281,7 +289,7 @@ styles.textContent = `
 		border-radius: 24px;
 		box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 		padding: 32px;
-		z-index: 1001;
+		z-index: 100000;
 		min-width: 320px;
 	}
 	.tag-btn {
@@ -338,7 +346,20 @@ function TitleBar() {
 		btn.className = 'optButton';
 		btn.title = b.title;
 		btn.innerHTML = b.svg;
-		btn.onclick = b.fn;
+		btn.onclick = () => {
+		try {
+		b.fn();
+		} catch (e) {
+		console.error(b.title, 'button failed:', e);
+  }
+};
+
+};
+
+};
+
+  }
+};
 		right.appendChild(btn);
 	});
 
@@ -525,7 +546,10 @@ function rollGame() {
 	let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
 	let cycles = 0;
 
-	const gameBtn = document.createElement('button');
+	gameBtn.onclick = async () => {
+  modal.remove();
+  const cfg = buttonConfigs[currentIdx];
+};
 	gameBtn.style.cssText = 'width:150px;height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(45deg,#038FF9,#00C5FF);border:none;border-radius:18px;cursor:pointer;';
 
 	const img = document.createElement('img');
