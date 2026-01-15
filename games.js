@@ -505,10 +505,12 @@
                     
                async function launchGame(config) {
     
-                    if (config.type === "gameBuild") {
+                button.onclick = () => {
+                  if (config.type === "gameBuild") {
                     window.open(config.url, "_blank");
                     return;
                     }
+                  };
 
                     const iframe = document.createElement('iframe');
                     iframe.allow = "autoplay; fullscreen";
