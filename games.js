@@ -34,6 +34,19 @@ javascript:(function () {
         });
     }
 
+    async function loadGameBuild(rawOrShorthandUrl) {
+	try {
+		let baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
+		if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+		const fetchCache = new Map();
+		const cachedFetch = (url) => {
+			if (fetchCache.has(url)) return fetchCache.get(url);
+			const p = fetch(url);
+			fetchCache.set(url, p);
+			return p;
+		};
+        
     const fredokaFontLink = document.createElement('link');
     fredokaFontLink.id = 'fredoka-font-link';
     fredokaFontLink.rel = 'stylesheet';
