@@ -280,6 +280,19 @@ document.head.appendChild(sidebarStyle);
         let filteredConfigs = buttonConfigs.slice();
         renderButtons(filteredConfigs);
 
+			async function openBuiltGame(url, cfg) {
+		let builtUrl = url;
+		try {
+			if (cfg?.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+				builtUrl = await loadGameBuild(url);
+			}
+		} catch (e) {
+			console.error('Failed to load game build:', e);
+			throw e;
+		}
+		return builtUrl;
+	}
+
         function renderButtons(configs) {
            container.innerHTML = '';
            configs.forEach(config => {
@@ -349,10 +362,20 @@ document.head.appendChild(sidebarStyle);
                button.style.position = 'relative';
                button.appendChild(label);
 
-              button.addEventListener('click', async () => {
-                panel.remove();
-                const url = config.url;
+			button.addEventListener('click', async () => {
+				panel.remove();
+				let url = config.url;
 
+				try {
+					if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+						url = await loadGameBuild(url);
+					}
+				} catch (e) {
+					console.error('Failed to load game build:', e);
+					alert('Failed to load game. Try again.');
+					return;
+				}
+				
                 if (url.endsWith(".swf")) {
                   await injectRuffle();
                   const ruffle = window.RufflePlayer.newest();
