@@ -1,6 +1,6 @@
-<h1> Zephware </h1>
-Zephware is the ultimate bookmarklet for school with gimkit and blooket cheats along with games and unblockers.
-This project is intended to primarly bypass GoGuardian, if you have another blocker, this might not be functional.
+<h1> Hyperware </h1>
+Hyperware is a bookmarklet on steroids for school with stuff like gimkit (work in progress) and blooket cheats along with games and pther utilites
+This project is intended to primarly bypass GoGuardian, if you have another blocker this might not work.
 
 
 ## How to Use:
