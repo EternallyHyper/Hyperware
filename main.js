@@ -770,7 +770,7 @@ if (val === 'news') {
         let file;
         if (val === 'games') file = 'games.js';
         else if (val === 'library') file = 'library.js';
-       fetch(`https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/${file}`)
+       fetch(`https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {
                 const script = document.createElement('script');
