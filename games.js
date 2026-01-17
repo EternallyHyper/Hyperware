@@ -284,8 +284,18 @@ document.head.appendChild(sidebarStyle);
                button.style.justifyContent = 'flex-start';
                button.style.position = 'relative';
 
-               const PLACEHOLDER_IMAGE = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/assets/games/placeholder.png';
+               button.addEventListener('mouseenter', () => {
+                 button.style.boxShadow =
+                   '0 0 10px rgba(99,253,1,0.6), 0 0 22px rgba(37,253,1,0.4)';
+               });
 
+               button.addEventListener('mouseleave', () => {
+                 button.style.boxShadow =
+                   '0 2px 12px rgba(37,253,1,0.25)';
+               });
+
+               const PLACEHOLDER_IMAGE = 
+                   'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/assets/games/placeholder.png';
 
                const img = document.createElement('img');
 
