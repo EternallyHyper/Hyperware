@@ -733,13 +733,6 @@ document.head.appendChild(sidebarStyle);
     let oldRoller = document.getElementById('random-roller-modal');
     if (oldRoller) oldRoller.remove();
 
-    img.src = config.image || PLACEHOLDER_IMAGE;
-
-    img.onerror = () => {
-      img.onerror = null;
-      img.src = PLACEHOLDER_IMAGE;
-    };
-
     const modal = document.createElement('div');
     modal.id = 'random-roller-modal';
     modal.style.position = 'fixed';
@@ -764,6 +757,13 @@ document.head.appendChild(sidebarStyle);
     let cycles = 0;
     let maxCycles = 30;
     let interval = null;
+        
+    img.src = config.image || PLACEHOLDER_IMAGE;
+
+    img.onerror = () => {
+      img.onerror = null;
+      img.src = PLACEHOLDER_IMAGE;
+    };
 
     const gameBtn = document.createElement('button');
     gameBtn.style.width = '150px';
