@@ -725,7 +725,6 @@ document.head.appendChild(sidebarStyle);
     }
 
     function rollGame() {
-
     // Close settings panel if open
     if (settingsPanel && settingsPanel.parentNode) {
         settingsPanel.remove();
@@ -757,14 +756,7 @@ document.head.appendChild(sidebarStyle);
     let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
     let cycles = 0;
     let maxCycles = 30;
-    let interval = null;  
-                     
-    img.src = config.image || PLACEHOLDER_IMAGE;
-
-    img.onerror = () => {
-      img.onerror = null;
-      img.src = PLACEHOLDER_IMAGE;
-    };
+    let interval = null;
 
     const gameBtn = document.createElement('button');
     gameBtn.style.width = '150px';
@@ -792,13 +784,15 @@ gameBtn.addEventListener('mouseleave', () => {
 });
  
     const img = document.createElement('img');
+
     img.style.width = '120px';
     img.style.height = '120px';
     img.style.borderRadius = '12px';
     img.style.objectFit = 'cover';
     img.style.marginBottom = '10px';
-    gameBtn.appendChild(img);
 
+    gameBtn.appendChild(img);
+        
     const label = document.createElement('div');
     label.style.fontSize = '18px';
     label.style.fontWeight = 'bold';
@@ -840,8 +834,15 @@ gameBtn.addEventListener('mouseleave', () => {
 
     function updateGameBtn(idx) {
         const config = buttonConfigs[idx];
-        img.src = config.image;
-        label.innerText = config.label || '';
+
+        img.src = config.image || PLACEHOLDER_IMAGE;
+
+        img.onerror = () => {
+            img.onerror = null;
+            img.src = PLACEHOLDER_IMAGE;
+        };
+
+    label.innerText = config.label || '';
         if (!rolling) {
             gameBtn.onclick = function() {
                 modal.remove();
