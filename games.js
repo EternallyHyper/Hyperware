@@ -371,7 +371,7 @@ function createPanel() {
 		);
 		renderButtons(filteredConfigs);
 	});
-
+	
 	async function openBuiltGame(url, cfg) {
 		let builtUrl = url;
 		try {
