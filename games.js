@@ -725,6 +725,14 @@ document.head.appendChild(sidebarStyle);
     }
 
     function rollGame() {
+             
+    img.src = config.image || PLACEHOLDER_IMAGE;
+
+    img.onerror = () => {
+      img.onerror = null;
+      img.src = PLACEHOLDER_IMAGE;
+    };
+
     // Close settings panel if open
     if (settingsPanel && settingsPanel.parentNode) {
         settingsPanel.remove();
@@ -757,13 +765,6 @@ document.head.appendChild(sidebarStyle);
     let cycles = 0;
     let maxCycles = 30;
     let interval = null;
-        
-    img.src = config.image || PLACEHOLDER_IMAGE;
-
-    img.onerror = () => {
-      img.onerror = null;
-      img.src = PLACEHOLDER_IMAGE;
-    };
 
     const gameBtn = document.createElement('button');
     gameBtn.style.width = '150px';
