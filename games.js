@@ -61,7 +61,7 @@ javascript:(function () {
         background-color: #444;
         transition: .4s;
         border-radius: 24px;
-        box-shadow: 0 0 5px #01AEFD;
+        box-shadow: 0 0 5px #63fd01;
     }
 
     .slider:before {
@@ -77,7 +77,7 @@ javascript:(function () {
     }
 
     .switch input:checked + .slider {
-        background-color: #01AEFD;
+        background-color: #63fd01;
     }
 
     .switch input:checked + .slider:before {
@@ -104,7 +104,7 @@ sidebarStyle.innerHTML = `
 
 .sidebar-btn {
   background: none;
-  color: #01AEFD;
+  color: #63fd01;
   border: none;
   font-size: 20px;
   padding: 12px 24px;
@@ -156,7 +156,7 @@ document.head.appendChild(sidebarStyle);
         panel.style.transform = 'none';
         panel.style.background = '#222';
         panel.style.fontFamily = 'Fredoka, sans-serif';
-        panel.style.color = '#01AEFD';
+        panel.style.color = '#63fd01';
         panel.style.padding = '0';
         panel.className = 'custom-scroll-panel';
         panel.id = 'panel';
@@ -190,7 +190,7 @@ document.head.appendChild(sidebarStyle);
         searchBar.style.fontSize = '14px';
         searchBar.style.outline = 'none';
         searchBar.style.background = '#111';
-        searchBar.style.color = '#01AEFD';
+        searchBar.style.color = '#63fd01';
         searchBar.style.display = 'block';
         searchBar.style.marginLeft = 'auto';
         searchBar.style.marginRight = 'auto';
@@ -216,7 +216,7 @@ document.head.appendChild(sidebarStyle);
         sidebarBtn.style.background = 'transparent';
         sidebarBtn.style.border = 'none';
         sidebarBtn.style.cursor = 'pointer';
-        sidebarBtn.style.color = '#01AEFD';
+        sidebarBtn.style.color = '#63fd01';
         sidebarBtn.id = 'sidebarBtn';
         sidebarBtn.style.display = 'flex';
         sidebarBtn.style.alignItems = 'center';
@@ -272,7 +272,7 @@ document.head.appendChild(sidebarStyle);
                button.style.height = buttonHeight;
                button.style.fontSize = '16px';
                button.style.background = 'linear-gradient(45deg, #038FF9, #00C5FF)';
-               button.style.color = '#01AEFD';
+               button.style.color = '#63fd01';
                button.style.border = 'none';
                button.style.borderRadius = '15px';
                button.style.cursor = 'pointer';
@@ -362,7 +362,7 @@ document.head.appendChild(sidebarStyle);
         settingsPanel.style.transform = 'translate(-50%, -50%)';
         settingsPanel.style.background = '#111';
         settingsPanel.style.fontFamily = 'Fredoka, sans-serif';
-        settingsPanel.style.color = '#01AEFD';
+        settingsPanel.style.color = '#63fd01';
         settingsPanel.style.padding = '20px';
         settingsPanel.style.zIndex = '5';
         settingsPanel.className = 'custom-scroll-panel';
@@ -377,7 +377,7 @@ document.head.appendChild(sidebarStyle);
         closeBtn.style.right = '15px';
         closeBtn.style.background = 'transparent';
         closeBtn.style.border = 'none';
-        closeBtn.style.color = '#01AEFD';
+        closeBtn.style.color = '#63fd01';
         closeBtn.style.fontSize = '16px';
         closeBtn.style.cursor = 'pointer';
         closeBtn.onclick = () => {
@@ -400,11 +400,11 @@ document.head.appendChild(sidebarStyle);
         <div id="misc-section"></div>
         <p>Nothing Yet..</p>
         <h3>Keybinds</h3>
-        <p style="color: #01AEFD;">Ctrl + E | Hide<br>Ctrl + M | Menu<br>More Soon...</p>
+        <p style="color: #63fd01;">Ctrl + E | Hide<br>Ctrl + M | Menu<br>More Soon...</p>
         <h3>Credits</h3>
-        <p style="color: #01AEFD;">Owner: @trulyzeph</p>
+        <p style="color: #63fd01;">Owner: @etenallyhyper</p>
         <div style="text-align: center; font-size: 10px; margin-top: 35px;">
-        Zephware 2025 | <span style="font-size: 0.75rem;">${version}</span>
+        Hyperware | <span style="font-size: 0.75rem;">${version}</span>
         </div>
 `;
 
@@ -426,7 +426,7 @@ document.head.appendChild(sidebarStyle);
     dropdownMenu.style.background = '#1a1a1a';
     dropdownMenu.style.width = '300px';
     dropdownMenu.style.height = '350px';
-    dropdownMenu.style.border = '1px solid #01AEFD';
+    dropdownMenu.style.border = '1px solid #63fd01';
     dropdownMenu.style.borderRadius = '8px';
     dropdownMenu.style.display = 'flex';
     dropdownMenu.style.flexDirection = 'column';
@@ -441,7 +441,7 @@ document.head.appendChild(sidebarStyle);
     settingsBtn.style.background = 'transparent';
     settingsBtn.style.fontFamily = 'Fredoka, sans-serif';
     settingsBtn.style.fontWeight = 'bold';
-    settingsBtn.style.color = '#01AEFD';
+    settingsBtn.style.color = '#63fd01';
     settingsBtn.style.border = 'none';
     settingsBtn.style.fontSize = '32px';
     settingsBtn.style.cursor = 'pointer';
@@ -455,7 +455,7 @@ document.head.appendChild(sidebarStyle);
     hideBtn.style.background = 'transparent';
     hideBtn.style.fontFamily = 'Fredoka, sans-serif';
     hideBtn.style.fontWeight = 'bold';
-    hideBtn.style.color = '#01AEFD';
+    hideBtn.style.color = '#63fd01';
     hideBtn.style.border = 'none';
     hideBtn.style.fontSize = '32px';
     hideBtn.style.cursor = 'pointer';
@@ -487,7 +487,7 @@ document.head.appendChild(sidebarStyle);
     homeBtn.style.background = 'transparent';
     homeBtn.style.fontFamily = 'Fredoka, sans-serif';
     homeBtn.style.fontWeight = 'bold';
-    homeBtn.style.color = '#01AEFD';
+    homeBtn.style.color = '#63fd01';
     homeBtn.style.border = 'none';
     homeBtn.style.fontSize = '32px';
     homeBtn.style.cursor = 'pointer';
@@ -561,14 +561,14 @@ document.head.appendChild(sidebarStyle);
         padding: 16px;
         border: none;
         background: none;
-        color: #01AEFD;
+        color: #63fd01;
         font-size: 16px;
         cursor: pointer;
         text-align: left;
         transition: background 0.2s;
     }
     .wp-sidebar-btn.active {
-        border-left: 4px solid #01AEFD;
+        border-left: 4px solid #63fd01;
         background: rgba(255,255,255,0.05);
     }
     .wp-divider {
@@ -759,13 +759,13 @@ document.head.appendChild(sidebarStyle);
     label.style.color = '#fff';
     label.style.textAlign = 'center';
     label.style.marginTop = '0';
-    label.style.textShadow = '0 2px 8px #01AEFD44';
+    label.style.textShadow = '0 2px 8px #63fd0144';
     gameBtn.appendChild(label);
 
     const rerollBtn = document.createElement('button');
     rerollBtn.innerText = 'Reroll';
     rerollBtn.style.marginTop = '18px';
-    rerollBtn.style.background = '#01AEFD';
+    rerollBtn.style.background = '#63fd01';
     rerollBtn.style.color = '#fff';
     rerollBtn.style.border = 'none';
     rerollBtn.style.borderRadius = '8px';
@@ -781,7 +781,7 @@ document.head.appendChild(sidebarStyle);
     closeBtn.style.right = '18px';
     closeBtn.style.background = 'transparent';
     closeBtn.style.border = 'none';
-    closeBtn.style.color = '#01AEFD';
+    closeBtn.style.color = '#63fd01';
     closeBtn.style.fontSize = '22px';
     closeBtn.style.cursor = 'pointer';
     closeBtn.onclick = () => {
