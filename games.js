@@ -1,457 +1,353 @@
-const imageCache = new Map();
-function preloadImage(src) {
-	if (imageCache.has(src)) return imageCache.get(src);
-	const promise = new Promise((resolve, reject) => {
-		const img = new Image();
-		img.onload = () => resolve(img);
-		img.onerror = reject;
-		img.src = src;
-	});
-	imageCache.set(src, promise);
-	return promise;
-}
+javascript:(function () {
+    let iframe = null;
+    let panel = null;
+    let settingsPanel = null;
+    let dropdownMenu = null;
+    let sidebar = null;
+    let buttonConfigs = [];
+    const version = 'v1.0';
 
-function loadGameList() {
-	fetch('https://raw.githubusercontent.com/trulyzeph/zephware/main/data/gamelist.json')
-		.then(response => response.json())
-		.then(data => {
-			buttonConfigs = data;
-			data.slice(0, 10).forEach(cfg => cfg.image && preloadImage(cfg.image));
-			createPanel();
-		})
-		.catch(error => {
-			console.error('Error loading game list:', error);
-			alert('Error, Try Again.');
-		});
-}
+    function loadGameList() {
+        fetch('https://raw.githubusercontent.com/TrulyZeph/Zephware/main/data/gamelist.json')
+            .then(response => response.json())
+            .then(data => {
+                buttonConfigs = data;
+                createPanel();
+                createDropdownMenu();
+            })
+            .catch(error => {
+                console.error('Error loading game list:', error);
+                alert('Error, Try Again.');
+            });
+    }
 
-function injectRuffle() {
-	return new Promise((resolve) => {
-		if (window.RufflePlayer) {
-			resolve();
-			return;
-		}
-		const script = document.createElement('script');
-		script.src = "https://unpkg.com/@ruffle-rs/ruffle";
-		script.onload = () => resolve();
-		document.body.appendChild(script);
-	});
-}
+    const fredokaFontLink = document.createElement('link');
+    fredokaFontLink.id = 'fredoka-font-link';
+    fredokaFontLink.rel = 'stylesheet';
+    fredokaFontLink.href = 'https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap';
+    document.head.appendChild(fredokaFontLink);
 
-function convertToRawGitHubURL(url) {
-	if (typeof url !== 'string') return url;
-	if (url.startsWith('http')) return url;
-	const repoPattern = /^([^\/]+)\/([^\/]+)(?:\/(.+))?$/;
-	const match = url.match(repoPattern);
-	if (!match) return url;
-	const username = match[1];
-	const repo = match[2];
-	let rest = match[3] || 'main';
-	if (!rest.endsWith('/')) rest = rest + '/';
-	return `https://raw.githubusercontent.com/${username}/${repo}/${rest}`;
-}
+    const fredokaFontStyle = document.createElement('style');
+    fredokaFontStyle.type = 'text/css';
+    fredokaFontStyle.innerText = `
+       * {
+          font-family: 'Fredoka', sans-serif !important;
+       }
+    `;
+    document.head.appendChild(fredokaFontStyle);
 
-function makeAbsoluteFromBase(baseUrl, resourcePath) {
-	if (!resourcePath) return resourcePath;
-	if (/^(https?:|\/\/|data:|mailto:|javascript:|#)/i.test(resourcePath)) return resourcePath;
-	if (resourcePath.startsWith('/')) resourcePath = resourcePath.slice(1);
-	return baseUrl + resourcePath;
-}
+    const toggle = document.createElement('style');
+    toggle.innerHTML = `
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
 
-async function loadGameBuild(rawOrShorthandUrl) {
-	try {
-		let baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
-		if (!baseUrl.endsWith('/')) baseUrl += '/';
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-		const fetchCache = new Map();
-		const cachedFetch = (url) => {
-			if (fetchCache.has(url)) return fetchCache.get(url);
-			const p = fetch(url);
-			fetchCache.set(url, p);
-			return p;
-		};
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #444;
+        transition: .4s;
+        border-radius: 24px;
+        box-shadow: 0 0 5px #01AEFD;
+    }
 
-		const resp = await cachedFetch(baseUrl + 'index.html');
-		if (!resp.ok) throw new Error('Failed to fetch index.html: ' + resp.status);
-		let htmlText = await resp.text();
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
 
-		const externalScriptPatterns = [
-			/https:\/\/apis\.google\.com/gi,
-			/https?:\/\/connect\.facebook\.net/gi,
-			/https?:\/\/cdn\.ravenjs\.com/gi,
-			/https:\/\/.*doorbell\.io/gi,
-			/https?:\/\/.*googletagmanager/gi,
-			/https?:\/\/.*analytics/gi,
-			/https?:\/\/static\.addtoany/gi
-		];
+    .switch input:checked + .slider {
+        background-color: #01AEFD;
+    }
 
-		htmlText = htmlText.replace(/<script[\s\S]*?<\/script>/gi, (m) => {
-			for (const p of externalScriptPatterns) {
-				if (p.test(m)) return '';
-			}
-			return m;
-		});
-
-		const parser = new DOMParser();
-		const doc = parser.parseFromString(htmlText, 'text/html');
-
-		let baseEl = doc.querySelector('base');
-		if (!baseEl) {
-			baseEl = doc.createElement('base');
-			baseEl.href = baseUrl;
-			(doc.head || doc.documentElement).insertBefore(baseEl, doc.head?.firstChild || null);
-		} else {
-			baseEl.href = baseUrl;
-		}
-
-		const linkEls = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'));
-		for (const link of linkEls) {
-			const href = link.getAttribute('href') || '';
-			const absHref = makeAbsoluteFromBase(baseUrl, href);
-
-			try {
-				const cssResp = await cachedFetch(absHref);
-				if (!cssResp.ok) throw 0;
-				let cssText = await cssResp.text();
-				const cssDir = absHref.substring(0, absHref.lastIndexOf('/') + 1);
-
-				cssText = cssText.replace(/url\(([^)]+)\)/gi, (m, p1) => {
-					const clean = p1.trim().replace(/^['"]|['"]$/g, '');
-					if (/^(data:|https?:|\/\/)/i.test(clean)) return m;
-					return `url("${makeAbsoluteFromBase(cssDir, clean)}")`;
-				});
-
-				const styleEl = doc.createElement('style');
-				styleEl.textContent = cssText;
-				link.replaceWith(styleEl);
-			} catch {
-				link.href = absHref;
-			}
-		}
-
-		const scriptEls = Array.from(doc.querySelectorAll('script[src]'));
-		for (const s of scriptEls) {
-			const src = s.getAttribute('src') || '';
-			const absSrc = makeAbsoluteFromBase(baseUrl, src);
-
-			try {
-				const jsResp = await cachedFetch(absSrc);
-				if (!jsResp.ok) throw 0;
-				const jsText = await jsResp.text();
-				const inline = doc.createElement('script');
-				inline.textContent = jsText;
-				s.replaceWith(inline);
-			} catch {
-				s.src = absSrc;
-			}
-		}
-
-		const ATTRS = [
-			{ sel: 'img', attr: 'src' },
-			{ sel: 'audio', attr: 'src' },
-			{ sel: 'video', attr: 'src' },
-			{ sel: 'source', attr: 'src' },
-			{ sel: 'iframe', attr: 'src' },
-			{ sel: 'a', attr: 'href' },
-			{ sel: 'link[rel="icon"]', attr: 'href' }
-		];
-
-		for (const { sel, attr } of ATTRS) {
-			for (const node of doc.querySelectorAll(sel)) {
-				const val = node.getAttribute(attr);
-				if (!val) continue;
-				if (/^(https?:|\/\/|data:|mailto:|javascript:)/i.test(val)) continue;
-				node.setAttribute(attr, makeAbsoluteFromBase(baseUrl, val));
-			}
-		}
-
-		const runtimeFix = doc.createElement('script');
-		runtimeFix.textContent = `
-			const __base = ${JSON.stringify(baseUrl)};
-			const __origFetch = window.fetch;
-			window.fetch = function(input, init){
-				try{
-					if (typeof input === 'string' && !/^(https?:|data:|blob:)/i.test(input)) {
-						input = new URL(input, __base).href;
-					}
-				}catch{}
-				return __origFetch(input, init);
-			};
-
-			const __origOpen = XMLHttpRequest.prototype.open;
-			XMLHttpRequest.prototype.open = function(m,u){
-				try{
-					if (u && !/^(https?:|data:|blob:)/i.test(u)) {
-						u = new URL(u, __base).href;
-					}
-				}catch{}
-				return __origOpen.apply(this, arguments);
-			};
-
-			const __origWorker = window.Worker;
-			window.Worker = function(u, o){
-				if (!/^(https?:|blob:)/i.test(u)) {
-					u = new URL(u, __base).href;
-				}
-				return new __origWorker(u, o);
-			};
-		`;
-		(doc.head || doc.documentElement).appendChild(runtimeFix);
-
-		const finalHtml = '<!doctype html>\n' + doc.documentElement.outerHTML;
-		return URL.createObjectURL(new Blob([finalHtml], { type: 'text/html' }));
-	} catch (e) {
-		console.error('Error building game from repo:', e);
-		throw e;
-	}
-}
-
-async function enableRuffleSavePersistence(player, gameUrl) {
-	const saveKey = "zephware_ruffle_" + gameUrl;
-	try {
-		const savedData = localStorage.getItem(saveKey);
-		if (savedData && player.setLocalStorageData) {
-			player.setLocalStorageData(JSON.parse(savedData));
-		}
-	} catch (e) {
-		console.warn('Could not load Ruffle save:', e);
-	}
-
-	setInterval(() => {
-		try {
-			const saveData = player.getLocalStorageData?.();
-			if (saveData) {
-				localStorage.setItem(saveKey, JSON.stringify(saveData));
-			}
-		} catch (e) {}
-	}, 3000);
-}
-
-const globalFontLink = document.createElement('link');
-globalFontLink.rel = 'stylesheet';
-globalFontLink.href = 'https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@100..900&display=swap';
-document.head.appendChild(globalFontLink);
-
-const styles = document.createElement('style');
-styles.textContent = `
-	* { font-family: 'Grenze Gotisch', sans-serif !important; }
-	.custom-scroll-panel { scrollbar-width: none; -ms-overflow-style: none; }
-	.custom-scroll-panel::-webkit-scrollbar { display: none; }
-	
-	.optButton {
-		background: #0faada !important;
-		border: none;
-		border-radius: 50%;
-		width: 36px;
-		height: 36px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0;
-		margin: 0 6px;
-		cursor: pointer;
-		transition: background 0.2s;
-	}
-	.optButton svg { width: 22px; height: 22px; }
-	
-	#gradient {
-		background: linear-gradient(130deg, #053680ff, #204cacff);
-		background-size: 200% 200%;
-		animation: gradientAnim 5s ease infinite;
-	}
-	@keyframes gradientAnim {
-		0%, 100% { background-position: 10% 0%; }
-		50% { background-position: 91% 100%; }
-	}
-	
-	.game-grid {
-		display: grid;
-		grid-template-columns: repeat(5, 280px);
-		gap: 20px;
-		justify-content: center;
-		margin: 60px 40px 10px;
-	}
-	
-	.tags-modal {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background: #181818;
-		border-radius: 24px;
-		box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-		padding: 32px;
-		z-index: 1001;
-		min-width: 320px;
-	}
-	.tag-btn {
-		background: linear-gradient(45deg, #01AEFD, #00C5FF);
-		color: #fff;
-		border: none;
-		border-radius: 18px;
-		font-size: 18px;
-		font-weight: bold;
-		padding: 10px 28px;
-		margin: 4px;
-		cursor: pointer;
-		transition: background 0.2s;
-	}
-	.tag-btn:hover { background: #015AFD; }
+    .switch input:checked + .slider:before {
+        transform: translateX(26px);
+    }
 `;
-document.head.appendChild(styles);
 
-function TitleBar() {
-	const bar = document.createElement('div');
-	bar.style.cssText = 'width:60%;height:50px;margin:20px auto 0;border-radius:15px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;';
-	bar.id = 'gradient';
-
-	const left = document.createElement('div');
-	left.style.cssText = 'display:flex;align-items:center;gap:10px;';
-
-	const img = document.createElement('img');
-	img.src = 'https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/assets/Zephware.png';
-	img.style.cssText = 'height:45px;width:auto;margin-left:8px;';
-	left.appendChild(img);
-
-	const title = document.createElement('div');
-	title.textContent = 'Zephware';
-	title.style.cssText = 'font-weight:bold;font-size:28px;background:linear-gradient(to bottom,#0faada,#005da1);-webkit-background-clip:text;color:transparent;';
-	left.appendChild(title);
-
-	const searchBar = document.createElement('input');
-	searchBar.type = 'text';
-	searchBar.placeholder = 'Search';
-	searchBar.style.cssText = 'width:420px;max-width:45vw;padding:8px 12px;border-radius:10px;border:none;font-size:14px;background:#262327;color:#01AEFD;margin:0 10px;';
-
-	const right = document.createElement('div');
-	right.style.cssText = 'display:flex;align-items:center;';
-
-	const btns = [
-		{ title: 'Random', svg: '<svg width="35" height="35" viewBox="0 0 20 20"><path d="M174,7927.1047 C172.896,7927.1047 172,7927.9997 172,7929.1047 C172,7930.2097 172.896,7931.1047 174,7931.1047 C175.104,7931.1047 176,7930.2097 176,7929.1047 C176,7927.9997 175.104,7927.1047 174,7927.1047 L174,7927.1047 Z M182,7921.9997 C182,7921.4477 181.552,7920.9997 181,7920.9997 L167,7920.9997 C166.448,7920.9997 166,7921.4477 166,7921.9997 L166,7935.9997 C166,7936.5527 166.448,7936.9997 167,7936.9997 L181,7936.9997 C181.552,7936.9997 182,7936.5527 182,7935.9997 L182,7921.9997 Z" transform="translate(-164,-7918)"/></svg>', fn: rollGame },
-		{ title: 'Tags', svg: '<svg width="40" height="40" viewBox="0 0 24 24"><path d="M8.5 3H11.5118C12.2455 3 12.6124 3 12.9577 3.08289L20.5 10M7.5498 10.0498H7.5598" stroke="#000" stroke-width="2"/></svg>', fn: showTagsModal },
-		{ title: 'Report', svg: '<svg width="40" height="40" viewBox="0 0 24 24"><path d="M12 1C9.63768 1 8.30808 2.0703 7.63176 3.25386" fill="#0F0F0F"/></svg>', fn: () => window.open('https://forms.gle/h5DHdt5EnsT3bwqP7','_blank') },
-		{ title: 'Settings', svg: '<svg width="40" height="40" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="#000" stroke-width="2"/></svg>', fn: createSettingsPanel }
-	];
-
-	btns.forEach(b => {
-		const btn = document.createElement('button');
-		btn.className = 'optButton';
-		btn.title = b.title;
-		btn.innerHTML = b.svg;
-		btn.onclick = b.fn;
-		right.appendChild(btn);
-	});
-
-	bar.appendChild(left);
-	bar.appendChild(searchBar);
-	bar.appendChild(right);
-	bar._searchBar = searchBar;
-	return bar;
+const sidebarStyle = document.createElement('style');
+sidebarStyle.innerHTML = `
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 260px;
+  background: #222;
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20px 0;
+  z-index: 10;
 }
 
-function createPanel() {
-	panel = document.createElement('div');
-	panel.style.cssText = 'width:100vw;height:100vh;overflow-y:auto;position:fixed;top:0;left:0;background:#111;color:#01AEFD;z-index:99999;';
-	panel.className = 'custom-scroll-panel';
-
-	const titleBar = TitleBar();
-	panel.appendChild(titleBar);
-
-	const container = document.createElement('div');
-	container.className = 'game-grid';
-
-	let filteredConfigs = buttonConfigs.filter(cfg => !cfg.highlighted);
-
-	titleBar._searchBar.addEventListener('input', () => {
-		const query = titleBar._searchBar.value.toLowerCase();
-		filteredConfigs = buttonConfigs.filter(cfg =>
-			!cfg.highlighted &&
-			cfg.label?.toLowerCase().includes(query) &&
-			(!activeTag || (Array.isArray(cfg.tag) ? cfg.tag.includes(activeTag) : cfg.tag === activeTag))
-		);
-		renderButtons(filteredConfigs);
-	});
-
-	async function openBuiltGame(url, cfg) {
-		let builtUrl = url;
-		try {
-			if (cfg?.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
-				builtUrl = await loadGameBuild(url);
-			}
-		} catch (e) {
-			console.error('Failed to load game build:', e);
-			throw e;
-		}
-		return builtUrl;
-	}
-
-	function renderButtons(configs) {
-		container.innerHTML = '';
-		configs.forEach(config => {
-			const button = document.createElement('button');
-			button.style.cssText = 'width:280px;height:150px;background:#000;border:none;border-radius:15px;cursor:pointer;padding:0;position:relative;overflow:hidden;';
-
-			const imgContainer = document.createElement('div');
-			imgContainer.style.cssText = 'width:100%;height:100%;position:relative;border-radius:15px;overflow:hidden;';
-
-			const img = document.createElement('img');
-			img.src = config.image;
-			img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-			imgContainer.appendChild(img);
-
-			const label = document.createElement('div');
-			label.textContent = config.label || '';
-			label.style.cssText = 'position:absolute;bottom:0;left:0;width:100%;padding:6px 10px;font-size:12px;font-weight:bold;color:#fff;background:linear-gradient(to top,rgba(0,0,0,0.85),rgba(0,0,0,0));';
-			imgContainer.appendChild(label);
-
-			button.appendChild(imgContainer);
-
-			button.addEventListener('click', async () => {
-				panel.remove();
-				let url = config.url;
-
-				try {
-					if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
-						url = await loadGameBuild(url);
-					}
-				} catch (e) {
-					console.error('Failed to load game build:', e);
-					alert('Failed to load game. Try again.');
-					return;
-				}
-
-				if (url && url.endsWith('.swf')) {
-					try {
-						await injectRuffle();
-						const ruffle = window.RufflePlayer.newest();
-						const player = ruffle.createPlayer();
-						player.style.cssText = 'width:100vw;height:100vh;position:fixed;top:0;left:0;z-index:100000;';
-						document.body.appendChild(player);
-						await enableRuffleSavePersistence(player, config.url || url);
-						player.load(url);
-					} catch (e) {
-						console.error('Ruffle error', e);
-						alert('Could not run SWF.');
-					}
-				} else {
-					const iframe = document.createElement('iframe');
-					iframe.src = url;
-					iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
-					iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals";
-					iframe.style.cssText = 'width:100vw;height:100vh;border:none;position:fixed;top:0;left:0;z-index:100000;';
-					document.body.appendChild(iframe);
-				}
-			});
-			container.appendChild(button);
-		});
-	}
-
-	renderButtons(filteredConfigs);
-	window.zwRenderButtons = renderButtons;
-	panel.appendChild(container);
-	document.body.appendChild(panel);
+.sidebar-btn {
+  background: none;
+  color: #01AEFD;
+  border: none;
+  font-size: 20px;
+  padding: 12px 24px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
+.sidebar-btn:hover {
+  background: #333;
+}
+`;
+
+document.head.appendChild(sidebarStyle);
+
+    const fontStyle = document.createElement("style");
+    fontStyle.type = "text/css";
+    fontStyle.innerText = `
+       * {
+          font-family: 'Fredoka', sans-serif !important;
+       }
+    `;
+    document.head.appendChild(fontStyle);
+    document.head.appendChild(toggle);
+
+    function TitleText() {
+        const title = document.createElement('div');
+        title.innerHTML = `Hyperware <sup style="font-size: 0.75rem">${version}</sup>`;
+        title.style.fontFamily = 'Fredoka';
+        title.style.fontWeight = 'bold';
+        title.style.color = '#63fd01';
+        title.style.fontSize = '32px';
+        title.style.textAlign = 'center';
+        title.style.marginTop = '15px';
+  
+        return title;
+     }    
+
+    function createPanel() {
+        panel = document.createElement('div');
+        panel.style.width = '100vw';
+        panel.style.height = '100vh';
+        panel.style.overflowY = 'auto';
+        panel.style.borderRadius = '0';
+        panel.style.zIndex = 1;
+        panel.style.position = 'fixed';
+        panel.style.top = '0';
+        panel.style.left = '0';
+        panel.style.transform = 'none';
+        panel.style.background = '#222';
+        panel.style.fontFamily = 'Fredoka, sans-serif';
+        panel.style.color = '#01AEFD';
+        panel.style.padding = '0';
+        panel.className = 'custom-scroll-panel';
+        panel.id = 'panel';
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .custom-scroll-panel {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .custom-scroll-panel::-webkit-scrollbar {
+                display: none;
+            }
+        `;
+        document.head.appendChild(style);
+
+        const titleBar = TitleText();
+        panel.appendChild(titleBar);
+        if (!sidebar) createSidebar();
+        toggleSidebar();
+
+        const searchBar = document.createElement('input');
+        searchBar.type = 'text';
+        searchBar.placeholder = 'Search';
+        searchBar.style.width = '70%';
+        searchBar.style.marginTop = '20px';
+        searchBar.style.marginBottom = '-30px';
+        searchBar.style.padding = '10px';
+        searchBar.style.borderRadius = '10px';
+        searchBar.style.border = 'none';
+        searchBar.style.fontSize = '14px';
+        searchBar.style.outline = 'none';
+        searchBar.style.background = '#111';
+        searchBar.style.color = '#01AEFD';
+        searchBar.style.display = 'block';
+        searchBar.style.marginLeft = 'auto';
+        searchBar.style.marginRight = 'auto';
+
+        searchBar.addEventListener('input', () => {
+            const query = searchBar.value.toLowerCase();
+            filteredConfigs = buttonConfigs.filter(config =>
+               config.label && config.label.toLowerCase().includes(query)
+            );
+            renderButtons(filteredConfigs);
+         });
+         
+
+        panel.appendChild(searchBar);
+
+
+        const sidebarBtn = document.createElement('button');
+        sidebarBtn.style.position = 'absolute';
+        sidebarBtn.style.top = '25px';
+        sidebarBtn.style.left = '25px';
+        sidebarBtn.style.width = '30px';
+        sidebarBtn.style.height = '24px';
+        sidebarBtn.style.background = 'transparent';
+        sidebarBtn.style.border = 'none';
+        sidebarBtn.style.cursor = 'pointer';
+        sidebarBtn.style.color = '#01AEFD';
+        sidebarBtn.id = 'sidebarBtn';
+        sidebarBtn.style.display = 'flex';
+        sidebarBtn.style.alignItems = 'center';
+        sidebarBtn.style.justifyContent = 'center';
+        sidebarBtn.style.padding = '0';
+
+        const svgIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svgIcon.setAttribute('width', '30');
+        svgIcon.setAttribute('height', '24');
+        svgIcon.setAttribute('viewBox', '0 0 30 24');
+        svgIcon.setAttribute('fill', 'none');
+        svgIcon.innerHTML = `
+          <rect y="0" width="25" height="4" rx="2" fill="currentColor"/>
+          <rect y="10" width="25" height="4" rx="2" fill="currentColor"/>
+          <rect y="20" width="25" height="4" rx="2" fill="currentColor"/>
+        `;
+        sidebarBtn.appendChild(svgIcon);
+
+        sidebarBtn.onclick = () => {
+            showSidebar();
+        };
+
+        panel.appendChild(sidebarBtn);
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.flexWrap = 'wrap';
+        container.style.justifyContent = 'space-around';
+        container.style.alignItems = 'center';
+        container.style.gap = '20px';
+        container.style.marginTop = '60px';
+        container.style.marginBottom = '10px';
+        container.style.marginLeft = '40px';
+        container.style.marginRight = '40px';
+        
+        let filteredConfigs = buttonConfigs.slice();
+        renderButtons(filteredConfigs);
+
+        function renderButtons(configs) {
+           container.innerHTML = '';
+           configs.forEach(config => {
+               const button = document.createElement('button');
+               let buttonHeight = '120px';
+               const labelText = config.label || '';
+               const labelLength = labelText.length;
+               let labelFontSize = '12px';
+               if (labelLength > 20) {
+                   buttonHeight = '130px';
+                   labelFontSize = '10px';
+               } else if (labelLength > 12) {
+                   labelFontSize = '10px';
+               }
+               button.style.width = '100px';
+               button.style.height = buttonHeight;
+               button.style.fontSize = '16px';
+               button.style.background = 'linear-gradient(45deg, #038FF9, #00C5FF)';
+               button.style.color = '#01AEFD';
+               button.style.border = 'none';
+               button.style.borderRadius = '15px';
+               button.style.cursor = 'pointer';
+               button.style.padding = '0';
+               button.style.display = 'flex';
+               button.style.flexDirection = 'column';
+               button.style.alignItems = 'center';
+               button.style.justifyContent = 'flex-start';
+               button.style.position = 'relative';
+
+               const img = document.createElement('img');
+               img.src = config.image;
+               img.style.width = '100px';
+               img.style.height = '100px';
+               img.style.borderTopLeftRadius = '15px';
+               img.style.borderTopRightRadius = '15px';
+               img.style.marginBottom = '0';
+               img.style.display = 'block';
+               img.style.position = 'relative';
+               button.appendChild(img);
+
+               const label = document.createElement('div');
+               label.innerText = labelText;
+               label.style.fontSize = labelFontSize;
+               label.style.fontWeight = 'bold';
+               label.style.color = '#fff';
+               label.style.textAlign = 'center';
+               label.style.padding = '2px 4px';
+               label.style.marginTop = '0';
+               label.style.borderRadius = '0';
+               label.style.boxShadow = 'none';
+               label.style.alignSelf = 'center';
+               label.style.overflow = 'hidden';
+               label.style.display = 'flex';
+               label.style.alignItems = 'center';
+               label.style.justifyContent = 'center';
+               if (labelLength > 20) {
+                  label.style.whiteSpace = 'normal';
+                  label.style.wordBreak = 'break-word';
+                  label.style.lineHeight = '1.1';
+                  label.style.height = '28px';
+                  label.style.textOverflow = 'clip';
+               } else {
+                  label.style.whiteSpace = 'nowrap';
+                  label.style.textOverflow = 'ellipsis';
+                  label.style.height = '14px';
+               }
+               button.style.position = 'relative';
+               button.appendChild(label);
+
+              button.addEventListener('click', () => {
+                 panel.remove();
+
+                 iframe = document.createElement('iframe');
+                 iframe.src = config.url;
+                 iframe.style.width = '100vw';
+                 iframe.style.height = '100vh';
+                 iframe.style.border = 'none';
+                 iframe.style.borderRadius = '0';
+                 iframe.style.display = 'block';
+                 iframe.style.margin = '0';
+                 iframe.style.zIndex = 2;
+                 iframe.style.position = 'fixed';
+                 iframe.style.top = '0';
+                 iframe.style.left = '0';
+                 document.body.appendChild(iframe);
+              });
+
+              container.appendChild(button);
+           });
+        }     
+
+        panel.appendChild(container);
+        document.body.appendChild(panel);
+    }
 
     function createSettingsPanel() {
         settingsPanel = document.createElement('div');
@@ -465,7 +361,7 @@ function createPanel() {
         settingsPanel.style.left = '50%';
         settingsPanel.style.transform = 'translate(-50%, -50%)';
         settingsPanel.style.background = '#111';
-        settingsPanel.style.fontFamily = 'Grenze Gotisch, sans-serif';
+        settingsPanel.style.fontFamily = 'Fredoka, sans-serif';
         settingsPanel.style.color = '#01AEFD';
         settingsPanel.style.padding = '20px';
         settingsPanel.style.zIndex = '5';
@@ -473,7 +369,6 @@ function createPanel() {
         if (settingsPanel) settingsPanel.remove();
         let oldRoller = document.getElementById('random-roller-modal');
         if (oldRoller) oldRoller.remove();
-
 
         const closeBtn = document.createElement('button');
         closeBtn.innerText = '✕';
@@ -488,9 +383,9 @@ function createPanel() {
         closeBtn.onclick = () => {
             settingsPanel.remove();
             if (overlay) overlay.remove();
+            hideSidebar();
         };
         settingsPanel.appendChild(closeBtn);
-
 
         const title = document.createElement('div');
         title.innerText = 'Settings';
@@ -504,89 +399,311 @@ function createPanel() {
         <h3>Misc</h3>
         <div id="misc-section"></div>
         <p>Nothing Yet..</p>
-		`;
-		
-    function showTagsModal() {
-        if (document.getElementById('tags-modal')) return;
-        const modal = document.createElement('div');
-        modal.className = 'tags-modal';
-        modal.id = 'tags-modal';
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'tags-modal-close';
-        closeBtn.innerText = '×';
-        closeBtn.title = 'Close';
-        closeBtn.style.position = 'absolute';
-        closeBtn.style.top = '12px';
-        closeBtn.style.right = '18px';
-        closeBtn.style.background = '#e74c3c';
-        closeBtn.style.color = '#fff';
-        closeBtn.style.fontWeight = 'bold';
-        closeBtn.style.fontSize = '22px';
-        closeBtn.style.border = 'none';
-        closeBtn.style.borderRadius = '25%';
-        closeBtn.style.width = '36px';
-        closeBtn.style.height = '36px';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.onclick = () => modal.remove();
-        modal.appendChild(closeBtn);
-        const title = document.createElement('div');
-        title.className = 'tags-modal-title';
-        title.innerText = 'Tags';
-        title.style.marginTop = '8px';
-        modal.appendChild(title);
-        const tagsRow = document.createElement('div');
-        tagsRow.className = 'tags-btn-row';
-        tagsRow.style.marginTop = '8px';
-        const tags = ['Simulator', 'Fighting', 'RPG'];
-        tags.forEach(tag => {
-            const tagBtn = document.createElement('button');
-            tagBtn.className = 'tag-btn';
-            tagBtn.innerText = tag;
-            tagBtn.style.fontSize = '14px';
-            tagBtn.style.padding = '6px 16px';
-            tagBtn.style.margin = '0 4px';
-            tagBtn.style.borderRadius = '14px';
-            tagBtn.style.minWidth = 'unset';
-            tagBtn.style.background = (activeTag === tag) ? '#015AFD' : 'linear-gradient(45deg, #01AEFD, #00C5FF)';
-            tagBtn.style.color = '#fff';
-            tagBtn.style.fontWeight = 'bold';
-            tagBtn.style.transition = 'background 0.2s';
-            tagBtn.onclick = () => {
-                if (activeTag === tag) {
-                    activeTag = null;
-                    tagBtn.style.background = 'linear-gradient(45deg, #01AEFD, #00C5FF)';
-                } else {
-                    activeTag = tag;
-                    tagsRow.querySelectorAll('.tag-btn').forEach(btn => btn.style.background = 'linear-gradient(45deg, #01AEFD, #00C5FF)');
-                    tagBtn.style.background = '#015AFD';
-                }
-                filteredConfigs = buttonConfigs.filter(config =>
-                    (!config.highlighted) && (!activeTag || (Array.isArray(config.tag) ? config.tag.includes(activeTag) : config.tag === activeTag))
-                );
-                if (typeof renderButtons === 'function') {
-                    renderButtons(filteredConfigs);
-                } else if (typeof window.zwRenderButtons === 'function') {
-                    window.zwRenderButtons(filteredConfigs);
-                } else {
-                    console.warn('renderButtons not available to update UI after tag change');
-                }
-                modal.remove();
-            };
-            tagsRow.appendChild(tagBtn);
-        });
-        modal.appendChild(tagsRow);
-        document.body.appendChild(modal);
+        <h3>Keybinds</h3>
+        <p style="color: #01AEFD;">Ctrl + E | Hide<br>Ctrl + M | Menu<br>More Soon...</p>
+        <h3>Credits</h3>
+        <p style="color: #01AEFD;">Owner: @trulyzeph</p>
+        <div style="text-align: center; font-size: 10px; margin-top: 35px;">
+        Zephware 2025 | <span style="font-size: 0.75rem;">${version}</span>
+        </div>
+`;
+
+        settingsPanel.appendChild(content);
+        document.body.appendChild(settingsPanel);
     }
 
 
+    function createDropdownMenu() {
+    if (dropdownMenu) {
+        dropdownMenu.style.visibility = dropdownMenu.style.visibility === 'hidden' ? 'visible' : 'hidden';
+        return dropdownMenu;
+    }
+
+    dropdownMenu = document.createElement('div');
+    dropdownMenu.style.position = 'fixed';
+    dropdownMenu.style.top = '30%';
+    dropdownMenu.style.left = '42%';
+    dropdownMenu.style.background = '#1a1a1a';
+    dropdownMenu.style.width = '300px';
+    dropdownMenu.style.height = '350px';
+    dropdownMenu.style.border = '1px solid #01AEFD';
+    dropdownMenu.style.borderRadius = '8px';
+    dropdownMenu.style.display = 'flex';
+    dropdownMenu.style.flexDirection = 'column';
+    dropdownMenu.style.justifyContent = 'center';
+    dropdownMenu.style.alignItems = 'center';
+    dropdownMenu.style.visibility = 'hidden';
+    dropdownMenu.style.zIndex = '5';
+    dropdownMenu.id = 'dropdownmenu';
+
+    const settingsBtn = document.createElement('button');
+    settingsBtn.innerText = 'Settings';
+    settingsBtn.style.background = 'transparent';
+    settingsBtn.style.fontFamily = 'Fredoka, sans-serif';
+    settingsBtn.style.fontWeight = 'bold';
+    settingsBtn.style.color = '#01AEFD';
+    settingsBtn.style.border = 'none';
+    settingsBtn.style.fontSize = '32px';
+    settingsBtn.style.cursor = 'pointer';
+    settingsBtn.onclick = () => {
+        createSettingsPanel();
+        dropdownMenu.style.visibility = 'hidden';
+    };
+
+    const hideBtn = document.createElement('button');
+    hideBtn.innerText = 'Hide';
+    hideBtn.style.background = 'transparent';
+    hideBtn.style.fontFamily = 'Fredoka, sans-serif';
+    hideBtn.style.fontWeight = 'bold';
+    hideBtn.style.color = '#01AEFD';
+    hideBtn.style.border = 'none';
+    hideBtn.style.fontSize = '32px';
+    hideBtn.style.cursor = 'pointer';
+    hideBtn.onclick = () => {
+        if (panel) panel.style.display = 'none';
+        if (iframe) iframe.style.display = 'none';
+        dropdownMenu.style.visibility = 'hidden';
+    };
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerText = 'Exit';
+    closeBtn.style.background = 'transparent';
+    closeBtn.style.fontFamily = 'Fredoka, sans-serif';
+    closeBtn.style.fontWeight = 'bold';
+    closeBtn.style.color = '#ff0000';
+    closeBtn.style.border = 'none';
+    closeBtn.style.fontSize = '32px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.onclick = () => {
+        panel?.remove();
+        iframe?.remove();
+        settingsPanel?.remove();
+        dropdownMenu?.remove();
+        sidebarBtn?.remove();
+    };
+
+    const homeBtn = document.createElement('button');
+    homeBtn.innerText = 'Home';
+    homeBtn.style.background = 'transparent';
+    homeBtn.style.fontFamily = 'Fredoka, sans-serif';
+    homeBtn.style.fontWeight = 'bold';
+    homeBtn.style.color = '#01AEFD';
+    homeBtn.style.border = 'none';
+    homeBtn.style.fontSize = '32px';
+    homeBtn.style.cursor = 'pointer';
+    homeBtn.style.textAlign = 'center';
+    homeBtn.onclick = () => {
+        if (document.getElementById('panel') == null) {
+            createPanel();
+            iframe?.remove();
+            dropdownMenu.style.visibility = 'hidden';
+        }
+    };
+
+    dropdownMenu.appendChild(homeBtn);
+    dropdownMenu.appendChild(settingsBtn);
+    dropdownMenu.appendChild(hideBtn);
+    dropdownMenu.appendChild(closeBtn);
+
+    document.body.appendChild(dropdownMenu);
+    return dropdownMenu;
+    }
+
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes pulseLine {
+            0% {
+                transform: scaleX(0);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scaleX(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scaleX(0);
+                opacity: 0.2;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    function createSidebar() {
+    if (sidebar) {
+        const isHidden = sidebar.classList.contains('sidebar-hidden');
+        sidebar.classList.toggle('sidebar-hidden', !isHidden);
+        sidebar.classList.toggle('sidebar-visible', isHidden);
+        return sidebar;
+    }
+
+    const blooketSidebarStyle = document.createElement('style');
+    blooketSidebarStyle.textContent = `
+    #wp-sidebar {
+        width: 200px;
+        background: #111;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255,255,255,0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 5;
+        transform: translateX(-220px);
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    #wp-sidebar.sidebar-visible {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    .wp-sidebar-btn {
+        padding: 16px;
+        border: none;
+        background: none;
+        color: #01AEFD;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.2s;
+    }
+    .wp-sidebar-btn.active {
+        border-left: 4px solid #01AEFD;
+        background: rgba(255,255,255,0.05);
+    }
+    .wp-divider {
+        width: 100%;
+        height: 1px;
+        background: rgba(255,255,255,0.1);
+        margin: 4px 0;
+    }
+    `;
+    document.head.appendChild(blooketSidebarStyle);
+
+    sidebar = document.createElement('div');
+    sidebar.id = 'wp-sidebar';
+    sidebar.className = 'sidebar';
+    sidebar.style.zIndex = '5';
+    sidebar.style.display = 'none';
+    const buttons = [
+        { label: 'Home', onClick: function() {
+            setActiveSidebarBtn(this);
+            hideSidebar();
+        }},
+        { label: 'Random', onClick: function() {
+            setActiveSidebarBtn(this);
+            rollGame();
+        }},
+        { label: 'Settings', onClick: function() {
+            setActiveSidebarBtn(this);
+            createSettingsPanel();
+            showOverlay();
+        }},
+        { label: 'Forms', onClick: function() {
+            setActiveSidebarBtn(this);
+            window.open('https://forms.gle/h5DHdt5EnsT3bwqP7', '_blank');
+        }},
+        { label: 'Close', onClick: function() {
+            setActiveSidebarBtn(this);
+            hideSidebar();
+        }},
+        { label: 'Exit', onClick: function() {
+            setActiveSidebarBtn(this);
+            panel?.remove();
+            iframe?.remove();
+            settingsPanel?.remove();
+            sidebar?.remove();
+            sidebarBtn?.remove();
+        }, style: { color: '#FF0000' } }
+    ];
+    function setActiveSidebarBtn(btnElem) {
+        const allBtns = sidebar.querySelectorAll('.wp-sidebar-btn');
+        allBtns.forEach(b => b.classList.remove('active'));
+        btnElem.classList.add('active');
+    }
+    buttons.forEach((btn, idx) => {
+        if (btn.divider) {
+            const divider = document.createElement('div');
+            divider.className = 'wp-divider';
+            sidebar.appendChild(divider);
+            return;
+        }
+        const button = document.createElement('button');
+        button.className = 'wp-sidebar-btn' + (idx === 0 ? ' active' : '');
+        button.innerText = btn.label;
+        if (btn.style) Object.assign(button.style, btn.style);
+        button.onclick = btn.onClick;
+        sidebar.appendChild(button);
+    });
+    document.body.appendChild(sidebar);
+
+    return sidebar;
+    }
+
+    function hideSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.remove('sidebar-visible');
+        setTimeout(() => { sidebar.style.display = 'none'; }, 300);
+        if (sidebarBtn) sidebarBtn.style.display = 'flex';
+        const allBtns = sidebar.querySelectorAll('.wp-sidebar-btn');
+        allBtns.forEach((b, i) => {
+            if (i === 0) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
+            }
+        });
+        const news = document.getElementById('overlay');
+        if (news) news.remove();
+        if (settingsPanel && settingsPanel.parentNode) {
+            settingsPanel.remove();
+        }
+    }
+
+    function toggleSidebar(show) {
+        if (!sidebar) return;
+
+        const shouldShow = typeof show === 'boolean' ? show : !sidebar.classList.contains('sidebar-visible');
+
+        sidebar.classList.toggle('sidebar-visible', shouldShow);
+        sidebar.classList.toggle('sidebar-hidden', !shouldShow);
+    }
+
+    function toggleFrames(event) {
+        if (event.key === 'e' && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+
+            if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            if (iframe) iframe.style.display = iframe.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    function toggleMenu(event) {
+    if (event.key === 'm' && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        
+        if (!dropdownMenu) return;
+        if (iframe) dropdownMenu.style.visibility = dropdownMenu.style.visibility === 'hidden' ? 'visible' : 'hidden';
+    }
+}
+
+
+    function showSidebar() {
+        if (!sidebar) return;
+        sidebar.style.display = '';
+        setTimeout(() => sidebar.classList.add('sidebar-visible'), 10);
+        if (sidebarBtn) sidebarBtn.style.display = 'none';
+        showOverlay();
+    }
 
     function rollGame() {
+    // Close settings panel if open
     if (settingsPanel && settingsPanel.parentNode) {
         settingsPanel.remove();
     }
+    // Remove any existing roller
     let oldRoller = document.getElementById('random-roller-modal');
     if (oldRoller) oldRoller.remove();
-
 
     const modal = document.createElement('div');
     modal.id = 'random-roller-modal';
@@ -669,6 +786,7 @@ function createPanel() {
     closeBtn.style.cursor = 'pointer';
     closeBtn.onclick = () => {
         modal.remove();
+        hideSidebar();
         const overlayElem = document.getElementById('overlay');
         if (overlayElem) overlayElem.remove();
     };
@@ -681,6 +799,7 @@ function createPanel() {
         if (!rolling) {
             gameBtn.onclick = function() {
                 modal.remove();
+                hideSidebar();
                 const overlayElem = document.getElementById('overlay');
                 if (overlayElem) overlayElem.remove();
                 if (panel) panel.remove();
@@ -752,5 +871,15 @@ function showOverlay() {
     overlay.style.zIndex = '3';
     overlay.style.pointerEvents = 'auto';
     document.body.appendChild(overlay);
-	
-loadGameList();
+}
+
+    document.addEventListener('keydown', toggleFrames);
+    document.addEventListener('keydown', toggleMenu);
+    loadGameList();
+})();
+/* 
+add disguise (fake background) -- customizable through settings
+add tab disguise
+add escape button
+add console
+*/
