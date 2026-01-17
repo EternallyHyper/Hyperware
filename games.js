@@ -240,7 +240,6 @@ styles.textContent = `
 	
 	.optButton {
 		background: #0faada !important;
-		color: #000;
 		border: none;
 		border-radius: 50%;
 		width: 36px;
@@ -327,66 +326,12 @@ function TitleBar() {
 	const right = document.createElement('div');
 	right.style.cssText = 'display:flex;align-items:center;';
 
-const btns = [
-	{
-		title: 'Random',
-		svg: `
-		<svg viewBox="0 0 24 24" fill="none">
-			<path d="M4 4h4l3 4 3-4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-			<path d="M4 20h4l3-4 3 4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-		</svg>
-		`,
-		fn: rollGame
-	},
-	{
-		title: 'Tags',
-		svg: `
-		<svg viewBox="0 0 24 24" fill="none">
-			<path d="M3 12l9-9h6l3 3v6l-9 9L3 12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-			<circle cx="16" cy="8" r="1.5" fill="currentColor"/>
-		</svg>
-		`,
-		fn: showTagsModal
-	},
-	{
-		title: 'Report',
-		svg: `
-		<svg viewBox="0 0 24 24" fill="none">
-			<path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"
-			      stroke="currentColor" stroke-width="2"/>
-			<path d="M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-		</svg>
-		`,
-		fn: () => window.open('https://forms.gle/h5DHdt5EnsT3bwqP7','_blank')
-	},
-	{
-		title: 'Settings',
-		svg: `
-		<svg viewBox="0 0 24 24" fill="none">
-			<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-			<path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3
-			         1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2
-			         a1.7 1.7 0 0 0-1-1.6
-			         1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1
-			         a1.7 1.7 0 0 0 .3-1.9
-			         1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2
-			         a1.7 1.7 0 0 0 1.6-1
-			         1.7 1.7 0 0 0-.3-1.9l-.1-.1
-			         a2 2 0 1 1 2.8-2.8l.1.1
-			         a1.7 1.7 0 0 0 1.9.3H9
-			         a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2
-			         a1.7 1.7 0 0 0 1 1.6
-			         1.7 1.7 0 0 0 1.9-.3l.1-.1
-			         a2 2 0 1 1 2.8 2.8l-.1.1
-			         a1.7 1.7 0 0 0-.3 1.9V9
-			         a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2
-			         a1.7 1.7 0 0 0-1.6 1z"
-			      stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-		</svg>
-		`,
-		fn: createSettingsPanel
-	}
-];
+	const btns = [
+		{ title: 'Random', svg: '<svg width="35" height="35" viewBox="0 0 20 20"><path d="M174,7927.1047 C172.896,7927.1047 172,7927.9997 172,7929.1047 C172,7930.2097 172.896,7931.1047 174,7931.1047 C175.104,7931.1047 176,7930.2097 176,7929.1047 C176,7927.9997 175.104,7927.1047 174,7927.1047 L174,7927.1047 Z M182,7921.9997 C182,7921.4477 181.552,7920.9997 181,7920.9997 L167,7920.9997 C166.448,7920.9997 166,7921.4477 166,7921.9997 L166,7935.9997 C166,7936.5527 166.448,7936.9997 167,7936.9997 L181,7936.9997 C181.552,7936.9997 182,7936.5527 182,7935.9997 L182,7921.9997 Z" transform="translate(-164,-7918)"/></svg>', fn: rollGame },
+		{ title: 'Tags', svg: '<svg width="40" height="40" viewBox="0 0 24 24"><path d="M8.5 3H11.5118C12.2455 3 12.6124 3 12.9577 3.08289L20.5 10M7.5498 10.0498H7.5598" stroke="#000" stroke-width="2"/></svg>', fn: showTagsModal },
+		{ title: 'Report', svg: '<svg width="40" height="40" viewBox="0 0 24 24"><path d="M12 1C9.63768 1 8.30808 2.0703 7.63176 3.25386" fill="#0F0F0F"/></svg>', fn: () => window.open('https://forms.gle/h5DHdt5EnsT3bwqP7','_blank') },
+		{ title: 'Settings', svg: '<svg width="40" height="40" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="#000" stroke-width="2"/></svg>', fn: createSettingsPanel }
+	];
 
 	btns.forEach(b => {
 		const btn = document.createElement('button');
@@ -507,115 +452,305 @@ function createPanel() {
 	document.body.appendChild(panel);
 }
 
-function createSettingsPanel() {
-	if (settingsPanel) settingsPanel.remove();
-	settingsPanel = document.createElement('div');
-	settingsPanel.style.cssText = 'width:300px;height:350px;overflow:auto;border-radius:20px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;color:#01AEFD;padding:20px;z-index:100001;';
-	settingsPanel.className = 'custom-scroll-panel';
 
-	const closeBtn = document.createElement('button');
-	closeBtn.textContent = '✕';
-	closeBtn.style.cssText = 'position:absolute;top:10px;right:15px;background:transparent;border:none;color:#01AEFD;font-size:16px;cursor:pointer;';
-	closeBtn.onclick = () => settingsPanel.remove();
-	settingsPanel.appendChild(closeBtn);
+    function createSettingsPanel() {
+        settingsPanel = document.createElement('div');
+        settingsPanel.style.width = '300px';
+        settingsPanel.style.height = '350px';
+        settingsPanel.style.overflowY = 'scroll';
+        settingsPanel.style.overflow = 'auto';
+        settingsPanel.style.borderRadius = '20px';
+        settingsPanel.style.position = 'fixed';
+        settingsPanel.style.top = '50%';
+        settingsPanel.style.left = '50%';
+        settingsPanel.style.transform = 'translate(-50%, -50%)';
+        settingsPanel.style.background = '#111';
+        settingsPanel.style.fontFamily = 'Grenze Gotisch, sans-serif';
+        settingsPanel.style.color = '#01AEFD';
+        settingsPanel.style.padding = '20px';
+        settingsPanel.style.zIndex = '5';
+        settingsPanel.className = 'custom-scroll-panel';
+        if (settingsPanel) settingsPanel.remove();
+        let oldRoller = document.getElementById('random-roller-modal');
+        if (oldRoller) oldRoller.remove();
 
-	const title = document.createElement('div');
-	title.textContent = 'Settings';
-	title.style.cssText = 'text-align:center;font-size:24px;font-weight:bold;';
-	settingsPanel.appendChild(title);
 
-	const content = document.createElement('div');
-	content.innerHTML = '<h3>Misc</h3><p>Nothing Yet..</p>';
-	settingsPanel.appendChild(content);
+        const closeBtn = document.createElement('button');
+        closeBtn.innerText = '✕';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '10px';
+        closeBtn.style.right = '15px';
+        closeBtn.style.background = 'transparent';
+        closeBtn.style.border = 'none';
+        closeBtn.style.color = '#01AEFD';
+        closeBtn.style.fontSize = '16px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.onclick = () => {
+            settingsPanel.remove();
+            if (overlay) overlay.remove();
+        };
+        settingsPanel.appendChild(closeBtn);
 
-	document.body.appendChild(settingsPanel);
+
+        const title = document.createElement('div');
+        title.innerText = 'Settings';
+        title.style.textAlign = 'center';
+        title.style.fontSize = '24px';
+        title.style.fontWeight = 'bold';
+        settingsPanel.appendChild(title);
+
+        const content = document.createElement('div');
+        content.innerHTML = `
+        <h3>Misc</h3>
+        <div id="misc-section"></div>
+        <p>Nothing Yet..</p>
+		`;
+		
+    function showTagsModal() {
+        if (document.getElementById('tags-modal')) return;
+        const modal = document.createElement('div');
+        modal.className = 'tags-modal';
+        modal.id = 'tags-modal';
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'tags-modal-close';
+        closeBtn.innerText = '×';
+        closeBtn.title = 'Close';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '12px';
+        closeBtn.style.right = '18px';
+        closeBtn.style.background = '#e74c3c';
+        closeBtn.style.color = '#fff';
+        closeBtn.style.fontWeight = 'bold';
+        closeBtn.style.fontSize = '22px';
+        closeBtn.style.border = 'none';
+        closeBtn.style.borderRadius = '25%';
+        closeBtn.style.width = '36px';
+        closeBtn.style.height = '36px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.onclick = () => modal.remove();
+        modal.appendChild(closeBtn);
+        const title = document.createElement('div');
+        title.className = 'tags-modal-title';
+        title.innerText = 'Tags';
+        title.style.marginTop = '8px';
+        modal.appendChild(title);
+        const tagsRow = document.createElement('div');
+        tagsRow.className = 'tags-btn-row';
+        tagsRow.style.marginTop = '8px';
+        const tags = ['Simulator', 'Fighting', 'RPG'];
+        tags.forEach(tag => {
+            const tagBtn = document.createElement('button');
+            tagBtn.className = 'tag-btn';
+            tagBtn.innerText = tag;
+            tagBtn.style.fontSize = '14px';
+            tagBtn.style.padding = '6px 16px';
+            tagBtn.style.margin = '0 4px';
+            tagBtn.style.borderRadius = '14px';
+            tagBtn.style.minWidth = 'unset';
+            tagBtn.style.background = (activeTag === tag) ? '#015AFD' : 'linear-gradient(45deg, #01AEFD, #00C5FF)';
+            tagBtn.style.color = '#fff';
+            tagBtn.style.fontWeight = 'bold';
+            tagBtn.style.transition = 'background 0.2s';
+            tagBtn.onclick = () => {
+                if (activeTag === tag) {
+                    activeTag = null;
+                    tagBtn.style.background = 'linear-gradient(45deg, #01AEFD, #00C5FF)';
+                } else {
+                    activeTag = tag;
+                    tagsRow.querySelectorAll('.tag-btn').forEach(btn => btn.style.background = 'linear-gradient(45deg, #01AEFD, #00C5FF)');
+                    tagBtn.style.background = '#015AFD';
+                }
+                filteredConfigs = buttonConfigs.filter(config =>
+                    (!config.highlighted) && (!activeTag || (Array.isArray(config.tag) ? config.tag.includes(activeTag) : config.tag === activeTag))
+                );
+                if (typeof renderButtons === 'function') {
+                    renderButtons(filteredConfigs);
+                } else if (typeof window.zwRenderButtons === 'function') {
+                    window.zwRenderButtons(filteredConfigs);
+                } else {
+                    console.warn('renderButtons not available to update UI after tag change');
+                }
+                modal.remove();
+            };
+            tagsRow.appendChild(tagBtn);
+        });
+        modal.appendChild(tagsRow);
+        document.body.appendChild(modal);
+    }
+
+
+
+    function rollGame() {
+    if (settingsPanel && settingsPanel.parentNode) {
+        settingsPanel.remove();
+    }
+    let oldRoller = document.getElementById('random-roller-modal');
+    if (oldRoller) oldRoller.remove();
+
+
+    const modal = document.createElement('div');
+    modal.id = 'random-roller-modal';
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.width = '225px';
+    modal.style.height = '275px';
+    modal.style.background = '#181818';
+    modal.style.borderRadius = '24px';
+    modal.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+    modal.style.display = 'flex';
+    modal.style.flexDirection = 'column';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '1000';
+    modal.style.padding = '24px';
+    modal.style.userSelect = 'none';
+
+    let rolling = true;
+    let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
+    let cycles = 0;
+    let maxCycles = 30;
+    let interval = null;
+
+    const gameBtn = document.createElement('button');
+    gameBtn.style.width = '150px';
+    gameBtn.style.height = '190px';
+    gameBtn.style.display = 'flex';
+    gameBtn.style.flexDirection = 'column';
+    gameBtn.style.alignItems = 'center';
+    gameBtn.style.justifyContent = 'center';
+    gameBtn.style.background = 'linear-gradient(45deg, #038FF9, #00C5FF)';
+    gameBtn.style.border = 'none';
+    gameBtn.style.borderRadius = '18px';
+    gameBtn.style.boxShadow = '0 2px 12px rgba(1,174,253,0.2)';
+    gameBtn.style.cursor = 'pointer';
+    gameBtn.style.transition = 'box-shadow 0.2s';
+    gameBtn.style.position = 'relative';
+
+    const img = document.createElement('img');
+    img.style.width = '120px';
+    img.style.height = '120px';
+    img.style.borderRadius = '12px';
+    img.style.objectFit = 'cover';
+    img.style.marginBottom = '10px';
+    gameBtn.appendChild(img);
+
+    const label = document.createElement('div');
+    label.style.fontSize = '18px';
+    label.style.fontWeight = 'bold';
+    label.style.color = '#fff';
+    label.style.textAlign = 'center';
+    label.style.marginTop = '0';
+    label.style.textShadow = '0 2px 8px #01AEFD44';
+    gameBtn.appendChild(label);
+
+    const rerollBtn = document.createElement('button');
+    rerollBtn.innerText = 'Reroll';
+    rerollBtn.style.marginTop = '18px';
+    rerollBtn.style.background = '#01AEFD';
+    rerollBtn.style.color = '#fff';
+    rerollBtn.style.border = 'none';
+    rerollBtn.style.borderRadius = '8px';
+    rerollBtn.style.padding = '8px 24px';
+    rerollBtn.style.fontSize = '16px';
+    rerollBtn.style.cursor = 'pointer';
+    rerollBtn.style.display = 'none';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerText = '✕';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '12px';
+    closeBtn.style.right = '18px';
+    closeBtn.style.background = 'transparent';
+    closeBtn.style.border = 'none';
+    closeBtn.style.color = '#01AEFD';
+    closeBtn.style.fontSize = '22px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.onclick = () => {
+        modal.remove();
+        const overlayElem = document.getElementById('overlay');
+        if (overlayElem) overlayElem.remove();
+    };
+    modal.appendChild(closeBtn);
+
+    function updateGameBtn(idx) {
+        const config = buttonConfigs[idx];
+        img.src = config.image;
+        label.innerText = config.label || '';
+        if (!rolling) {
+            gameBtn.onclick = function() {
+                modal.remove();
+                const overlayElem = document.getElementById('overlay');
+                if (overlayElem) overlayElem.remove();
+                if (panel) panel.remove();
+                iframe = document.createElement('iframe');
+                iframe.src = config.url;
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
+                iframe.style.border = 'none';
+                iframe.style.borderRadius = '0';
+                iframe.style.display = 'block';
+                iframe.style.margin = '0';
+                iframe.style.zIndex = 2;
+                iframe.style.position = 'fixed';
+                iframe.style.top = '0';
+                iframe.style.left = '0';
+                document.body.appendChild(iframe);
+            };
+        } else {
+            gameBtn.onclick = function() {
+                if (rolling) stopRolling();
+            };
+        }
+    }
+
+    function rollStep() {
+        currentIdx = Math.floor(Math.random() * buttonConfigs.length);
+        updateGameBtn(currentIdx);
+        cycles++;
+        if (!rolling) return;
+        if (cycles >= maxCycles) {
+            stopRolling();
+        }
+    }
+
+    function stopRolling() {
+        if (!rolling) return;
+        rolling = false;
+        clearInterval(interval);
+        updateGameBtn(currentIdx);
+        rerollBtn.style.display = 'block';
+    }
+
+    updateGameBtn(currentIdx);
+    interval = setInterval(rollStep, 100);
+
+    rerollBtn.onclick = function() {
+        rolling = true;
+        cycles = 0;
+        rerollBtn.style.display = 'none';
+        interval = setInterval(rollStep, 100);
+        updateGameBtn(currentIdx);
+    };
+
+    modal.appendChild(gameBtn);
+    modal.appendChild(rerollBtn);
+    document.body.appendChild(modal);
 }
 
-function showTagsModal() {
-	if (document.getElementById('tags-modal')) return;
-	const modal = document.createElement('div');
-	modal.className = 'tags-modal';
-	modal.id = 'tags-modal';
-
-	const closeBtn = document.createElement('button');
-	closeBtn.textContent = '×';
-	closeBtn.style.cssText = 'position:absolute;top:12px;right:18px;background:#e74c3c;color:#fff;border:none;border-radius:25%;width:36px;height:36px;cursor:pointer;font-size:22px;font-weight:bold;';
-	closeBtn.onclick = () => modal.remove();
-	modal.appendChild(closeBtn);
-
-	const title = document.createElement('div');
-	title.textContent = 'Tags';
-	title.style.cssText = 'font-size:24px;font-weight:bold;color:#01AEFD;margin:8px 0 18px;text-align:center;';
-	modal.appendChild(title);
-
-	const tagsRow = document.createElement('div');
-	tagsRow.style.cssText = 'display:flex;gap:18px;justify-content:center;';
-
-	['Simulator', 'Fighting', 'RPG'].forEach(tag => {
-		const tagBtn = document.createElement('button');
-		tagBtn.className = 'tag-btn';
-		tagBtn.textContent = tag;
-		tagBtn.style.background = activeTag === tag ? '#015AFD' : 'linear-gradient(45deg,#01AEFD,#00C5FF)';
-		tagBtn.onclick = () => {
-			activeTag = activeTag === tag ? null : tag;
-			const filtered = buttonConfigs.filter(cfg =>
-				!cfg.highlighted && (!activeTag || (Array.isArray(cfg.tag) ? cfg.tag.includes(activeTag) : cfg.tag === activeTag))
-			);
-			window.zwRenderButtons?.(filtered);
-			modal.remove();
-		};
-		tagsRow.appendChild(tagBtn);
-	});
-
-	modal.appendChild(tagsRow);
-	document.body.appendChild(modal);
-}
-
-function rollGame() {
-	const modal = document.createElement('div');
-	modal.id = 'random-roller-modal';
-	modal.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:225px;height:275px;background:#181818;border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;padding:24px;';
-
-	let rolling = true;
-	let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
-	let cycles = 0;
-
-	const gameBtn = document.createElement('button');
-	gameBtn.style.cssText = 'width:150px;height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(45deg,#038FF9,#00C5FF);border:none;border-radius:18px;cursor:pointer;';
-
-	const img = document.createElement('img');
-	img.style.cssText = 'width:120px;height:120px;border-radius:12px;object-fit:cover;margin-bottom:10px;';
-
-	const label = document.createElement('div');
-	label.style.cssText = 'font-size:18px;font-weight:bold;color:#fff;text-align:center;';
-
-	gameBtn.appendChild(img);
-	gameBtn.appendChild(label);
-
-	function updateBtn() {
-		const cfg = buttonConfigs[currentIdx];
-		img.src = cfg.image;
-		label.textContent = cfg.label || '';
-	}
-
-	updateBtn();
-	const interval = setInterval(() => {
-		currentIdx = Math.floor(Math.random() * buttonConfigs.length);
-		updateBtn();
-		if (++cycles >= 30) {
-			clearInterval(interval);
-			rolling = false;
-		}
-	}, 100);
-
-	const closeBtn = document.createElement('button');
-	closeBtn.textContent = '✕';
-	closeBtn.style.cssText = 'position:absolute;top:12px;right:18px;background:transparent;border:none;color:#01AEFD;font-size:22px;cursor:pointer;';
-	closeBtn.onclick = () => modal.remove();
-
-	modal.appendChild(closeBtn);
-	modal.appendChild(gameBtn);
-	document.body.appendChild(modal);
-}
-
+function showOverlay() {
+    if (document.getElementById('overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.background = 'rgba(17, 17, 17, 0.7)';
+    overlay.style.zIndex = '3';
+    overlay.style.pointerEvents = 'auto';
+    document.body.appendChild(overlay);
+	
 loadGameList();
