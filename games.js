@@ -725,13 +725,6 @@ document.head.appendChild(sidebarStyle);
     }
 
     function rollGame() {
-             
-    img.src = config.image || PLACEHOLDER_IMAGE;
-
-    img.onerror = () => {
-      img.onerror = null;
-      img.src = PLACEHOLDER_IMAGE;
-    };
 
     // Close settings panel if open
     if (settingsPanel && settingsPanel.parentNode) {
@@ -759,6 +752,14 @@ document.head.appendChild(sidebarStyle);
     modal.style.zIndex = '1000';
     modal.style.padding = '24px';
     modal.style.userSelect = 'none';
+
+                     
+    img.src = config.image || PLACEHOLDER_IMAGE;
+
+    img.onerror = () => {
+      img.onerror = null;
+      img.src = PLACEHOLDER_IMAGE;
+    };
 
     let rolling = true;
     let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
