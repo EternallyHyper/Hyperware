@@ -753,6 +753,11 @@ document.head.appendChild(sidebarStyle);
     modal.style.padding = '24px';
     modal.style.userSelect = 'none';
 
+    let rolling = true;
+    let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
+    let cycles = 0;
+    let maxCycles = 30;
+    let interval = null;  
                      
     img.src = config.image || PLACEHOLDER_IMAGE;
 
@@ -760,12 +765,6 @@ document.head.appendChild(sidebarStyle);
       img.onerror = null;
       img.src = PLACEHOLDER_IMAGE;
     };
-
-    let rolling = true;
-    let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
-    let cycles = 0;
-    let maxCycles = 30;
-    let interval = null;
 
     const gameBtn = document.createElement('button');
     gameBtn.style.width = '150px';
