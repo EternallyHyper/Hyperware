@@ -298,33 +298,21 @@ document.head.appendChild(sidebarStyle);
                    'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/assets/games/placeholder.png';
 
                const img = document.createElement('img');
-
                img.src = config.image || PLACEHOLDER_IMAGE;
-               img.style.filter =
-                 'grayscale(100%) brightness(1.1) contrast(1.1) sepia(100%) hue-rotate(65deg) saturate(300%)';
-
-               function tintPlaceholder() {
-                 img.style.filter =
-                   'hue-rotate(85deg) saturate(220%) brightness(1.1)';
-               }
-
-               function clearTint() {
-                 img.style.filter = 'none';
-               }
-
-               if (!config.image) tintPlaceholder();
 
                img.onerror = () => {
                  img.onerror = null;
                  img.src = PLACEHOLDER_IMAGE;
-                 tintPlaceholder();
                };
 
-               img.onload = () => {
-                 if (img.src !== PLACEHOLDER_IMAGE) {
-                   clearTint();
-                 }
-               };
+               img.style.width = '100px';
+               img.style.height = '100px';
+               img.style.borderTopLeftRadius = '15px';
+               img.style.borderTopRightRadius = '15px';
+               img.style.display = 'block';
+
+               button.appendChild(img);
+
 
                img.style.width = '100px';
                img.style.height = '100px';
