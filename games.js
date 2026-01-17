@@ -832,15 +832,28 @@ gameBtn.addEventListener('mouseleave', () => {
     };
     modal.appendChild(closeBtn);
 
-    function updateGameBtn(idx) {
-        const config = buttonConfigs[idx];
+function updateGameBtn(idx) {
+    const config = buttonConfigs[idx];
 
-        img.src = config.image || PLACEHOLDER_IMAGE;
+    img.src = config.image || PLACEHOLDER_IMAGE;
 
-        img.onerror = () => {
-            img.onerror = null;
-            img.src = PLACEHOLDER_IMAGE;
-        };
+    // tint placeholder only
+    if (!config.image) {
+        img.style.filter =
+          'grayscale(100%) sepia(100%) hue-rotate(65deg) saturate(300%) brightness(1.05)';
+    } else {
+        img.style.filter = 'none';
+    }
+
+    img.onerror = () => {
+        img.onerror = null;
+        img.src = PLACEHOLDER_IMAGE;
+        img.style.filter =
+          'grayscale(100%) sepia(100%) hue-rotate(65deg) saturate(300%) brightness(1.05)';
+    };
+
+    label.innerText = config.label || '';
+}
 
     label.innerText = config.label || '';
         if (!rolling) {
