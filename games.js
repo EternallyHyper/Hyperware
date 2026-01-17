@@ -284,15 +284,42 @@ document.head.appendChild(sidebarStyle);
                button.style.justifyContent = 'flex-start';
                button.style.position = 'relative';
 
+               const PLACEHOLDER_IMAGE = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/assets/games/placeholder.png';
+
+
                const img = document.createElement('img');
-               img.src = config.image;
+
+               img.src = config.image || PLACEHOLDER_IMAGE;
+
+               function tintPlaceholder() {
+                 img.style.filter =
+                   'hue-rotate(85deg) saturate(220%) brightness(1.1)';
+               }
+
+               function clearTint() {
+                 img.style.filter = 'none';
+               }
+
+               if (!config.image) tintPlaceholder();
+
+               img.onerror = () => {
+                 img.onerror = null;
+                 img.src = PLACEHOLDER_IMAGE;
+                 tintPlaceholder();
+               };
+
+               img.onload = () => {
+                 if (img.src !== PLACEHOLDER_IMAGE) {
+                   clearTint();
+                 }
+               };
+
                img.style.width = '100px';
                img.style.height = '100px';
                img.style.borderTopLeftRadius = '15px';
                img.style.borderTopRightRadius = '15px';
-               img.style.marginBottom = '0';
                img.style.display = 'block';
-               img.style.position = 'relative';
+
                button.appendChild(img);
 
                const label = document.createElement('div');
