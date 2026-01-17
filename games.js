@@ -8,7 +8,7 @@ javascript:(function () {
     const version = 'v1.0';
 
     function loadGameList() {
-        fetch('https://raw.githubusercontent.com/TrulyZeph/Zephware/main/data/gamelist.json')
+        fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/gamelist.json')
             .then(response => response.json())
             .then(data => {
                 buttonConfigs = data;
