@@ -784,15 +784,13 @@ gameBtn.addEventListener('mouseleave', () => {
 });
  
     const img = document.createElement('img');
-
     img.style.width = '120px';
     img.style.height = '120px';
     img.style.borderRadius = '12px';
     img.style.objectFit = 'cover';
     img.style.marginBottom = '10px';
-
     gameBtn.appendChild(img);
-        
+
     const label = document.createElement('div');
     label.style.fontSize = '18px';
     label.style.fontWeight = 'bold';
@@ -832,22 +830,10 @@ gameBtn.addEventListener('mouseleave', () => {
     };
     modal.appendChild(closeBtn);
 
-function updateGameBtn(idx) {
-    const config = buttonConfigs[idx];
-
-    img.src = config.image || PLACEHOLDER_IMAGE;
-
-    img.onerror = () => {
-        img.onerror = null;
-        img.src = PLACEHOLDER_IMAGE;
-        img.style.filter =
-          'grayscale(100%) sepia(100%) hue-rotate(65deg) saturate(300%) brightness(1.05)';
-    };
-
-    label.innerText = config.label || '';
-}
-
-    label.innerText = config.label || '';
+    function updateGameBtn(idx) {
+        const config = buttonConfigs[idx];
+        img.src = config.image;
+        label.innerText = config.label || '';
         if (!rolling) {
             gameBtn.onclick = function() {
                 modal.remove();
