@@ -1,29 +1,21 @@
-const imageCache = new Map();
-function preloadImage(src) {
-	if (imageCache.has(src)) return imageCache.get(src);
-	const promise = new Promise((resolve, reject) => {
-		const img = new Image();
-		img.onload = () => resolve(img);
-		img.onerror = reject;
-		img.src = src;
-	});
-	imageCache.set(src, promise);
-	return promise;
-}
-
-function loadGameList() {
-	fetch('https://raw.githubusercontent.com/trulyzeph/zephware/main/data/gamelist.json')
-		.then(response => response.json())
-		.then(data => {
-			buttonConfigs = data;
-			data.slice(0, 10).forEach(cfg => cfg.image && preloadImage(cfg.image));
-			createPanel();
-		})
-		.catch(error => {
-			console.error('Error loading game list:', error);
-			alert('Error, Try Again.');
-		});
-}
+(function () {
+    let iframe = null;
+    let panel = null;
+    let settingsPanel = null;
+    let activeTag = null;
+    let buttonConfigs = [];
+    function loadGameList() {
+        fetch('https://raw.githubusercontent.com/trulyzeph/zephware/main/data/gamelist.json')
+            .then(response => response.json())
+            .then(data => {
+                buttonConfigs = data;
+                createPanel();
+            })
+            .catch(error => {
+                console.error('Error loading game list:', error);
+                alert('Error, Try Again.');
+            });
+    }
 
 function injectRuffle() {
 	return new Promise((resolve) => {
@@ -231,6 +223,105 @@ const globalFontLink = document.createElement('link');
 globalFontLink.rel = 'stylesheet';
 globalFontLink.href = 'https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@100..900&display=swap';
 document.head.appendChild(globalFontLink);
+
+	 const toggle = document.createElement('style');
+    toggle.innerHTML = `
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #444;
+        transition: .4s;
+        border-radius: 24px;
+        box-shadow: 0 0 5px #01AEFD;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    .switch input:checked + .slider {
+        background-color: #01AEFD;
+    }
+
+    .switch input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    #gradient
+    {
+        height:300px;
+        width:300px;
+        border:1px solid black;
+        font-size:30px;
+        background: linear-gradient(130deg, #053680ff, #204cacff);
+        background-size: 200% 200%;
+
+        -webkit-animation: Animation 5s ease infinite;
+        -moz-animation: Animation 5s ease infinite;
+        animation: Animation 5s ease infinite;
+    }
+
+    @-webkit-keyframes Animation {
+        0%{background-position:10% 0%}
+        50%{background-position:91% 100%}
+        100%{background-position:10% 0%}
+    }
+    @-moz-keyframes Animation {
+        0%{background-position:10% 0%}
+        50%{background-position:91% 100%}
+        100%{background-position:10% 0%}
+    }
+    @keyframes Animation { 
+        0%{background-position:10% 0%}
+        50%{background-position:91% 100%}
+        100%{background-position:10% 0%}
+    }
+`;
+
+    document.head.appendChild(toggle);
+
+    const keyframesStyle = document.createElement('style');
+    keyframesStyle.innerHTML = `
+        @keyframes pulseLine {
+            0% {
+                transform: scaleX(0);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scaleX(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scaleX(0);
+                opacity: 0.2;
+            }
+        }
+    `;
+    document.head.appendChild(keyframesStyle);
 
  function TitleBar() {
         const bar = document.createElement('div');
