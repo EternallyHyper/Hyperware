@@ -737,14 +737,24 @@ document.head.appendChild(sidebarStyle);
     gameBtn.style.flexDirection = 'column';
     gameBtn.style.alignItems = 'center';
     gameBtn.style.justifyContent = 'center';
-    gameBtn.style.background = 'linear-gradient(45deg, #038FF9, #00C5FF)';
+    gameBtn.style.background = 'linear-gradient(45deg, #63fd01, #25fd01)';
     gameBtn.style.border = 'none';
     gameBtn.style.borderRadius = '18px';
-    gameBtn.style.boxShadow = '0 2px 12px rgba(1,174,253,0.2)';
+    gameBtn.style.boxShadow = '0 2px 12px rgba(37,253,1,0.25)';
     gameBtn.style.cursor = 'pointer';
     gameBtn.style.transition = 'box-shadow 0.2s';
     gameBtn.style.position = 'relative';
 
+gameBtn.addEventListener('mouseenter', () => {
+  gameBtn.style.boxShadow =
+    '0 0 12px rgba(99,253,1,0.8), 0 0 28px rgba(37,253,1,0.6)';
+});
+
+gameBtn.addEventListener('mouseleave', () => {
+  gameBtn.style.boxShadow =
+    '0 2px 12px rgba(37,253,1,0.25)';
+});
+ 
     const img = document.createElement('img');
     img.style.width = '120px';
     img.style.height = '120px';
