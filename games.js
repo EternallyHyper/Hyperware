@@ -300,6 +300,8 @@ document.head.appendChild(sidebarStyle);
                const img = document.createElement('img');
 
                img.src = config.image || PLACEHOLDER_IMAGE;
+               img.style.filter =
+                 'grayscale(100%) brightness(1.1) contrast(1.1) sepia(100%) hue-rotate(65deg) saturate(300%)';
 
                function tintPlaceholder() {
                  img.style.filter =
