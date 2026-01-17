@@ -837,14 +837,6 @@ function updateGameBtn(idx) {
 
     img.src = config.image || PLACEHOLDER_IMAGE;
 
-    // tint placeholder only
-    if (!config.image) {
-        img.style.filter =
-          'grayscale(100%) sepia(100%) hue-rotate(65deg) saturate(300%) brightness(1.05)';
-    } else {
-        img.style.filter = 'none';
-    }
-
     img.onerror = () => {
         img.onerror = null;
         img.src = PLACEHOLDER_IMAGE;
