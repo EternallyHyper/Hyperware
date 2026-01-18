@@ -299,7 +299,7 @@ document.head.appendChild(sidebarStyle);
 
                const img = document.createElement('img');
                img.src = config.image || PLACEHOLDER_IMAGE;
-               label.innerText = config.label || '';
+
                img.onerror = () => {
                  img.onerror = null;
                  img.src = PLACEHOLDER_IMAGE;
@@ -791,13 +791,6 @@ gameBtn.addEventListener('mouseleave', () => {
     img.style.marginBottom = '10px';
     gameBtn.appendChild(img);
 
-    let usingPlaceholder = false;
-        
-    img.onerror = () => {
-      img.onerror = null; // 🔒 CRITICAL: prevents infinite loop
-      img.src = PLACEHOLDER_IMAGE;
-    };
-
     const label = document.createElement('div');
     label.style.fontSize = '18px';
     label.style.fontWeight = 'bold';
@@ -839,18 +832,8 @@ gameBtn.addEventListener('mouseleave', () => {
 
     function updateGameBtn(idx) {
         const config = buttonConfigs[idx];
-
-        usingPlaceholder = false;
-
-        if (config.image) {
-            img.src = config.image || PLACEHOLDER_IMAGE;
-        } else {
-            usingPlaceholder = true;
-            img.src = PLACEHOLDER_IMAGE;
-        }
+        img.src = config.image;
         label.innerText = config.label || '';
-    }
-        
         if (!rolling) {
             gameBtn.onclick = function() {
                 modal.remove();
