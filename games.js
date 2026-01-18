@@ -299,7 +299,7 @@ document.head.appendChild(sidebarStyle);
 
                const img = document.createElement('img');
                img.src = config.image || PLACEHOLDER_IMAGE;
-
+               label.innerText = config.label || '';
                img.onerror = () => {
                  img.onerror = null;
                  img.src = PLACEHOLDER_IMAGE;
@@ -792,8 +792,9 @@ gameBtn.addEventListener('mouseleave', () => {
     gameBtn.appendChild(img);
 
     let usingPlaceholder = false;
-
+        
     img.onerror = () => {
+      img.onerror = null; // 🔒 CRITICAL: prevents infinite loop
       img.src = PLACEHOLDER_IMAGE;
     };
 
