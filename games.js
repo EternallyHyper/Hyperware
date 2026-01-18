@@ -794,8 +794,6 @@ gameBtn.addEventListener('mouseleave', () => {
     let usingPlaceholder = false;
 
     img.onerror = () => {
-      if (usingPlaceholder) return; // prevent crash loop
-      usingPlaceholder = true;
       img.src = PLACEHOLDER_IMAGE;
     };
 
@@ -844,7 +842,7 @@ gameBtn.addEventListener('mouseleave', () => {
         usingPlaceholder = false;
 
         if (config.image) {
-            img.src = config.image;
+            img.src = config.image || PLACEHOLDER_IMAGE;
         } else {
             usingPlaceholder = true;
             img.src = PLACEHOLDER_IMAGE;
