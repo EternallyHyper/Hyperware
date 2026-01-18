@@ -791,6 +791,14 @@ gameBtn.addEventListener('mouseleave', () => {
     img.style.marginBottom = '10px';
     gameBtn.appendChild(img);
 
+    let usingPlaceholder = false;
+
+    img.onerror = () => {
+      if (usingPlaceholder) return; // prevent crash loop
+      usingPlaceholder = true;
+      img.src = PLACEHOLDER_IMAGE;
+    };
+
     const label = document.createElement('div');
     label.style.fontSize = '18px';
     label.style.fontWeight = 'bold';
@@ -832,8 +840,18 @@ gameBtn.addEventListener('mouseleave', () => {
 
     function updateGameBtn(idx) {
         const config = buttonConfigs[idx];
-        img.src = config.image;
+
+        usingPlaceholder = false;
+
+        if (config.image) {
+            img.src = config.image;
+        } else {
+            usingPlaceholder = true;
+            img.src = PLACEHOLDER_IMAGE;
+        }
         label.innerText = config.label || '';
+    }
+        
         if (!rolling) {
             gameBtn.onclick = function() {
                 modal.remove();
