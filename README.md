@@ -1,16 +1,16 @@
-<h1> Zephware </h1>
-Zephware is the ultimate bookmarklet for school with gimkit and blooket cheats along with games and unblockers.
-This project is intended to primarly bypass GoGuardian, if you have another blocker, this might not be functional.
+<h1> Hyperware </h1>
+Hyperware is a bookmarklet on steroids for school with stuff like gimkit (work in progress) and blooket cheats along with games and other utilities.
+This project is intended to primarly bypass GoGuardian, if you have another blocker, this might not work so don't blame me
 
 
 ## How to Use:
-<br>Step 1. Go to <a href="https://github.com/TrulyZeph/Zephware/blob/main/bookmarklet.js" target="_blank">bookmarklet.js</a>
+<br>Step 1. Go to <a href="https://github.com/EternallyHyper/Hyperware/blob/main/bookmarklet.js" target="_blank">bookmarklet.js</a>
 <br>Step 2. Copy the code and set it as the url for a bookmark
-<br>Step 3. Run the bookmark ontop of about:blank
+<br>Step 3. Run the bookmark on and only on about:blank (although other websites work for some reason)
 
 
 ## Contributors
 
-This is currently a one-man project, so updates DO take time.
+I used <a href="https://github.com/TrulyZeph/Zephware/" target="_blank">Zephware</a> as a starting point, go give that a star. I make the rest of the updates so they WILL take time
 
 [![Contributors](https://contrib.rocks/image?repo=trulyzeph/zephware)](https://github.com/TrulyZeph/Zephware/graphs/contributors)

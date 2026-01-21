@@ -47,7 +47,7 @@ style.textContent = `
       width: 90%;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       text-align: center;
-    }
+    } 
     #zw-overlay-box h1 {
       font-size: 24px;
       color: #01AEFD;
@@ -123,7 +123,7 @@ function parseNumberSafe(str) {
     return isNaN(num) ? NaN : num;
 }
 
-const SESSION_EXPIRE = new Date('2025-11-1T14:10:00-04:00');
+const SESSION_EXPIRE = new Date('2026-01-31T14:00:00-04:00');
 
 function isSessionActive() {
     const now = new Date();
@@ -201,8 +201,8 @@ function createUI() {
     });
 
     const header = document.createElement('h1');
-    header.textContent = 'Zephware';
-    header.style.color = '#01AEFD';
+    header.textContent = 'Hyperware';
+    header.style.color = '#63fd01';
     header.style.fontSize = '1.2em';
     header.style.margin = '0 0 6px 0';
     header.style.textAlign = 'center';
@@ -210,7 +210,7 @@ function createUI() {
 
     const divider = document.createElement('hr');
     divider.style.border = '0';
-    divider.style.borderTop = '2px solid #01AEFD';
+    divider.style.borderTop = '2px solid #25fd01';
     divider.style.borderRadius = '4px';
     divider.style.margin = '-7.5px 0 10px 0';
     divider.style.width = '90%';
@@ -220,7 +220,7 @@ function createUI() {
     const timerDiv = document.createElement('div');
     timerDiv.id = 'session-timer';
     timerDiv.style.fontSize = '1em';
-    timerDiv.style.color = '#3c80ffff';
+    timerDiv.style.color = '#63fd01';
     timerDiv.style.margin = '6px 0 0 0';
     timerDiv.style.textAlign = 'center';
     timerDiv.style.marginTop = '-10px';
@@ -228,7 +228,7 @@ function createUI() {
 
     const supportText = document.createElement('a');
     supportText.style.fontSize = '1em';
-    supportText.style.color = '#00aeffff';
+    supportText.style.color = '#63fd01';
     supportText.style.margin = '6px 0 0 0';
     supportText.style.textAlign = 'center';
     supportText.style.marginTop = '-5px';
@@ -268,7 +268,7 @@ function createUI() {
     btn.style.padding = '10px 20px';
     btn.style.border = 'none';
     btn.style.borderRadius = '10px';
-    btn.style.backgroundColor = '#01AEFD';
+    btn.style.backgroundColor = '#25fd01';
     btn.style.color = 'white';
     btn.style.cursor = 'pointer';
     btn.style.marginTop = '10px';
@@ -363,7 +363,7 @@ function SessionTimer() {
         if (diff <= 0) {
             timerDiv.textContent = "Session Expired.";
             if (!isSessionActive()) {
-            alert("Session Expired. Go to Zephware for Current Session.");
+            alert("Session Expired. Go to Hyperware for Current Session.");
             return;
             }
         } else {
