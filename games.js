@@ -73,6 +73,25 @@ const DataLoader = (() => {
 		}
 	}
 
+	function convertToRawGitHubURL(url) {
+	if (typeof url !== 'string') return url;
+	if (url.startsWith('http')) return url;
+	const repoPattern = /^([^\/]+)\/([^\/]+)(?:\/(.+))?$/;
+	const match = url.match(repoPattern);
+	if (!match) return url;
+	const username = match[1];
+	const repo = match[2];
+	let rest = match[3] || 'main';
+	if (!rest.endsWith('/')) rest = rest + '/';
+	return `https://raw.githubusercontent.com/${username}/${repo}/${rest}`;
+}
+	
+	function makeAbsoluteFromBase(baseUrl, resourcePath) {
+	if (!resourcePath) return resourcePath;
+	if (/^(https?:|\/\/|data:|mailto:|javascript:|#)/i.test(resourcePath)) return resourcePath;
+	if (resourcePath.startsWith('/')) resourcePath = resourcePath.slice(1);
+	return baseUrl + resourcePath;
+
 	async function _directSync(iframe, gameId, options = {}) {
 		const win = iframe.contentWindow;
 		if (!win) return false;
@@ -155,12 +174,6 @@ const DataLoader = (() => {
 		iframe._zwb_messageListener = onMessage;
 		return true;
 	}
-
-	function makeAbsoluteFromBase(baseUrl, resourcePath) {
-	if (!resourcePath) return resourcePath;
-	if (/^(https?:|\/\/|data:|mailto:|javascript:|#)/i.test(resourcePath)) return resourcePath;
-	if (resourcePath.startsWith('/')) resourcePath = resourcePath.slice(1);
-	return baseUrl + resourcePath;
 
 	async function loadGameBuild(rawOrShorthandUrl) {
 	try {
