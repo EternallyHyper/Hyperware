@@ -18,6 +18,9 @@ javascript:(function () {
             });
     }
 
+    const PLACEHOLDER_IMAGE =
+  'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/assets/games/placeholder.png';
+
     function injectRuffle() {
     return new Promise((resolve) => {
         if (window.RufflePlayer) {
@@ -812,13 +815,20 @@ async function enableRuffleSavePersistence(player, gameId) {
                     }
                 };
                 const img = document.createElement('img');
-                img.src = config.image;
+                img.src = config.image || PLACEHOLDER_IMAGE;
+
+                img.onerror = () => {
+                  img.onerror = null; // prevent infinite loop
+                  img.src = PLACEHOLDER_IMAGE;
+                };
+
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.borderTopLeftRadius = '15px';
+                img.style.borderTopRightRadius = '15px';
+                img.style.display = 'block';
+
                 button.appendChild(img);
-                const label = document.createElement('div');
-                label.className = 'highlighted-label';
-                label.innerText = config.label || '';
-                button.appendChild(label);
-                highlightedGrid.appendChild(button);
             });
             panel.appendChild(highlightedGrid);
         }
@@ -847,6 +857,19 @@ async function enableRuffleSavePersistence(player, gameId) {
 
         renderButtons(filteredConfigs);
 
+        async function openBuiltGame(url, cfg) {
+		let builtUrl = url;
+		try {
+			if (cfg?.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+				builtUrl = await loadGameBuild(url);
+			}
+		} catch (e) {
+			console.error('Failed to load game build:', e);
+			throw e;
+		}
+		return builtUrl;
+	}
+
         function renderButtons(configs) {
             container.innerHTML = '';
             configs.forEach(config => {
@@ -864,7 +887,7 @@ async function enableRuffleSavePersistence(player, gameId) {
                button.style.width = '100px';
                button.style.height = buttonHeight;
                button.style.fontSize = '16px';
-               button.style.background = 'linear-gradient(45deg, #038FF9, #00C5FF)';
+               button.style.background = 'linear-gradient(45deg, #63fd01, #25fd01)';
                button.style.color = '#01AEFD';
                button.style.border = 'none';
                button.style.borderRadius = '15px';
@@ -875,6 +898,16 @@ async function enableRuffleSavePersistence(player, gameId) {
                button.style.alignItems = 'center';
                button.style.justifyContent = 'flex-start';
                button.style.position = 'relative';
+
+               button.addEventListener('mouseenter', () => {
+                 button.style.boxShadow =
+                   '0 0 10px rgba(99,253,1,0.6), 0 0 22px rgba(37,253,1,0.4)';
+               });
+
+               button.addEventListener('mouseleave', () => {
+                 button.style.boxShadow =
+                  '0 2px 12px rgba(37,253,1,0.25)';
+               });
 
                const img = document.createElement('img');
                img.src = config.image;
@@ -916,10 +949,19 @@ async function enableRuffleSavePersistence(player, gameId) {
                button.style.position = 'relative';
                button.appendChild(label);
 
-               button.addEventListener('click', async () => {
-	panel.remove();
-	let url = config.url;
-	url = getPersistentUrl(url);
+			button.addEventListener('click', async () => {
+				panel.remove();
+				let url = config.url;
+
+				try {
+					if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+						url = await loadGameBuild(url);
+					}
+				} catch (e) {
+					console.error('Failed to load game build:', e);
+					alert('Failed to load game. Try again.');
+					return;
+				}
 
 	if (url.endsWith('.swf')) {
 		await injectRuffle();
@@ -1252,6 +1294,13 @@ async function enableRuffleSavePersistence(player, gameId) {
     img.style.objectFit = 'cover';
     img.style.marginBottom = '10px';
     gameBtn.appendChild(img);
+
+        img.src = config.image || PLACEHOLDER_IMAGE;
+
+    img.onerror = () => {
+      img.onerror = null;
+      img.src = PLACEHOLDER_IMAGE;
+    };
 
     const label = document.createElement('div');
     label.style.fontSize = '18px';
