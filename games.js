@@ -156,6 +156,12 @@ const DataLoader = (() => {
 		return true;
 	}
 
+	function makeAbsoluteFromBase(baseUrl, resourcePath) {
+	if (!resourcePath) return resourcePath;
+	if (/^(https?:|\/\/|data:|mailto:|javascript:|#)/i.test(resourcePath)) return resourcePath;
+	if (resourcePath.startsWith('/')) resourcePath = resourcePath.slice(1);
+	return baseUrl + resourcePath;
+
 	async function loadGameBuild(rawOrShorthandUrl) {
 	try {
 		let baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
@@ -814,14 +820,6 @@ async function enableRuffleSavePersistence(player, gameId) {
                         document.body.appendChild(iframe);
                     }
                 };
-                const img = document.createElement('img');
-                img.src = config.image || PLACEHOLDER_IMAGE;
-
-                img.onerror = () => {
-                  img.onerror = null; // prevent infinite loop
-                  img.src = PLACEHOLDER_IMAGE;
-                };
-
                 img.style.width = '100px';
                 img.style.height = '100px';
                 img.style.borderTopLeftRadius = '15px';
