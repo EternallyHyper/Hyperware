@@ -13,4 +13,4 @@ This project is intended to primarly bypass GoGuardian, if you have another bloc
 
 I used <a href="https://github.com/TrulyZeph/Zephware/" target="_blank">Zephware</a> as a starting point, go give that a star. I make the rest of the updates so they WILL take time
 
-[![Contributors](https://contrib.rocks/image?repo=trulyzeph/zephware)](https://github.com/TrulyZeph/Zephware/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=EternallyHyper/Hyperware)](https://github.com/EternallyHyper/Hyperware/graphs/contributors)

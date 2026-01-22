@@ -454,8 +454,8 @@ const theme = themes.default;
       { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg" }
     ],
     changes: [
-      { text: "Library Expansion", desc: "video display change, currently adding more shows" },
-      { text: "News", desc: "felt like adding this as an option cause why not" }
+      { text: "Zephware Redirection", desc: "made the games and library lead to Zephware cause i ain't dealing with that" },
+      { text: "Library Rework", desc: "Library has a progress option and continue watching mechanic" }
     ]
   },
   {
@@ -465,9 +465,8 @@ const theme = themes.default;
       { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png" }
     ],
     changes: [
-      { text: "Deleted Unblockers", desc: "never worked anyway" },
-      { text: "Reverted to Main Theme", desc: "no more christmas" },
-      { text: "Library", desc: "soundboard reworked to library, now has Animes" }
+      { text: "Library Expansion", desc: "video display change, currently adding more shows" },
+      { text: "News", desc: "felt like adding this as an option cause why not" }
     ]
   },
   {
