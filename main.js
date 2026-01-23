@@ -448,7 +448,7 @@ async function loadTheme(name) {
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Games', 'Library', 'News', 'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Games', 'Library', 'News', 'Zephware', 'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -469,7 +469,7 @@ async function loadTheme(name) {
       { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/`${THEME_BASE}/${currentThemeName}/Current.jpg`" }
     ],
     changes: [
-      { text: "Zephware Redirection", desc: "made the games and library lead to Zephware cause i ain't dealing with that" },
+      { text: "Zephware Redirection", desc: "made the games and library lead to Zephware and added a Zephware option" },
       { text: "Library Rework", desc: "Library has a progress option and continue watching mechanic" }
     ]
   },
@@ -495,6 +495,7 @@ async function loadTheme(name) {
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
+      { text: "Games Rework", desc: "games will be coming back soon" },
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
     ]
   },
@@ -523,7 +524,7 @@ function showNewsPanel() {
 
   const panel = document.createElement('div');
   panel.style.width = '600px';
-  panel.style.height = '450px';
+  panel.style.height = '500px';
   panel.style.background = 'rgba(17,17,17,0.97)';
   panel.style.borderRadius = '24px';
   panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.4)';
@@ -850,8 +851,13 @@ if (val === 'news') {
   return;
 }
 
+<<<<<<< HEAD
 if (val === "marketplace") {
   showMarketplace();
+=======
+if (val === 'zephware') {
+  window.location.assign("https://d1kusoubqqwr7w.cloudfront.net");
+>>>>>>> 661e40e9bd78575ce14bc187500a0471a5b0ab83
   return;
 }
 
@@ -860,8 +866,8 @@ if (val === "marketplace") {
         document.body.innerHTML = '';
         let file;
         if (val === 'games') file = 'games.js';
-        else if (val === 'library') file = 'library.js';
-       fetch(`https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/${file}`)
+        else if (val === 'library') file = 'library.js'; 
+    fetch(`https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {
                 const script = document.createElement('script');
