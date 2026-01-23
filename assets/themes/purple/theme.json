@@ -1,0 +1,10 @@
+{
+  "name": "purple",
+  "colors": {
+    "color1":"#b463ffff",
+    "color2": "#8d3ee0ff",
+    "color3": "#002D62",
+    "color4": "#001B44",
+    "waves": ["#b463ffff","#8d3ee0ff","#5a15b3ff"]
+  }
+}

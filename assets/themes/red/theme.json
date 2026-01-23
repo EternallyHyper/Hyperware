@@ -1,0 +1,10 @@
+{
+  "name": "red",
+  "colors": {
+    "color1":"#ff6363ff",
+    "color2": "#e03e3ef",
+    "color3": "#002D62",
+    "color4": "#001B44",
+    "waves": ["#ff6363ff","#e03e3ef","#b31515ff"]
+  }
+}

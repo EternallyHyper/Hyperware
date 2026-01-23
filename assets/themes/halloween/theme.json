@@ -1,0 +1,10 @@
+{
+  "name": "halloween",
+  "colors": {
+    "color1": "#f7ab1dff",
+    "color2": "#eb6c04ff",
+    "color3": "#002D62",
+    "color4": "#001B44",
+    "waves": ["#fdba01ff","#f77e1dff","#e26817ff"]
+  }
+}

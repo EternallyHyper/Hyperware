@@ -1,0 +1,10 @@
+{
+  "name": "blue",
+  "colors": {
+    "color1": "#01AEFD",
+    "color2": "#015AFD",
+    "color3": "#002D62",
+    "color4": "#001B44",
+    "waves": ["#63baff", "#3ea7f7", "#298ee0"]
+  }
+}

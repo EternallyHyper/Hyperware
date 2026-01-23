@@ -1,0 +1,10 @@
+{
+  "name": "christmas",
+  "colors": {
+    "color1": "#63fd01",
+    "color2": "#25fd01",
+    "color3": "#002D62",
+    "color4": "#001B44",
+    "waves": ["#87ff63ff","#72f73eff","#3ee029ff"]
+  }
+}
