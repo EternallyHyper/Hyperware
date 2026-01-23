@@ -235,7 +235,7 @@ function createUI() {
     supportText.style.display = 'block';
     supportText.style.textDecoration = 'underline';
     supportText.textContent = 'Broken Question? Report Here';
-    supportText.href = 'https://docs.google.com/forms/d/e/1FAIpQLSfGXVgEYvTsZc3XPkfFFD9hQLuzBpAc2v2riige6UvysCYarA/viewform?usp=sharing&ouid=111901428890608330223';
+    supportText.href = 'https://docs.google.com/forms/d/e/1FAIpQLSebPRbGU9Xgt9oq38DZVBNt5UzIy1MhooTTMB7QZdLKz7wFrw/viewform';
     supportText.target = '_blank';
     panel.appendChild(supportText);
 
@@ -294,7 +294,23 @@ function createUI() {
         '{answer} is prolly it',
         '{answer} is so tuff',
         'ayo bro i gotchu the answer is {answer}!',
+        'idk try {answer}',
         'here you go brochacho {answer}',
+        'just use {answer}',
+        'too easy, use {answer}',
+        'found the answer, its {answer}',
+        'woah, the answer is {answer}',
+        'IXL says {answer}',
+        'only {answer} more days till the update',
+        'i’ve probably typed like {answer} amount of there’s rn',
+        'i will be getting bullied for {answer} amount of messages',
+        'i played roblox {answer} times',
+        'vro the answer is {answer}',
+        'WAY too easy, use {answer}',
+        'i’m too hyper, use {answer}',
+        'hyperware says {answer}',
+        'session refreshing in {answer} minutes',
+        'vro its not too hard to type {answer}',
         'gng the answer is {answer}, how do we not know this',
         'bro ITS LITERALLY {answer}',
         "lock in bro, a first grader could tell you it's {answer}",
@@ -306,6 +322,7 @@ function createUI() {
         'i just asked my dog and he said {answer}',
         'the guy behind you told me its {answer}',
         'i dreamt it was {answer}',
+        'chat its {answer}',
         'i saw it in a vision bro its {answer}',
         '{answer} was the grade i got on my last test',
         'yoo {answer} is the same number as my fortune cookie',
@@ -331,7 +348,7 @@ function createUI() {
         progressBar.style.width = '0%';
         let progress = 0;
         let interval = setInterval(() => {
-            progress += 2;
+            progress += 5;
             progressBar.style.width = progress + '%';
             if (progress >= 100) {
                 clearInterval(interval);
@@ -420,19 +437,19 @@ function answerQuestions() {
     processHorizontalBinary();
     processSolveArith();
 
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
     answer = processSimpleHorizontalEquations();
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
     answer = processLongDivision();
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
     answer = processFractionEquations();
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
     answer = processVertArith();
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
     answer = processHorizontalBinary();
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
     answer = processSolveArith();
-    if (answer && answer !== 'idk bro sry') return answer;
+    if (answer && answer !== 'idk') return answer;
 
     const problems = findProblems();
     problems.forEach(({el, equation}) => {
@@ -488,7 +505,7 @@ function answerQuestions() {
         }
         return answer;
     });
-    return 'idk bro sry';
+    return 'idk';
 }
 
 function getOperandValue(bundle) {
@@ -533,7 +550,7 @@ function cleanResult(num, decimals) {
 }
 
 function processHorizontalBinary() {
-    answer = 'idk bro sry';
+    answer = 'idk';
     document.querySelectorAll('.math.section').forEach(section => {
         const bundles = section.querySelectorAll('.bundle');
         if (bundles.length === 3) {
@@ -579,7 +596,7 @@ function processHorizontalBinary() {
     return answer;
 }
 function processSolveArith() {
-   answer = 'idk bro sry';
+   answer = 'idk';
    const tds = Array.from(document.querySelectorAll("td[align='right']"));
 
    const nums = [];
@@ -654,7 +671,7 @@ function processBasicHorizontal() {
 }
 
 function processSimpleHorizontalEquations() {
-    answer = 'idk bro sry';
+    answer = 'idk';
    document.querySelectorAll('div.old-space-indent').forEach(div => {
       let text = '';
       div.childNodes.forEach(node => {
@@ -700,7 +717,7 @@ function processSimpleHorizontalEquations() {
    return answer;
 }
 function processLongDivision() {
-    answer = 'idk bro sry';
+    answer = 'idk';
     document.querySelectorAll('div.old-long-division').forEach(div => {
       const divisorEl = div.querySelector('.old-long-division-divisor');
       const dividendEl = div.querySelector('.old-long-division-bar td[align="left"]');
@@ -723,7 +740,7 @@ function processLongDivision() {
    return answer;
 }
 function processFractionEquations() {
-    answer = 'idk bro sry';
+    answer = 'idk';
    function gcd(a, b) {
       return b === 0 ? a : gcd(b, a % b);
    }
@@ -800,7 +817,7 @@ function processFractionEquations() {
 }
 
 function processVertArith() {
-    answer = 'idk bro sry';
+    answer = 'idk';
      document.querySelectorAll('.math.section').forEach(section => {
         const vertArith = section.querySelector('.vertArith');
         if (vertArith) {
