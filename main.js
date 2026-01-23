@@ -851,13 +851,13 @@ if (val === 'news') {
   return;
 }
 
-<<<<<<< HEAD
 if (val === "marketplace") {
   showMarketplace();
-=======
+  return;
+}
+            
 if (val === 'zephware') {
   window.location.assign("https://d1kusoubqqwr7w.cloudfront.net");
->>>>>>> 661e40e9bd78575ce14bc187500a0471a5b0ab83
   return;
 }
 
