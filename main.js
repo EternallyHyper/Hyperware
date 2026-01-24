@@ -53,22 +53,7 @@ const themes = {
       waves: ['#e0dbdbff','#f0f0f0ff','#fdfdfdff']
    }
 };
-const THEME_BASE =
-  "https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/assets/themes";
-
-let theme = null;
-let currentThemeName = "default";
-
-async function loadTheme(name) {
-  const res = await fetch(`${THEME_BASE}/${name}/theme.json`);
-  if (!res.ok) throw new Error("Theme not found");
-
-  const data = await res.json();
-  currentThemeName = name;
-  theme = data.colors;
-
-  applyTheme();
-}
+const theme = themes.default;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -116,7 +101,7 @@ async function loadTheme(name) {
       text-align: center;
       font-weight: bold;
       font-family: 'Fredoka', sans-serif;
-      background: linear-gradient(to bottom, var(--c1), var(--c2));
+      background: linear-gradient(to bottom, ${theme.color1}, ${theme.color2});
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       color: transparent;
@@ -131,7 +116,7 @@ async function loadTheme(name) {
       text-align: center;
       font-weight: bold;
       font-family: 'Fredoka', sans-serif;
-      background: linear-gradient(to bottom, var(--c1), var(--c2));
+      background: linear-gradient(to bottom, ${theme.color1}, ${theme.color2});
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       color: transparent;
@@ -179,7 +164,7 @@ async function loadTheme(name) {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.2em;
       font-weight: 500;
-      color: var(--c1);
+      color: ${theme.color1};
       padding: 0.3em 0.6em;
       border: none;
       border-radius: 5px;
@@ -195,7 +180,7 @@ async function loadTheme(name) {
       padding: 0.4em 1em;
       border: none;
       border-radius: 5px;
-      background: linear-gradient(to bottom, var(--c1), var(--c2));
+      background: linear-gradient(to bottom, ${theme.color1}, ${theme.color2});
       color: white;
       font-weight: bold;
       cursor: pointer;
@@ -252,7 +237,7 @@ async function loadTheme(name) {
       padding: 10px 20px;
       border: none;
       border-radius: 10px;
-      background-color: var(--c1);
+      background-color: ${theme.color1};
       color: white;
       cursor: pointer;
     }
@@ -466,7 +451,7 @@ async function loadTheme(name) {
     title: "What's New?",
     desc: "v1.2.0 : Week of January 11th, 2026",
     images: [
-      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/`${THEME_BASE}/${currentThemeName}/Current.jpg`" }
+      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg" }
     ],
     changes: [
       { text: "Zephware Redirection", desc: "made the games and library lead to Zephware and added a Zephware option" },
@@ -477,7 +462,7 @@ async function loadTheme(name) {
     title: "What'd I Miss?",
     desc: "v1.1.9 : Week of January 4th, 2026",
     images: [
-      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/`${THEME_BASE}/${currentThemeName}/Previous.jpg`" }
+      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png" }
     ],
     changes: [
       { text: "Library Expansion", desc: "video display change, currently adding more shows" },
@@ -685,78 +670,6 @@ function showNewsPanel() {
     document.body.appendChild(inputArea);
   };
 
-  async function showMarketplace() {
-  const overlay = document.createElement("div");
-  overlay.id = "theme-marketplace";
-  overlay.style = `
-    position:fixed; inset:0;
-    background:rgba(0,0,0,.8);
-    z-index:100000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  `;
-
-  const panel = document.createElement("div");
-  panel.style = `
-    width:720px;
-    max-height:80vh;
-    overflow:auto;
-    background:#111;
-    border-radius:20px;
-    padding:24px;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:16px;
-  `;
-
-  overlay.appendChild(panel);
-  document.body.appendChild(overlay);
-
-  const themeNames = ["default","blue","orange","red","purple","christmas"];
-
-  for (const name of themeNames) {
-    const card = document.createElement("div");
-    card.style = `
-      background:#1a1a1a;
-      border-radius:16px;
-      cursor:pointer;
-      overflow:hidden;
-      transition:.2s;
-    `;
-
-    card.innerHTML = `
-      <img src="${THEME_BASE}/${name}/Preview.png"
-           style="width:100%;height:120px;object-fit:cover">
-      <div style="padding:12px;color:white;text-align:center">
-        ${name.toUpperCase()}
-      </div>
-    `;
-
-    card.onclick = async () => {
-      await loadTheme(name);
-      overlay.remove();
-    };
-
-    panel.appendChild(card);
-  }
-
-  overlay.onclick = e => {
-    if (e.target === overlay) overlay.remove();
-  };
-}
-
-  function applyTheme() {
-  document.documentElement.style.setProperty("--c1", theme.color1);
-  document.documentElement.style.setProperty("--c2", theme.color2);
-  document.documentElement.style.setProperty("--c3", theme.color3);
-  document.documentElement.style.setProperty("--c4", theme.color4);
-
-  document.querySelectorAll(".parallax use").forEach((u, i) => {
-    u.setAttribute("fill", theme.waves[i]);
-  });
-}
-
   function render() {
     title.textContent = newsPages[pageIdx].title;
     if (newsPages[pageIdx].desc && newsPages[pageIdx].desc.trim()) {
@@ -851,22 +764,13 @@ if (val === 'news') {
   return;
 }
 
-<<<<<<< HEAD
-if (val === "marketplace") {
-  showMarketplace();
-=======
-if (val === 'zephware') {
-  window.location.assign("https://d1kusoubqqwr7w.cloudfront.net");
->>>>>>> 661e40e9bd78575ce14bc187500a0471a5b0ab83
-  return;
-}
-
-    if (val === 'games' || val === 'library') {
+    if (val === 'games' || val === 'library' || val === 'zephware') {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
         if (val === 'games') file = 'games.js';
         else if (val === 'library') file = 'library.js'; 
+        else if (val === 'zephware') file = 'main.js'; 
     fetch(`https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {
@@ -902,7 +806,7 @@ function showPasswordOverlay(onSuccess, customPassword) {
       font-family:'Fredoka',sans-serif;
     ">✕</button>
 
-    <h1 style="color:var(--c1);">Password Required</h1>
+    <h1 style="color:${theme.color1};">Password Required</h1>
     <p>Enter the password to access this section.</p>
 
     <input id="password-input" type="password" placeholder="Password"
@@ -953,7 +857,7 @@ function showInstructionsOverlay(customLink) {
     overlay.style.fontFamily = "'Fredoka', sans-serif";
     overlay.innerHTML = `
       <div id="overlay-box" style="font-family:'Fredoka',sans-serif;">
-        <h1 style="color:var(--c1);">Instructions</h1>
+        <h1 style="color:${theme.color1};">Instructions</h1>
         <ol id="instructions-list" style="text-align:center;margin:0 0 24px 0;padding-left:0;font-size:16px;list-style-position:inside;color:#fff;">
           <li style="margin:8px 0;">Create a bookmark</li>
           <li style="margin:8px 0;">Click the "Copy" button below</li>
@@ -1000,7 +904,7 @@ function showInstructionsOverlay(customLink) {
 }
 
 function setButtonStatus(status) {
-  const gradientOpen = `linear-gradient(to bottom, var(--c1), var(--c2))`;
+  const gradientOpen = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
   const gradientWIP  = `linear-gradient(to bottom, ${theme.color3}, ${theme.color4})`;
 
   switch (status.toLowerCase()) {
@@ -1034,7 +938,7 @@ function setButtonStatus(status) {
     const val = select.value.toLowerCase();
     if (lockedTabs[val]) {
       setButtonStatus('locked');
-    } else if (val === 'gimkit hacks') {
+    } else if (val === 'gimkit hacks' || val === 'marketplace') {
       setButtonStatus('wip');
     } else {
       setButtonStatus('open');
