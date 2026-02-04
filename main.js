@@ -787,7 +787,7 @@ if (val === 'news') {
   return;
 }
 
-    if (val === 'zephware') {
+    if (val === 'games' || val === 'library' || val === 'zephware') {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
