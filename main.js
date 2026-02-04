@@ -1,4 +1,5 @@
 javascript:(function(){
+
   if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
     link.id = 'fredoka-font-link';
@@ -7,14 +8,14 @@ javascript:(function(){
     document.head.appendChild(link);
   }
 
-alert("make sure you are in about:blank before you enter the password otherwise that won’t work");
-
 const themes = {
    default: {
       color1: '#63fd01',
       color2: '#25fd01',
       color3: '#002D62',
       color4: '#001B44',
+      img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg',
+      img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png',
       waves: ['#87ff63ff','#72f73eff','#3ee029ff']
    },
    blue: {
@@ -22,6 +23,8 @@ const themes = {
       color2: '#015AFD',
       color3: '#002D62',
       color4: '#001B44',
+      img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/blue/Current.png',
+      img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/blue/Previous.png',
       waves: ['#63baff','#3ea7f7','#298ee0']
    },
    orange: {
@@ -29,6 +32,8 @@ const themes = {
       color2: '#eb6c04ff',
       color3: '#002D62',
       color4: '#001B44',
+      img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/halloween/Current.png',
+      img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/halloween/Previous.png',
       waves: ['#fdba01ff','#f77e1dff','#e26817ff']
    },
    red: {
@@ -36,6 +41,8 @@ const themes = {
       color2: '#e03e3eff',
       color3: '#002D62',
       color4: '#001B44',
+      img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/red/Current.png',
+      img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/red/Previous.png',
       waves: ['#ff6363ff','#e03e3eff','#b31515ff']
    },
    purple: {
@@ -43,6 +50,8 @@ const themes = {
       color2: '#8d3ee0ff',
       color3: '#002D62',
       color4: '#001B44',
+      img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Current.png',
+      img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Previous.png',
       waves: ['#b463ffff','#8d3ee0ff','#5a15b3ff']
    },
    christmas: {
@@ -50,10 +59,12 @@ const themes = {
       color2: '#ff0000ff',
       color3: '#002D62',
       color4: '#001B44',
+      img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/christmas/Current.png',
+      img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/christmas/Previous.png',
       waves: ['#e0dbdbff','#f0f0f0ff','#fdfdfdff']
    }
 };
-const theme = themes.default;
+const theme = themes.red;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -364,7 +375,7 @@ const theme = themes.default;
       closePanel();
       showNewsPanel();
     } else {
-      alert('Incorrect Password!');
+      alert('Incorrect Password! Make sure you are in about:blank before you enter the Password.');
     }
   }
 
@@ -389,9 +400,20 @@ const theme = themes.default;
   passdesc.style.color = '#3D3636';
   passdesc.innerText = 'Hyperware requires a password to hide from GoGuardian';
 
+  var disclaimer = document.createElement('div');
+  disclaimer.style.position = 'absolute';
+  disclaimer.style.left = '50%';
+  disclaimer.style.top = '275px';
+  disclaimer.style.transform = 'translateX(-50%)';
+  disclaimer.style.fontSize = '12px';
+  disclaimer.style.fontWeight = 'bold';
+  disclaimer.style.color = theme.color2;
+  disclaimer.innerText = 'Only use this Bookmarklet on about:blank, otherwise the Password might not work';
+
   guiDiv.appendChild(title);
   guiDiv.appendChild(inputBox);
   guiDiv.appendChild(passdesc);
+  guiDiv.appendChild(disclaimer);
   document.body.appendChild(guiDiv);
   document.body.appendChild(graybg);
 
@@ -433,7 +455,7 @@ const theme = themes.default;
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Games', 'Library', 'News', 'Zephware', 'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Zephware', 'News',  'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -449,9 +471,21 @@ const theme = themes.default;
    const newsPages = [
   {
     title: "What's New?",
+    desc: "v1.2.1 : Week of February 1st, 2026",
+    images: [
+      { src: theme.img1 }
+    ],
+    changes: [
+      { text: "Theme Preparation", desc: "Added news image switching when manually editing the theme" },
+      { text: "Theme Change", desc: "red theme cause valentines" },
+      { text: "Games and Library removal", desc: "those will not be updating so use Zephware" }
+    ]
+  },
+  {
+    title: "What'd I Miss?",
     desc: "v1.2.0 : Week of January 11th, 2026",
     images: [
-      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg" }
+      { src: theme.img2 }
     ],
     changes: [
       { text: "Zephware Redirection", desc: "made the games and library lead to Zephware and added a Zephware option" },
@@ -459,19 +493,8 @@ const theme = themes.default;
     ]
   },
   {
-    title: "What'd I Miss?",
-    desc: "v1.1.9 : Week of January 4th, 2026",
-    images: [
-      { src: "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png" }
-    ],
-    changes: [
-      { text: "Library Expansion", desc: "video display change, currently adding more shows" },
-      { text: "News", desc: "felt like adding this as an option cause why not" }
-    ]
-  },
-  {
     title: "What's Next?",
-    desc: "v1.2.1 : Coming Soon!",
+    desc: "v1.2.2 : Coming Soon!",
     images: [
       { src: 
 "https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
@@ -480,7 +503,7 @@ const theme = themes.default;
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
-      { text: "Games Rework", desc: "games will be coming back soon" },
+      { text: "Games Addition", desc: "will be remaking them" },
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
     ]
   },
@@ -764,13 +787,11 @@ if (val === 'news') {
   return;
 }
 
-    if (val === 'games' || val === 'library') {
+    if (val === 'zephware') {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
-        if (val === 'games') file = 'games.js';
-        else if (val === 'library') file = 'library.js'; 
-        else if (val === 'zephware') file = 'main.js'; 
+        if (val === 'zephware') file = 'main.js'; 
     fetch(`https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {
@@ -1007,6 +1028,64 @@ function setButtonStatus(status) {
    setInterval(createSnowflake, 120);
 })();
 */
+
+(function () {
+   if (window.__zephwareHeartfall) return;
+   window.__zephwareHeartfall = true;
+
+   const style = document.createElement("style");
+   style.textContent = `
+      #zeph-heart-container {
+         pointer-events: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         overflow: hidden;
+         z-index: 0;
+      }
+      .zeph-hearts {
+         position: absolute;
+         top: -5vh;
+         color: white;
+         font-size: 10px;
+         opacity: 0.8;
+         user-select: none;
+         animation-timing-function: linear;
+         animation-fill-mode: forwards;
+      }
+      @keyframes zeph-heartfall {
+         0% { transform: translateY(0) translateX(0); }
+         100% { transform: translateY(110vh) translateX(var(--drift)); }
+      }
+   `;
+   document.head.appendChild(style);
+
+   const container = document.createElement("div");
+   container.id = "zeph-heart-container";
+   document.body.appendChild(container);
+
+   function createhearts() {
+      const flake = document.createElement("div");
+      flake.className = "zeph-hearts";
+      flake.textContent = "❤️";
+
+      flake.style.left = Math.random() * 100 + "vw";
+      flake.style.fontSize = 8 + Math.random() * 20 + "px";
+      flake.style.opacity = 0.5 + Math.random() * 0.5;
+      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
+
+      const fallTime = 6 + Math.random() * 7;
+      flake.style.animation = `zeph-heartfall ${fallTime}s linear forwards`;
+
+      container.appendChild(flake);
+
+      setTimeout(() => flake.remove(), fallTime * 1000);
+   }
+
+   setInterval(createhearts, 120);
+})();
 
 /* JUMP SCARE (DISABLED)
 (function () {

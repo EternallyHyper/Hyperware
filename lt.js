@@ -123,7 +123,8 @@ function parseNumberSafe(str) {
     return isNaN(num) ? NaN : num;
 }
 
-const SESSION_EXPIRE = new Date('2026-01-31T14:00:00-04:00');
+
+const SESSION_EXPIRE = new Date('2026-02-28T02:00:00-04:00');
 
 function isSessionActive() {
     const now = new Date();
@@ -133,7 +134,7 @@ function isSessionActive() {
 }
 
 if (!isSessionActive()) {
-    alert("Session Expired.");
+    alert("Session Expired. Please go to Hyperware for Current Session.");
     return;
 }
 
@@ -302,7 +303,7 @@ function createUI() {
         'woah, the answer is {answer}',
         'IXL says {answer}',
         'only {answer} more days till the update',
-        'i’ve probably typed like {answer} amount of there’s rn',
+        'i’ve probably typed like {answer} amount of these rn',
         'i will be getting bullied for {answer} amount of messages',
         'i played roblox {answer} times',
         'vro the answer is {answer}',
