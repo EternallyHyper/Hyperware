@@ -11,9 +11,7 @@ javascript:(function(){
 const themes = {
    default: {
       color1: '#63fd01',
-      color2: '#25fd01',
-      color3: '#002D62',
-      color4: '#001B44',
+      color2: '#25fd01',   
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png',
       waves: ['#87ff63ff','#72f73eff','#3ee029ff']
@@ -21,8 +19,6 @@ const themes = {
    blue: {
       color1: '#01AEFD',
       color2: '#015AFD',
-      color3: '#002D62',
-      color4: '#001B44',
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/blue/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/blue/Previous.png',
       waves: ['#63baff','#3ea7f7','#298ee0']
@@ -30,8 +26,6 @@ const themes = {
    orange: {
       color1: '#f7ab1dff',
       color2: '#eb6c04ff',
-      color3: '#002D62',
-      color4: '#001B44',
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/halloween/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/halloween/Previous.png',
       waves: ['#fdba01ff','#f77e1dff','#e26817ff']
@@ -39,8 +33,6 @@ const themes = {
    red: {
       color1: '#ff6363ff',
       color2: '#e03e3eff',
-      color3: '#002D62',
-      color4: '#001B44',
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/red/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/red/Previous.png',
       waves: ['#ff6363ff','#e03e3eff','#b31515ff']
@@ -48,8 +40,6 @@ const themes = {
    purple: {
       color1: '#b463ffff',
       color2: '#8d3ee0ff',
-      color3: '#002D62',
-      color4: '#001B44',
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Previous.png',
       waves: ['#b463ffff','#8d3ee0ff','#5a15b3ff']
@@ -57,8 +47,6 @@ const themes = {
    christmas: {
       color1: '#00ff2aff',
       color2: '#ff0000ff',
-      color3: '#002D62',
-      color4: '#001B44',
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/christmas/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/christmas/Previous.png',
       waves: ['#e0dbdbff','#f0f0f0ff','#fdfdfdff']
@@ -182,7 +170,7 @@ const theme = themes.red;
       outline: none;
       background-color:rgb(42, 42, 42);
       cursor: pointer;
-      width: 180px;
+      width: 200px;
     }
 
     .input-area button {
@@ -303,7 +291,7 @@ const theme = themes.red;
   document.body.appendChild(svg);
 
   var guiWidth = 600,
-  guiHeight = 375,
+  guiHeight = 500,
   borderRadius = 20,
   guiDiv = document.createElement('div');
 
@@ -787,7 +775,7 @@ if (val === 'news') {
   return;
 }
 
-    if (val === 'games' || val === 'library' || val === 'zephware') {
+    if (val === 'zephware') {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
@@ -926,7 +914,7 @@ function showInstructionsOverlay(customLink) {
 
 function setButtonStatus(status) {
   const gradientOpen = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
-  const gradientWIP  = `linear-gradient(to bottom, ${theme.color3}, ${theme.color4})`;
+  const gradientWIP  = `linear-gradient(to bottom, #002D62, #001B44)`;
 
   switch (status.toLowerCase()) {
     case 'wip':
