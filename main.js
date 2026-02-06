@@ -363,7 +363,7 @@ const theme = themes.red;
       closePanel();
       showNewsPanel();
     } else {
-      alert('Incorrect Password! Make sure you are in about:blank before you enter the Password.');
+      alert('Incorrect Password!');
     }
   }
 
@@ -398,10 +398,118 @@ const theme = themes.red;
   disclaimer.style.color = theme.color2;
   disclaimer.innerText = 'Only use this Bookmarklet on about:blank, otherwise the Password might not work';
 
+  var hint = document.createElement('div');
+  hint.style.position = 'absolute';
+  hint.style.left = '50%';
+  hint.style.top = '335px';
+  hint.style.transform = 'translateX(-50%)';
+  hint.style.fontSize = '11px';
+  hint.style.fontWeight = 'bold';
+  hint.style.color = '#FFFFFF';
+  hint.style.width = '95%';
+  hint.style.textAlign = 'center';
+  hint.style.whiteSpace = 'normal';
+  hint.style.lineHeight = '1.1';
+
+  var randomBtn = document.createElement('button');
+  randomBtn.innerText = 'New Message';
+  randomBtn.style.position = 'absolute';
+  randomBtn.style.left = '50%';
+  randomBtn.style.top = '390px';
+  randomBtn.style.transform = 'translateX(-50%)';
+  randomBtn.style.padding = '5px 10px';
+  randomBtn.style.cursor = 'pointer';
+  randomBtn.style.backgroundColor = theme.color2;
+  randomBtn.style.borderRadius = '15px';
+  randomBtn.style.border = 'none';
+  randomBtn.style.color = 'white';
+
+  var messages = [
+  'The password is designed to be very “Human” - EternallyHyper',
+  'Just put the password - EternallyHyper',
+  'It’s all lowercase btw - EternallyHyper',
+  'Had a lot of fun typing these messages, the password is ******** - EternallyHyper',
+  'It’s not hard to put the password - EternallyHyper',
+  'Check out the GitHub: www.github.com/EternallyHyper/Hyperware - EternallyHyper',
+  'How did you not type the password already - EternallyHyper',
+  'Maybe ask a teacher lol - EternallyHyper',
+  'ok ok fine the password is [Censored] - EternallyHyper',
+  'screw goguardian - EternallyHyper',
+  'Maybe try testing every single password known to man - EternallyHyper',
+  'idk the password bro sry - EternallyHyper',
+  'How are you still here - EternallyHyper',
+  'Maybe the password is right there - EternallyHyper',
+  'Stop pressing that button - EternallyHyper',
+  'Why am I typing this? - EternallyHyper',
+  'As you can see I am very hyper - EternallyHyper',
+  '”Are you sure?”',
+  'As one wise man once said, “Screw GoGuardian, Enjoy Hyperware” - EternallyHyper',
+  'Don’t bother asking me for the password - EternallyHyper',
+  'Try smth else - EternallyHyper',
+  'go to sleep - EternallyHyper',
+  'You probably shouldn’t be doing this rn - EternallyHyper',
+  'Also try Zephware - EternallyHyper',
+  'Try “tookforeversry” for learning tools - EternallyHyper',
+  'JUST PUT THE PASSWORD ALREADY - EternallyAngy',
+  'I should put the password for other stuff here - EternallyHyper',
+  'These messages got to go bro 😭 - EternallyHyper',
+  'If you want to access blooket hacks just use “back2schoolggs” - EternallyHyper',
+  'Took forever to incorporate learning tools lol - EternallyHyper',
+  'I added a cooldown lol - EternallyHyper',
+  'did you know that you can use the space bar - EternallyHyper',
+  'blockers should not exist - EternallyHyper',
+  'EternallyHyper shut up already - Hyperware',
+  'Why am I even gatekeeping the password - EternallyHyper',
+  'Maybe check the github - EternallyHyper',
+  '💔🥀',
+  'w speed',
+  'Dude it ain’t that hard to enter in a password bro like stop - Hyperware',
+  'Going to shut down this whole thing if you don’t stop pressing that button - EternallyHyper',
+  'I am typing these messages as you press that button - EternallyHyper',
+  'I am hyper for eternity - EternallyHyper',
+  'Also try frogie’s arcade',
+  '…',
+  'Idk why EternallyHyper is gatekeeping the password, its password - Hyperware',
+  'The password is very simple. - EternallyHyper'
+  ];
+
+  function updateHint() {
+  if (randomBtn.disabled) return;
+
+  randomBtn.disabled = true;
+  randomBtn.style.cursor = 'not-allowed';
+  randomBtn.style.opacity = '0.5';
+
+  var randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  hint.innerText = randomMessage;
+
+  setTimeout(function() {
+    randomBtn.disabled = false;
+    randomBtn.style.cursor = 'pointer';
+    randomBtn.style.opacity = '1';
+  }, 4000);
+}
+
+window.addEventListener('keydown', function(event) {
+  if (event.repeat) return; 
+
+  if (event.key === " " || event.code === "Space") {
+    event.preventDefault(); 
+    updateHint();
+  }
+});
+
+randomBtn.addEventListener('click', updateHint);
+
+var randomMessage = messages[Math.floor(Math.random() * messages.length)];
+hint.innerText = randomMessage;
+
   guiDiv.appendChild(title);
   guiDiv.appendChild(inputBox);
   guiDiv.appendChild(passdesc);
   guiDiv.appendChild(disclaimer);
+  guiDiv.appendChild(hint);
+  guiDiv.appendChild(randomBtn);
   document.body.appendChild(guiDiv);
   document.body.appendChild(graybg);
 
@@ -459,25 +567,25 @@ const theme = themes.red;
    const newsPages = [
   {
     title: "What's New?",
-    desc: "v1.2.1 : Week of February 1st, 2026",
+    desc: "v1.2.1 : Week of February 8th, 2026",
     images: [
       { src: theme.img1 }
+    ],
+    changes: [
+      { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
+      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" }
+    ]
+  },
+  {
+    title: "What'd I Miss?",
+    desc: "v1.2.0 : Week of February 1st, 2026",
+    images: [
+      { src: theme.img2 }
     ],
     changes: [
       { text: "Theme Preparation", desc: "Added news image switching when manually editing the theme" },
       { text: "Theme Change", desc: "red theme cause valentines" },
       { text: "Games and Library removal", desc: "those will not be updating so use Zephware" }
-    ]
-  },
-  {
-    title: "What'd I Miss?",
-    desc: "v1.2.0 : Week of January 11th, 2026",
-    images: [
-      { src: theme.img2 }
-    ],
-    changes: [
-      { text: "Zephware Redirection", desc: "made the games and library lead to Zephware and added a Zephware option" },
-      { text: "Library Rework", desc: "Library has a progress option and continue watching mechanic" }
     ]
   },
   {
@@ -491,7 +599,7 @@ const theme = themes.red;
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
-      { text: "Games Addition", desc: "will be remaking them" },
+      { text: "Games", desc: "will be remaking them" },
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
     ]
   },
