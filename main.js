@@ -551,7 +551,7 @@ hint.innerText = randomMessage;
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Games', 'Library', 'Zephware', 'News',  'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Zephware', 'News',  'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -573,12 +573,7 @@ hint.innerText = randomMessage;
     ],
     changes: [
       { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
-<<<<<<< HEAD
-      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
-      { text: "Additions", desc: "games and library are back" }
-=======
       { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" }
->>>>>>> f2f73a8a2a40bb82cb15dc9d9f3862a13d4bce66
     ]
   },
   {
@@ -604,12 +599,8 @@ hint.innerText = randomMessage;
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
-<<<<<<< HEAD
-      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
-=======
-      { text: "Games", desc: "will be remaking them" },
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
->>>>>>> f2f73a8a2a40bb82cb15dc9d9f3862a13d4bce66
+      { text: "Games", desc: "will be remaking them" }
     ]
   },
 ];
@@ -892,13 +883,11 @@ if (val === 'news') {
   return;
 }
 
-    if (val === 'zephware' || val === 'games' || val === 'library') {
+    if (val === 'zephware') {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
         if (val === 'zephware') file = 'zephware.js'; 
-       else if (val === 'games') file = 'games.js';
-       else if (val === 'library') file = 'library.js';
 fetch(`https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {

