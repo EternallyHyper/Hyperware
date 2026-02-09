@@ -573,8 +573,12 @@ hint.innerText = randomMessage;
     ],
     changes: [
       { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
+<<<<<<< HEAD
       { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
       { text: "Additions", desc: "games and library are back" }
+=======
+      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" }
+>>>>>>> f2f73a8a2a40bb82cb15dc9d9f3862a13d4bce66
     ]
   },
   {
@@ -600,7 +604,12 @@ hint.innerText = randomMessage;
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
+<<<<<<< HEAD
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
+=======
+      { text: "Games", desc: "will be remaking them" },
+      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
+>>>>>>> f2f73a8a2a40bb82cb15dc9d9f3862a13d4bce66
     ]
   },
 ];
