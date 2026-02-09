@@ -573,7 +573,8 @@ hint.innerText = randomMessage;
     ],
     changes: [
       { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
-      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" }
+      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
+      { text: "Additions", desc: "games and library are back" }
     ]
   },
   {
@@ -600,7 +601,7 @@ hint.innerText = randomMessage;
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
-      { text: "Games", desc: "will be remaking them" }
+      { text: "Games", desc: "i will be remaking them" }
     ]
   },
 ];
