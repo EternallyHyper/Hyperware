@@ -551,7 +551,7 @@ hint.innerText = randomMessage;
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Zephware', 'News',  'Schoology Utilities', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Games', 'Library', 'Zephware', 'News',  'Schoology Utilities', 'Inspect Element', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -574,7 +574,8 @@ hint.innerText = randomMessage;
     changes: [
       { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
       { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
-      { text: "Additions", desc: "games and library are back" }
+      { text: "Games and Library", desc: "they’re back go enjoy them" },
+      { text: "Inspect Element", desc: "iPad users can now enjoy the inspect tool lol" }
     ]
   },
   {
@@ -599,9 +600,8 @@ hint.innerText = randomMessage;
     changes: [
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
-      { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },
-      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" },
-      { text: "Games", desc: "i will be remaking them" }
+      { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },   
+      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
     ]
   },
 ];
@@ -879,16 +879,23 @@ button.addEventListener('click', () => {
         return;
     }
 
+   if (val === 'inspect element') {
+   showInstructionsOverlay('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/devconsole.js');
+        return;
+    }
+
 if (val === 'news') {
   showNewsPanel();
   return;
 }
 
-    if (val === 'zephware') {
+    if (val === 'zephware' || val === 'games' || val === 'library') {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
         if (val === 'zephware') file = 'zephware.js'; 
+       else if (val === 'games') file = 'games.js';
+       else if (val === 'library') file = 'library.js';
 fetch(`https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/${file}`)
             .then(response => response.text())
             .then(scriptContent => {
