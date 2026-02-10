@@ -250,12 +250,12 @@ function createTitleBar() {
 
   const logo = document.createElement('img');
   logo.className = 'title-bar-logo';
-  logo.src = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/icon.png';
+  logo.src = 'https://raw.githubusercontent.com/TrulyZeph/Zephware/refs/heads/main/assets/Zephware.png';
   left.appendChild(logo);
 
   const title = document.createElement('div');
   title.className = 'title-bar-title';
-  title.textContent = 'Hyperware';
+  title.textContent = 'Zephware';
   left.appendChild(title);
 
   const searchBar = document.createElement('input');
@@ -379,7 +379,7 @@ async function openGame(config) {
 function createPanel() {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/css/games.css';
+  link.href = 'https://d1kusoubqqwr7w.cloudfront.net/data/css/games.css';
   document.head.appendChild(link);
 
   const fontLink = document.createElement('link');
@@ -524,7 +524,7 @@ function createSettingsPanel() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'Ã—';
+  closeBtn.textContent = 'X';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
