@@ -1,8 +1,8 @@
 (function () {
-  const moviesUrl = "https://d1kusoubqqwr7w.cloudfront.net/data/json/movies.json";
-  const showsUrl = "https://d1kusoubqqwr7w.cloudfront.net/data/json/shows.json";
-  const soundsUrl = "https://d1kusoubqqwr7w.cloudfront.net/data/json/sounds.json";
-  const updatelogUrl = "https://d1kusoubqqwr7w.cloudfront.net/data/json/updatelog.json";
+  const moviesUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/movies.json";
+  const showsUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/shows.json";
+  const soundsUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/sounds.json";
+  const updatelogUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/updatelog.json";
 
   if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
