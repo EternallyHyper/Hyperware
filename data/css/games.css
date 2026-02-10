@@ -37,7 +37,7 @@ body {
   height: 70px;
   margin: 20px auto 0;
   border-radius: 15px;
-  background: linear-gradient(130deg, rgb(5, 128, 15), rgb(37, 172, 32));
+  background: linear-gradient(130deg, #053680ff, #3ee029ff);
   background-size: 200% 200%;
   animation: gradientAnim 5s ease infinite;
   display: flex;
