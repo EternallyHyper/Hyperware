@@ -140,7 +140,7 @@
     const tags = Array.isArray(movie.tags) ? movie.tags.join(' â€¢ ') : movie.tags || movie.category || '';
     card.innerHTML = `
       <div class="zw-card-thumbnail" style="${thumbStyle}">
-        ${!movie.cover ? 'ðŸŽ¬' : ''}
+        ${!movie.cover ? '🎬' : ''}
       </div>
       <div class="zw-card-info">
         <div class="zw-card-title">${movie.name}</div>
@@ -172,7 +172,7 @@
       </div>
       <div class="zw-card-info">
         <div class="zw-card-title">${show.name}</div>
-        <div class="zw-card-category">${show.seasons.length} Season${show.seasons.length > 1 ? 's' : ''} â€¢ ${totalEpisodes} Episodes</div>
+        <div class="zw-card-category">${show.seasons.length} Season${show.seasons.length > 1 ? 's' : ''} • ${totalEpisodes} Episodes</div>
       </div>
     `;
     card.addEventListener('click', () => openShowModal(show));
@@ -184,7 +184,7 @@
     card.className = 'zw-sound-card';
     card.innerHTML = `
       <div class="zw-sound-title">${sound.name}</div>
-      <div class="zw-sound-icon">ðŸ”Š</div>
+      <div class="zw-sound-icon">🔊</div>
     `;
     card.addEventListener('click', () => {
       const audio = new Audio(sound.url);
