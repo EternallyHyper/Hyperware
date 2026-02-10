@@ -140,7 +140,7 @@
     const tags = Array.isArray(movie.tags) ? movie.tags.join(' â€¢ ') : movie.tags || movie.category || '';
     card.innerHTML = `
       <div class="zw-card-thumbnail" style="${thumbStyle}">
-        ${!movie.cover ? '🎬' : ''}
+        ${!movie.cover ? 'ðŸŽ¬' : ''}
       </div>
       <div class="zw-card-info">
         <div class="zw-card-title">${movie.name}</div>
@@ -557,7 +557,7 @@
       if (filteredMovies.length === 0) {
         content.innerHTML = `
           <div class="zw-empty-state">
-            <div class="zw-empty-state-icon">ðŸŽ¬</div>
+            <div class="zw-empty-state-icon">🎬</div>
             <div class="zw-empty-state-text">No movies found</div>
           </div>
         `;
@@ -583,7 +583,7 @@
       if (filteredShows.length === 0) {
         content.innerHTML = `
           <div class="zw-empty-state">
-            <div class="zw-empty-state-icon">ðŸ“º</div>
+            <div class="zw-empty-state-icon">📺</div>
             <div class="zw-empty-state-text">No shows found</div>
           </div>
         `;
@@ -609,7 +609,7 @@
       if (filteredSounds.length === 0) {
         content.innerHTML = `
           <div class="zw-empty-state">
-            <div class="zw-empty-state-icon">ðŸ”Š</div>
+            <div class="zw-empty-state-icon">🔊</div>
             <div class="zw-empty-state-text">No sounds found</div>
           </div>
         `;
@@ -636,7 +636,7 @@
         display.innerHTML = '';
         
         if (items.length === 0) {
-          display.innerHTML = '<div class="zw-empty-state"><div class="zw-empty-state-icon">ðŸ“…</div><div class="zw-empty-state-text">No updates scheduled for this week</div></div>';
+          display.innerHTML = '<div class="zw-empty-state"><div class="zw-empty-state-icon">📅</div><div class="zw-empty-state-text">No updates scheduled for this week</div></div>';
           return;
         }
         
@@ -669,9 +669,9 @@
     section.innerHTML = `
       <div class="zw-section-title">${title}</div>
       <div class="zw-row-wrapper">
-        <div class="zw-scroll-arrow left">â€¹</div>
+        <div class="zw-scroll-arrow left">‹</div>
         <div class="zw-row"></div>
-        <div class="zw-scroll-arrow right">â€º</div>
+        <div class="zw-scroll-arrow right">›</div>
       </div>
     `;
     const row = section.querySelector('.zw-row');
