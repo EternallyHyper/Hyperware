@@ -3,7 +3,7 @@
   {
     "name": "One Piece",
     "tags": ["Action", "Popular"],
-    "cover": "assets/covers/OnePiece.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/OnePiece.png",
     "seasons": [
       {
         "season": 1,
@@ -15,7 +15,7 @@
   {
     "name": "Bleach",
     "tags": ["Action", "Popular", "Peak"],
-    "cover": "assets/covers/Bleach.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Bleach.png",
     "seasons": [
       {
         "season": 1,
@@ -27,7 +27,7 @@
   {
     "name": "Bleach: Thousand Year Blood War",
     "tags": ["Action", "Popular", "Peak", "Sequel"],
-    "cover": "assets/covers/TYBW.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/TYBW.png",
     "seasons": [
       {
         "season": "Part 1",
@@ -49,7 +49,7 @@
   {
     "name": "Naruto",
     "tags": ["Action", "Popular"],
-    "cover": "assets/covers/Naruto.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Naruto.png",
     "seasons": [
       {
         "season": 1,
@@ -61,7 +61,7 @@
   {
     "name": "Naruto Shippuden",
     "tags": ["Action", "Popular", "Sequel"],
-    "cover": "assets/covers/Shippuden.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Shippuden.png",
     "seasons": [
       {
         "season": 1,
@@ -73,7 +73,7 @@
   {
     "name": "Dragon Ball",
     "tags": ["Action", "Popular"],
-    "cover": "assets/covers/DB.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DB.png",
     "seasons": [
       {
         "season": 1,
@@ -85,7 +85,7 @@
   {
     "name": "Dragon Ball Z",
     "tags": ["Action", "Popular", "Sequel"],
-    "cover": "assets/covers/DBZ.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DBZ.png",
     "seasons": [
       {
         "season": 1,
@@ -97,7 +97,7 @@
   {
     "name": "Dragon Ball Super",
     "tags": ["Action", "Popular", "Sequel"],
-    "cover": "assets/covers/DBS.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DBS.png",
     "seasons": [
       {
         "season": 1,
@@ -109,7 +109,7 @@
   {
     "name": "Dragon Ball GT",
     "tags": ["Action", "Popular", "Sequel"],
-    "cover": "assets/covers/DBGT.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DBGT.png",
     "seasons": [
       {
         "season": 1,
@@ -121,7 +121,7 @@
   {
     "name": "Dragon Ball Daima",
     "tags": ["Action", "Popular", "Sequel"],
-    "cover": "assets/covers/DBD.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DBD.png",
     "seasons": [
       {
         "season": 1,
@@ -133,7 +133,7 @@
   {
     "name": "My Hero Academia",
     "tags": ["Action", "Popular"],
-    "cover": "assets/covers/MHA.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/MHA.png",
     "seasons": [
       {
         "season": 1,
@@ -187,7 +187,7 @@
   {
     "name": "Black Clover",
     "tags": ["Action", "Popular"],
-    "cover": "assets/covers/BlackClover.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/BlackClover.png",
     "seasons": [
       {
         "season": 1,
@@ -199,7 +199,7 @@
   {
     "name": "Gachiakuta",
     "tags": ["Action"],
-    "cover": "assets/covers/Gachiakuta.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Gachiakuta.png",
     "seasons": [
       {
         "season": 1,
@@ -310,7 +310,7 @@
   {
     "name": "Fire Force",
     "tags": ["Action"],
-    "cover": "assets/covers/FireForce.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/FireForce.png",
     "seasons": [
       {
         "season": 1,
@@ -405,7 +405,7 @@
   {
     "name": "Jujutsu Kaisen",
     "tags": ["Action"],
-    "cover": "assets/covers/JJK.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/JJK.png",
     "seasons": [
       {
         "season": 1,
@@ -488,7 +488,7 @@
   {
     "name": "Vinland Saga",
     "tags": ["Action", "Gore", "Peak"],
-    "cover": "assets/covers/VinlandSaga.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/VinlandSaga.png",
     "seasons": [
       {
         "season": 1,
@@ -559,7 +559,7 @@
   {
     "name": "Full Metal Alchemist: Brotherhood",
     "tags": ["Action", "Thriller"],
-    "cover": "assets/covers/FMAB.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/FMAB.png",
     "seasons": [
       {
         "season": 1,
@@ -638,7 +638,7 @@
   {
     "name": "Death Note",
     "tags": ["Thriller"],
-    "cover": "assets/covers/DeathNote.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DeathNote.png",
     "seasons": [
       {
         "season": 1,
@@ -690,7 +690,7 @@
   {
     "name": "Gurren Lagann",
     "tags": ["Action", "Sad", "Mecha", "Peak"],
-    "cover": "assets/covers/GurrenLagaan.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/GurrenLagaan.png",
     "seasons": [
       {
         "season": 1,
@@ -732,7 +732,7 @@
   {
     "name": "Erased",
     "tags": ["Thriller", "School"],
-    "cover": "assets/covers/Erased.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Erased.png",
     "seasons": [
       {
         "season": 1,
@@ -784,7 +784,7 @@
   {
     "name": "Sakamoto Days",
     "tags": ["Action", "Comedy", "Chill"],
-    "cover": "assets/covers/SakamotoDays.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/SakamotoDays.png",
     "seasons": [
       {
         "season": 1,
@@ -821,7 +821,7 @@
   {
     "name": "Solo Leveling",
     "tags": "Action",
-    "cover": "assets/covers/SoloLeveling.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/SoloLeveling.png",
     "seasons": [
       {
         "season": 1,
@@ -869,7 +869,7 @@
   {
     "name": "The Eminence in Shadow",
     "tags": ["Isekai", "Fantasy", "Action"],
-    "cover": "assets/covers/EminenceInShadow.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/EminenceInShadow.png",
     "seasons": [
       {
         "season": 1,
@@ -924,7 +924,7 @@
   {
     "name": "Your Lie in April",
     "tags": ["Chill", "School", "Romance", "Sad", "Music"],
-    "cover": "assets/covers/YourLieinApril.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/YourLieinApril.png",
     "seasons": [
       {
         "season": 1,
@@ -961,7 +961,7 @@
   {
     "name": "Akame ga Kill!",
     "tags": ["Action", "Sad", "Dark", "Gore"],
-    "cover": "assets/covers/AkamegaKill.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/AkamegaKill.png",
     "seasons": [
       {
         "season": 1,
@@ -1000,7 +1000,7 @@
   {
     "name": "Undead Unluck",
     "tags": "Action",
-    "cover": "assets/covers/UndeadUnluck.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/UndeadUnluck.png",
     "seasons": [
       {
         "season": 1,
@@ -1039,7 +1039,7 @@
   {
     "name": "Mashle: Magic and Muscles",
     "tags": ["Action", "School", "Fantasy"],
-    "cover": "assets/covers/Mashle.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Mashle.png",
     "seasons": [
       {
         "season": 1,
@@ -1086,7 +1086,7 @@
   {
     "name": "Horimiya",
     "tags": ["Romance", "Comedy", "School", "Peak"],
-    "cover": "assets/covers/Horimiya.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Horimiya.png",
     "seasons": [
       {
         "season": 1,
@@ -1135,7 +1135,7 @@
   {
     "name": "Frieren: Beyond Journey's End",
     "tags": ["Action", "Chill", "Fantasy"],
-    "cover": "assets/covers/Frieren.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Frieren.png",
     "seasons": [
       {
         "season": 1,
@@ -1177,7 +1177,7 @@
   {
     "name": "Mob Psycho 100",
     "tags": ["Action", "Comedy", "School"],
-    "cover": "assets/covers/MobPsycho100.png",
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/MobPsycho100.png",
     "seasons": [
       {
         "season": 1,
