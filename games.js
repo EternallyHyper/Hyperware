@@ -379,7 +379,7 @@ async function openGame(config) {
 function createPanel() {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/css/games.css';
+  link.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css';
   document.head.appendChild(link);
 
   const fontLink = document.createElement('link');

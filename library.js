@@ -14,7 +14,7 @@
 
   const style = document.createElement('link');
   style.rel = 'stylesheet';
-  style.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/css/library.css';
+  style.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/library.css';
   document.head.appendChild(style);
 
   const navbar = document.createElement("div");
