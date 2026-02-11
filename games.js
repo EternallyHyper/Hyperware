@@ -377,10 +377,14 @@ async function openGame(config) {
 }
 
 function createPanel() {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css';
-  document.head.appendChild(link);
+  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css')
+    .then(r => r.text())
+    .then(css => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.appendChild(style);
+    })
+    .catch(err => console.error('CSS failed to load:', err));
 
   const fontLink = document.createElement('link');
   fontLink.rel = 'stylesheet';

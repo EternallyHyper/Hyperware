@@ -12,10 +12,14 @@
     document.head.appendChild(link);
   }
 
-  const style = document.createElement('link');
-  style.rel = 'stylesheet';
-  style.href = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/library.css';
-  document.head.appendChild(style);
+  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/library.css')
+    .then(r => r.text())
+    .then(css => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.appendChild(style);
+    })
+    .catch(err => console.error('CSS failed to load:', err));
 
   const navbar = document.createElement("div");
   navbar.id = "zw-navbar";
