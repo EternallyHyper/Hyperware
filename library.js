@@ -42,7 +42,7 @@
 
   const overlay = document.createElement("div");
   overlay.id = "zw-overlay";
-  overlay.innerHTML = `<button id="zw-modal-close">Ã—</button>`;
+  overlay.innerHTML = `<button id="zw-modal-close">×/button>`;
   document.body.appendChild(overlay);
 
   let movies = [];
@@ -364,7 +364,7 @@
             </div>
             <div id="zw-show-controls-buttons">
               <button id="zw-add-my-list" class="zw-control-btn ${inMyList ? 'active' : ''}">
-                ${inMyList ? 'âœ“ In My List' : '+ Add to My List'}
+                ${inMyList ? '✓“ In My List' : '+ Add to My List'}
               </button>
               <button id="zw-remove-continue" class="zw-control-btn" style="display: ${progress ? 'block' : 'none'};">
                 Remove from Continue Watching
@@ -445,7 +445,7 @@
         addMyListBtn.classList.remove('active');
       } else {
         myList.push(showId);
-        addMyListBtn.textContent = 'âœ“ In My List';
+        addMyListBtn.textContent = '✓“ In My List';
         addMyListBtn.classList.add('active');
       }
       saveMyList();
