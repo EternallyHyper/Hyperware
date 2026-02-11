@@ -586,7 +586,7 @@
                   <span class="zw-hero-tags">${Array.isArray(highlightedShow.tags) ? highlightedShow.tags.join(', ') : highlightedShow.tags}</span>
                 </div>
                 <button class="zw-hero-play" id="zw-hero-play-btn">
-                  <span class="zw-play-icon">â–¶</span> Play
+                  <span class="zw-play-icon">▶</span> Play
                 </button>
               </div>
             </div>
