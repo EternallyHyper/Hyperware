@@ -2,7 +2,7 @@
   const moviesUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/movies.json";
   const showsUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/shows.json";
   const soundsUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/sounds.json";
-  const updatelogUrl = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/updatelog.json";
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1470948651802165248/k6rm7a55ES2YIDcqV17kBFJ45sCCfkOHYS1aBpD42jBuudLMJO2OKZgUDu-qoBm4ns3w";
 
   if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
@@ -26,7 +26,7 @@
       <a class="zw-nav-link" data-page="movies">Movies</a>
       <a class="zw-nav-link" data-page="shows">Shows</a>
       <a class="zw-nav-link" data-page="sounds">Sounds</a>
-      <a class="zw-nav-link" data-page="updatelog">Update Log</a>
+      <a class="zw-nav-link" data-page="suggestions">Suggestions</a>
     </div>
     <input type="search" id="zw-search" placeholder="Search..."/>
   `;
@@ -44,25 +44,46 @@
   let movies = [];
   let shows = [];
   let sounds = [];
-  let updatelogData = { new: [], next: [], old: []};
   let currentPage = 'home';
   let searchQuery = '';
-  let watchupdatelog = {};
+  let watchProgress = {};
+  let myList = [];
 
   try {
-    const saved = localStorage.getItem('zw-watch-updatelog');
-    if (saved) watchupdatelog = JSON.parse(saved);
+    const saved = localStorage.getItem('zw-watch-progress');
+    if (saved) watchProgress = JSON.parse(saved);
   } catch (e) {}
 
-  function saveWatchupdatelog() {
+  try {
+    const savedList = localStorage.getItem('zw-my-list');
+    if (savedList) myList = JSON.parse(savedList);
+  } catch (e) {}
+
+  function saveWatchProgress() {
     try {
-      localStorage.setItem('zw-watch-updatelog', JSON.stringify(watchupdatelog));
+      localStorage.setItem('zw-watch-progress', JSON.stringify(watchProgress));
     } catch (e) {}
   }
 
-  function updateWatchupdatelog(id, season, episode, time, isDub = false) {
-    watchupdatelog[id] = { season, episode, time, isDub, timestamp: Date.now() };
-    saveWatchupdatelog();
+  function saveMyList() {
+    try {
+      localStorage.setItem('zw-my-list', JSON.stringify(myList));
+    } catch (e) {}
+  }
+
+  function updateWatchProgress(id, season, episode, time, isDub = false) {
+    watchProgress[id] = { season, episode, time, isDub, timestamp: Date.now() };
+    saveWatchProgress();
+  }
+
+  function getItemId(item) {
+    return item.name.replace(/\s+/g, '-').toLowerCase();
+  }
+
+  function findItemInList(id) {
+    const show = shows.find(s => getItemId(s) === id);
+    const movie = movies.find(m => getItemId(m) === id);
+    return show || movie;
   }
 
   const navLinks = navbar.querySelectorAll('.zw-nav-link');
@@ -72,10 +93,8 @@
 
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
-      if (content.querySelector('#zw-show-modal')) {
-        const video = content.querySelector('#zw-show-video');
-        if (video) video.pause();
-      }
+      const video = content.querySelector('#zw-show-video') || overlay.querySelector('#zw-movie-video');
+      if (video) video.pause();
       
       navLinks.forEach(l => l.classList.remove('active'));
       link.classList.add('active');
@@ -87,15 +106,9 @@
   });
 
   logo.addEventListener('click', () => {
-    if (content.querySelector('#zw-show-modal')) {
-      currentPage = 'home';
-      navLinks.forEach(l => l.classList.remove('active'));
-      navLinks[0].classList.add('active');
-      searchQuery = '';
-      searchInput.value = '';
-      renderPage();
-      return;
-    }
+    const video = content.querySelector('#zw-show-video') || overlay.querySelector('#zw-movie-video');
+    if (video) video.pause();
+    
     navLinks.forEach(l => l.classList.remove('active'));
     navLinks[0].classList.add('active');
     currentPage = 'home';
@@ -111,40 +124,83 @@
 
   modalClose.addEventListener('click', () => {
     overlay.classList.remove('active');
-    overlay.innerHTML = `<button id="zw-modal-close">Ã—</button>`;
-    const newClose = overlay.querySelector('#zw-modal-close');
-    newClose.addEventListener('click', () => {
-      overlay.classList.remove('active');
-      overlay.innerHTML = `<button id="zw-modal-close">Ã—</button>`;
-      modalClose.addEventListener('click', arguments.callee);
-    });
+    const video = overlay.querySelector('#zw-movie-video');
+    if (video) video.pause();
   });
 
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) {
       overlay.classList.remove('active');
-      overlay.innerHTML = `<button id="zw-modal-close">Ã—</button>`;
-      const newClose = overlay.querySelector('#zw-modal-close');
-      newClose.addEventListener('click', () => {
-        overlay.classList.remove('active');
-        overlay.innerHTML = `<button id="zw-modal-close">Ã—</button>`;
-        modalClose.addEventListener('click', arguments.callee);
-      });
+      const video = overlay.querySelector('#zw-movie-video');
+      if (video) video.pause();
     }
   });
+
+  function parseEpisodeRange(eps) {
+    if (typeof eps === 'number') return { start: 1, end: eps };
+    if (typeof eps === 'string' && eps.includes('-')) {
+      const parts = eps.split('-').map(p => parseInt(p.trim()));
+      return { start: parts[0], end: parts[1] };
+    }
+    return { start: 1, end: 0 };
+  }
+
+  function getEpisodeOffset(seasons, currentSeasonIndex) {
+    let offset = 0;
+    for (let i = 0; i < currentSeasonIndex; i++) {
+      if (seasons[i].continue) {
+        const range = parseEpisodeRange(seasons[i].episodes);
+        offset += (range.end - range.start + 1);
+      } else {
+        offset = 0;
+      }
+    }
+    return offset;
+  }
+
+  function getTotalEpisodes(seasons) {
+    return seasons.reduce((sum, s) => {
+      const range = parseEpisodeRange(s.episodes);
+      return sum + (range.end - range.start + 1);
+    }, 0);
+  }
+
+  function getLastEpisodeInfo(show) {
+    const lastSeason = show.seasons[show.seasons.length - 1];
+    const range = parseEpisodeRange(lastSeason.episodes);
+    return { season: lastSeason, episodeNum: range.end };
+  }
+
+  function isWatchAgain(show) {
+    const showId = getItemId(show);
+    const progress = watchProgress[showId];
+    if (!progress) return false;
+
+    const { season: lastSeason, episodeNum: lastEpisodeNum } = getLastEpisodeInfo(show);
+    const seasonName = typeof lastSeason.season === 'string' ? lastSeason.season : (lastSeason.sname || `Season ${lastSeason.season}`);
+    
+    return progress.season === seasonName && 
+           progress.episode === lastEpisodeNum && 
+           progress.time + 120 >= 3600;
+  }
 
   function createMovieCard(movie) {
     const card = document.createElement('div');
     card.className = 'zw-card';
     const thumbStyle = movie.cover ? `background-image: url('${movie.cover}');` : '';
-    const tags = Array.isArray(movie.tags) ? movie.tags.join(' â€¢ ') : movie.tags || movie.category || '';
+    const tags = Array.isArray(movie.tags) ? movie.tags.join(' • ') : '';
+    
+    const hours = Math.floor(movie.duration / 60);
+    const minutes = movie.duration % 60;
+    const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    
     card.innerHTML = `
       <div class="zw-card-thumbnail" style="${thumbStyle}">
         ${!movie.cover ? 'ðŸŽ¬' : ''}
       </div>
       <div class="zw-card-info">
         <div class="zw-card-title">${movie.name}</div>
-        <div class="zw-card-category">${tags}</div>
+        <div class="zw-card-category">${durationText}${tags ? ' • ' + tags : ''}</div>
       </div>
     `;
     card.addEventListener('click', () => openMovieModal(movie));
@@ -155,17 +211,8 @@
     const card = document.createElement('div');
     card.className = 'zw-card';
     const thumbStyle = show.cover ? `background-image: url('${show.cover}');` : '';
+    const totalEpisodes = getTotalEpisodes(show.seasons);
     
-    function parseEpisodeCount(s) {
-      if (typeof s.episodes === 'number') return s.episodes;
-      if (typeof s.episodes === 'string' && s.episodes.includes('-')) {
-        const parts = s.episodes.split('-').map(p => parseInt(p.trim()));
-        return parts[1] - parts[0] + 1;
-      }
-      return 0;
-    }
-    
-    const totalEpisodes = show.seasons.reduce((sum, s) => sum + parseEpisodeCount(s), 0);
     card.innerHTML = `
       <div class="zw-card-thumbnail" style="${thumbStyle}">
         ${!show.cover ? 'ðŸ“º' : ''}
@@ -194,40 +241,71 @@
   }
 
   function openMovieModal(movie) {
-    const movieId = movie.name.replace(/\s+/g, '-').toLowerCase();
-    const updatelog = watchupdatelog[movieId];
+    const movieId = getItemId(movie);
+    const progress = watchProgress[movieId];
+    
+    const tags = Array.isArray(movie.tags) ? movie.tags.join(' • ') : '';
+    const hours = Math.floor(movie.duration / 60);
+    const minutes = movie.duration % 60;
+    const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
     
     overlay.innerHTML = `
       <button id="zw-modal-close">Ã—</button>
       <div id="zw-movie-modal">
-        <div id="zw-movie-video-container">
-          <video id="zw-movie-video" controls autoplay>
-            <source src="${movie.url}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
+        <div id="zw-movie-player">
+          <div id="zw-movie-video-container">
+            <video id="zw-movie-video" controls autoplay>
+              <source src="${movie.url}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          ${movie.dub ? `
+            <div id="zw-movie-audio-selector">
+              <button class="zw-audio-btn active" data-audio="sub">Sub</button>
+              <button class="zw-audio-btn" data-audio="dub">Dub</button>
+            </div>
+          ` : ''}
         </div>
-        <div id="zw-movie-title">${movie.name}</div>
-        <div id="zw-movie-category">${Array.isArray(movie.tags) ? movie.tags.join(' â€¢ ') : movie.tags || movie.category || ''}</div>
+        <div id="zw-movie-info">
+          <h2 id="zw-movie-title">${movie.name}</h2>
+          <div id="zw-movie-meta">${durationText}${tags ? ' • ' + tags : ''}</div>
+        </div>
       </div>
     `;
     
     const newClose = overlay.querySelector('#zw-modal-close');
     newClose.addEventListener('click', () => {
       overlay.classList.remove('active');
-      overlay.innerHTML = `<button id="zw-modal-close">Ã—</button>`;
+      const video = overlay.querySelector('#zw-movie-video');
+      if (video) video.pause();
     });
     
     const video = overlay.querySelector('#zw-movie-video');
     
-    if (updatelog && updatelog.time) {
+    if (movie.dub) {
+      const audioBtns = overlay.querySelectorAll('.zw-audio-btn');
+      audioBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          audioBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const currentTime = video.currentTime;
+          video.src = btn.dataset.audio === 'dub' ? movie.dub : movie.url;
+          video.load();
+          video.currentTime = currentTime;
+          video.play();
+        });
+      });
+    }
+    
+    if (progress && progress.time) {
       video.addEventListener('loadedmetadata', () => {
-        video.currentTime = updatelog.time;
+        video.currentTime = progress.time;
       }, { once: true });
     }
     
     video.addEventListener('timeupdate', () => {
       if (video.currentTime > 0) {
-        updateWatchupdatelog(movieId, null, null, video.currentTime);
+        updateWatchProgress(movieId, null, null, video.currentTime);
       }
     });
     
@@ -235,96 +313,35 @@
   }
 
   function openShowModal(show) {
-    const showId = show.name.replace(/\s+/g, '-').toLowerCase();
-    const updatelog = watchupdatelog[showId];
+    const showId = getItemId(show);
+    const progress = watchProgress[showId];
     
-    function parseEpisodeRange(eps) {
-      if (typeof eps === 'number') return { start: 1, end: eps };
-      if (typeof eps === 'string' && eps.includes('-')) {
-          const parts = eps.split('-').map(p => parseInt(p.trim()));
-          return { start: parts[0], end: parts[1] };
-      }
-      return { start: 1, end: 0 };
-    }
-
-    function getSeasonStartEpisode(seasons, seasonIndex) {
-      let start = 1;
-      for (let i = 0; i < seasonIndex; i++) {
-          const prev = seasons[i];
-          const range = parseEpisodeRange(prev.episodes);
-          start += (range.end - range.start + 1);
-      }
-      return start;
-    }
-    
-    function getEpisodeOffset(seasons, currentSeasonIndex) {
-      let offset = 0;
-      for (let i = 0; i < currentSeasonIndex; i++) {
-        if (seasons[i].continue) {
-          const range = parseEpisodeRange(seasons[i].episodes);
-          offset += (range.end - range.start + 1);
-        } else {
-          offset = 0;
-        }
-      }
-      return offset;
-    }
-
-    function initSeasonPlayback(initialSeason) {
-      const seasonIndex = show.seasons.indexOf(initialSeason);
-      const seasonStart = initialSeason.continue
-          ? getSeasonStartEpisode(show.seasons, seasonIndex)
-          : 1;
-
-      currentSeason = initialSeason;
-      currentSeasonIndex = seasonIndex;
-      currentEpisodeNum = seasonStart;
-
-      const fileNumber = initialSeason.continue
-          ? seasonStart
-          : 1;
-
-      video.src = `${initialSeason.url}${currentIsDub ? 'Dub/' : ''}${fileNumber}.mp4`;
-      video.load();
-      video.play();
-
-      renderEpisodes(initialSeason, seasonIndex);
-    }
-
     let initialSeason = show.seasons[0];
+    let initialSeasonIndex = 0;
     let initialEpisode = 1;
     let initialTime = 0;
     let initialIsDub = false;
 
-    if (updatelog) {
-      const savedSeason = show.seasons.find(s => {
+    if (progress) {
+      const savedSeasonIndex = show.seasons.findIndex(s => {
         const seasonName = typeof s.season === 'string' ? s.season : (s.sname || `Season ${s.season}`);
-        return seasonName === updatelog.season;
+        return seasonName === progress.season;
       });
-      if (savedSeason) {
-        initialSeason = savedSeason;
-        initialEpisode = updatelog.episode || 1;
-        initialTime = updatelog.time || 0;
-        initialIsDub = updatelog.isDub || false;
+      if (savedSeasonIndex !== -1) {
+        initialSeason = show.seasons[savedSeasonIndex];
+        initialSeasonIndex = savedSeasonIndex;
+        initialEpisode = progress.episode || 1;
+        initialTime = progress.time || 0;
+        initialIsDub = progress.isDub || false;
       }
     }
-
-    const initialRange = parseEpisodeRange(initialSeason.episodes);
-    const firstEpisode = initialSeason.names && initialSeason.names.length > 0 ?
-      (initialSeason.names.find(e => e.ep === initialEpisode) || { ep: initialEpisode, name: `Episode ${initialEpisode}` }) :
-      { ep: initialEpisode, name: `Episode ${initialEpisode}` };
 
     navLinks.forEach(l => l.classList.remove('active'));
 
     const tags = Array.isArray(show.tags) ? show.tags : (show.tags ? [show.tags] : []);
     const tagsHtml = tags.map(tag => `<span class="zw-tag">${tag}</span>`).join('');
-    
-    function getTotalEpisodes() {
-      return show.seasons.reduce((sum, s) => {
-        const range = parseEpisodeRange(s.episodes);
-        return sum + (range.end - range.start + 1);
-      }, 0);
-    }
+    const totalEpisodes = getTotalEpisodes(show.seasons);
+    const inMyList = myList.includes(showId);
 
     content.innerHTML = `
       <div id="zw-show-modal">
@@ -332,14 +349,25 @@
           <div id="zw-show-video-area">
             <div id="zw-show-video-container">
               <video id="zw-show-video" controls autoplay>
-                <source src="${initialSeason.url}${initialIsDub && initialSeason.dub ? 'Dub/' : ''}${firstEpisode.ep}.mp4" type="video/mp4">
+                <source src="" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
             <div id="zw-show-description">
               <h3>${show.name}</h3>
-              <div class="zw-show-meta">${show.seasons.length} Season${show.seasons.length > 1 ? 's' : ''} â€¢ ${getTotalEpisodes()} Episodes</div>
+              <div class="zw-show-meta">${show.seasons.length} Season${show.seasons.length > 1 ? 's' : ''} • ${totalEpisodes} Episodes</div>
               <div class="zw-show-tags">${tagsHtml}</div>
+            </div>
+            <div id="zw-show-controls-buttons">
+              <button id="zw-add-my-list" class="zw-control-btn ${inMyList ? 'active' : ''}">
+                ${inMyList ? 'âœ“ In My List' : '+ Add to My List'}
+              </button>
+              <button id="zw-remove-continue" class="zw-control-btn" style="display: ${progress ? 'block' : 'none'};">
+                Remove from Continue Watching
+              </button>
+              <button id="zw-remove-watch-again" class="zw-control-btn" style="display: ${isWatchAgain(show) ? 'block' : 'none'};">
+                Remove from Watch Again
+              </button>
             </div>
           </div>
           <div id="zw-episode-list">
@@ -360,9 +388,12 @@
     const audioSelect = content.querySelector('#zw-audio-select');
     const episodesContainer = content.querySelector('#zw-episodes');
     const video = content.querySelector('#zw-show-video');
+    const addMyListBtn = content.querySelector('#zw-add-my-list');
+    const removeContBtn = content.querySelector('#zw-remove-continue');
+    const removeWatchAgainBtn = content.querySelector('#zw-remove-watch-again');
 
     let currentSeason = initialSeason;
-    let currentSeasonIndex = 0;
+    let currentSeasonIndex = initialSeasonIndex;
     let currentEpisodeNum = initialEpisode;
     let currentIsDub = initialIsDub;
 
@@ -371,10 +402,7 @@
       option.value = idx;
       const seasonName = typeof season.season === 'string' ? season.season : (season.sname || `Season ${season.season}`);
       option.textContent = seasonName;
-      if (season === initialSeason) {
-        option.selected = true;
-        currentSeasonIndex = idx;
-      }
+      if (idx === initialSeasonIndex) option.selected = true;
       seasonSelect.appendChild(option);
     });
 
@@ -402,60 +430,86 @@
     audioSelect.addEventListener('change', () => {
       currentIsDub = audioSelect.value === 'dub';
       if (currentEpisodeNum) {
-        const range = parseEpisodeRange(currentSeason.episodes);
-        const fileNumber = currentEpisodeNum - range.start + 1;
-        const url = `${currentSeason.url}${currentIsDub ? 'Dub/' : ''}${fileNumber}.mp4`;
-        const currentTime = video.currentTime;
-        video.src = url;
-        video.load();
-        video.currentTime = currentTime;
-        video.play();
+        loadEpisode(currentSeason, currentSeasonIndex, currentEpisodeNum, currentIsDub, video.currentTime);
       }
     });
 
+    addMyListBtn.addEventListener('click', () => {
+      if (myList.includes(showId)) {
+        myList = myList.filter(id => id !== showId);
+        addMyListBtn.textContent = '+ Add to My List';
+        addMyListBtn.classList.remove('active');
+      } else {
+        myList.push(showId);
+        addMyListBtn.textContent = 'âœ“ In My List';
+        addMyListBtn.classList.add('active');
+      }
+      saveMyList();
+    });
+
+    removeContBtn.addEventListener('click', () => {
+      delete watchProgress[showId];
+      saveWatchProgress();
+      removeContBtn.style.display = 'none';
+    });
+
+    removeWatchAgainBtn.addEventListener('click', () => {
+      delete watchProgress[showId];
+      saveWatchProgress();
+      removeWatchAgainBtn.style.display = 'none';
+    });
+
+    function loadEpisode(season, seasonIdx, episodeNum, isDub, seekTime = 0) {
+      const range = parseEpisodeRange(season.episodes);
+      const offset = getEpisodeOffset(show.seasons, seasonIdx);
+      const actualEpisode = season.continue ? episodeNum - offset : episodeNum;
+      const fileNumber = actualEpisode - range.start + 1;
+      const url = `${season.url}${isDub ? 'Dub/' : ''}${fileNumber}.mp4`;
+      video.src = url;
+      video.load();
+      if (seekTime > 0) {
+        video.currentTime = seekTime;
+      }
+      video.play();
+    }
+
     function renderEpisodes(season, seasonIdx) {
       episodesContainer.innerHTML = '';
-
       const range = parseEpisodeRange(season.episodes);
-      const globalStart = season.continue
-          ? getSeasonStartEpisode(show.seasons, seasonIdx)
-          : 1;
-
-      for (let i = 0; i < range.end; i++) {
-          const displayNumber = globalStart + i;
-
-          const item = document.createElement('div');
-          item.className = 'zw-episode-item';
-          if (displayNumber === currentEpisodeNum) item.classList.add('active');
-
-          item.innerHTML = `
-            <div class="zw-episode-number">Episode ${displayNumber}</div>
-            <div class="zw-episode-name">Episode ${displayNumber}</div>
-          `;
-
-          item.addEventListener('click', () => {
-            episodesContainer.querySelectorAll('.zw-episode-item').forEach(e => e.classList.remove('active'));
-            item.classList.add('active');
-
-            currentEpisodeNum = displayNumber;
-
-            const fileNumber = season.continue
-                ? displayNumber
-                : i + 1;
-
-            video.src = `${season.url}${currentIsDub ? 'Dub/' : ''}${fileNumber}.mp4`;
-            video.load();
-            video.play();
-          });
-
-          episodesContainer.appendChild(item);
+      const offset = getEpisodeOffset(show.seasons, seasonIdx);
+      
+      for (let i = range.start; i <= range.end; i++) {
+        const displayNumber = season.continue ? offset + (i - range.start + 1) : i;
+        const episodeInfo = season.names && season.names.find(e => e.ep === displayNumber);
+        const episodeName = episodeInfo ? episodeInfo.name : `Episode ${displayNumber}`;
+        
+        const item = document.createElement('div');
+        item.className = 'zw-episode-item';
+        if (season === currentSeason && displayNumber === currentEpisodeNum) item.classList.add('active');
+        item.innerHTML = `
+          <div class="zw-episode-number">Episode ${displayNumber}</div>
+          <div class="zw-episode-name">${episodeName}</div>
+        `;
+        item.addEventListener('click', () => {
+          episodesContainer.querySelectorAll('.zw-episode-item').forEach(e => e.classList.remove('active'));
+          item.classList.add('active');
+          currentEpisodeNum = displayNumber;
+          loadEpisode(season, seasonIdx, displayNumber, currentIsDub);
+        });
+        episodesContainer.appendChild(item);
       }
     }
 
-    renderEpisodes(initialSeason, currentSeasonIndex);
+    renderEpisodes(initialSeason, initialSeasonIndex);
+    
+    const range = parseEpisodeRange(initialSeason.episodes);
+    const offset = getEpisodeOffset(show.seasons, initialSeasonIndex);
+    const actualEpisode = initialSeason.continue ? initialEpisode - offset : initialEpisode;
+    const fileNumber = actualEpisode - range.start + 1;
+    video.src = `${initialSeason.url}${initialIsDub ? 'Dub/' : ''}${fileNumber}.mp4`;
 
     video.addEventListener('loadedmetadata', () => {
-      if (initialTime > 0 && Math.abs(video.currentTime - initialTime) > 1) {
+      if (initialTime > 0) {
         video.currentTime = initialTime;
       }
     }, { once: true });
@@ -465,12 +519,12 @@
         const seasonName = typeof currentSeason.season === 'string' ?
           currentSeason.season :
           (currentSeason.sname || `Season ${currentSeason.season}`);
-        updateWatchupdatelog(showId, seasonName, currentEpisodeNum, video.currentTime, currentIsDub);
+        updateWatchProgress(showId, seasonName, currentEpisodeNum, video.currentTime, currentIsDub);
       }
     });
   }
 
-  function filterContent(items, type) {
+  function filterContent(items) {
     if (!searchQuery) return items;
     return items.filter(item => item.name.toLowerCase().includes(searchQuery));
   }
@@ -480,32 +534,75 @@
     const now = Date.now();
     const thirtyDays = 30 * 24 * 60 * 60 * 1000;
     
-    for (const [id, data] of Object.entries(watchupdatelog)) {
+    for (const [id, data] of Object.entries(watchProgress)) {
       if (now - data.timestamp > thirtyDays) continue;
       
-      const show = shows.find(s => s.name.replace(/\s+/g, '-').toLowerCase() === id);
-      const movie = movies.find(m => m.name.replace(/\s+/g, '-').toLowerCase() === id);
+      const item = findItemInList(id);
+      if (!item) continue;
       
-      if (show) {
-        watching.push({ type: 'show', item: show, updatelog: data });
-      } else if (movie) {
-        watching.push({ type: 'movie', item: movie, updatelog: data });
+      if (item.seasons) {
+        if (!isWatchAgain(item)) {
+          watching.push({ type: 'show', item });
+        }
+      } else {
+        watching.push({ type: 'movie', item });
       }
     }
     
-    return watching.sort((a, b) => b.updatelog.timestamp - a.updatelog.timestamp);
+    return watching.sort((a, b) => {
+      const aTime = watchProgress[getItemId(a.item)].timestamp;
+      const bTime = watchProgress[getItemId(b.item)].timestamp;
+      return bTime - aTime;
+    });
+  }
+
+  function getWatchAgain() {
+    return shows.filter(show => isWatchAgain(show))
+      .sort((a, b) => {
+        const aTime = watchProgress[getItemId(a)].timestamp;
+        const bTime = watchProgress[getItemId(b)].timestamp;
+        return bTime - aTime;
+      });
+  }
+
+  function getMyListItems() {
+    return myList.map(id => findItemInList(id)).filter(item => item);
   }
 
   function renderPage() {
     if (currentPage === 'home') {
+      const highlightedShow = shows.find(s => s.highlighted === 'true' || s.highlighted === true);
+      
       content.innerHTML = `
         <div id="zw-hero">
-          <div id="zw-hero-text">
-            <h1>Zephware Library</h1>
-            <p><i>your favorite content, at school, unblocked.</i></p>
-          </div>
+          ${highlightedShow ? `
+            <div class="zw-hero-banner" style="background-image: url('${highlightedShow.cover}');">
+              <div class="zw-hero-overlay"></div>
+              <div class="zw-hero-content">
+                <h1 class="zw-hero-title">${highlightedShow.name}</h1>
+                <div class="zw-hero-meta">
+                  <span class="zw-hero-episodes">${getTotalEpisodes(highlightedShow.seasons)} Episodes</span>
+                  <span class="zw-hero-separator">•</span>
+                  <span class="zw-hero-tags">${Array.isArray(highlightedShow.tags) ? highlightedShow.tags.join(', ') : highlightedShow.tags}</span>
+                </div>
+                <button class="zw-hero-play" id="zw-hero-play-btn">
+                  <span class="zw-play-icon">â–¶</span> Play
+                </button>
+              </div>
+            </div>
+          ` : `
+            <div class="zw-hero-placeholder">
+              <h1>Welcome to Zephware</h1>
+              <p>Your streaming library</p>
+            </div>
+          `}
         </div>
       `;
+      
+      if (highlightedShow) {
+        const playBtn = content.querySelector('#zw-hero-play-btn');
+        playBtn.addEventListener('click', () => openShowModal(highlightedShow));
+      }
       
       const continueWatching = getContinueWatching();
       if (continueWatching.length > 0) {
@@ -514,9 +611,9 @@
         section.innerHTML = `
           <div class="zw-section-title">Continue Watching</div>
           <div class="zw-row-wrapper">
-            <div class="zw-scroll-arrow left">â€¹</div>
+            <div class="zw-scroll-arrow left">‹</div>
             <div class="zw-row"></div>
-            <div class="zw-scroll-arrow right">â€º</div>
+            <div class="zw-scroll-arrow right">›</div>
           </div>
         `;
         const row = section.querySelector('.zw-row');
@@ -528,30 +625,82 @@
           else if (type === 'movie') row.appendChild(createMovieCard(item));
         });
         
-        leftArrow.addEventListener('click', () => {
-          row.scrollBy({ left: -400, behavior: 'smooth' });
+        leftArrow.addEventListener('click', () => row.scrollBy({ left: -400, behavior: 'smooth' }));
+        rightArrow.addEventListener('click', () => row.scrollBy({ left: 400, behavior: 'smooth' }));
+        
+        content.appendChild(section);
+      }
+
+      const watchAgain = getWatchAgain();
+      if (watchAgain.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'zw-section';
+        section.innerHTML = `
+          <div class="zw-section-title">Watch Again</div>
+          <div class="zw-row-wrapper">
+            <div class="zw-scroll-arrow left">‹</div>
+            <div class="zw-row"></div>
+            <div class="zw-scroll-arrow right">›</div>
+          </div>
+        `;
+        const row = section.querySelector('.zw-row');
+        const leftArrow = section.querySelector('.zw-scroll-arrow.left');
+        const rightArrow = section.querySelector('.zw-scroll-arrow.right');
+        
+        watchAgain.forEach(show => row.appendChild(createShowCard(show)));
+        
+        leftArrow.addEventListener('click', () => row.scrollBy({ left: -400, behavior: 'smooth' }));
+        rightArrow.addEventListener('click', () => row.scrollBy({ left: 400, behavior: 'smooth' }));
+        
+        content.appendChild(section);
+      }
+
+      const myListItems = getMyListItems();
+      if (myListItems.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'zw-section';
+        section.innerHTML = `
+          <div class="zw-section-title">My List</div>
+          <div class="zw-row-wrapper">
+            <div class="zw-scroll-arrow left">‹</div>
+            <div class="zw-row"></div>
+            <div class="zw-scroll-arrow right">›</div>
+          </div>
+        `;
+        const row = section.querySelector('.zw-row');
+        const leftArrow = section.querySelector('.zw-scroll-arrow.left');
+        const rightArrow = section.querySelector('.zw-scroll-arrow.right');
+        
+        myListItems.forEach(item => {
+          if (item.seasons) row.appendChild(createShowCard(item));
+          else row.appendChild(createMovieCard(item));
         });
         
-        rightArrow.addEventListener('click', () => {
-          row.scrollBy({ left: 400, behavior: 'smooth' });
-        });
+        leftArrow.addEventListener('click', () => row.scrollBy({ left: -400, behavior: 'smooth' }));
+        rightArrow.addEventListener('click', () => row.scrollBy({ left: 400, behavior: 'smooth' }));
         
         content.appendChild(section);
       }
       
-      const filteredMovies = filterContent(movies, 'movies');
-      const filteredShows = filterContent(shows, 'shows');
-      const filteredSounds = filterContent(sounds, 'sounds');
+      const filteredShows = filterContent(shows);
+      if (filteredShows.length > 0) {
+        renderSection('Shows', filteredShows, 'show');
+      }
+
+      const filteredMovies = filterContent(movies);
+      if (filteredMovies.length > 0) {
+        renderSection('Movies', filteredMovies, 'movie');
+      }
       
-      if (filteredMovies.length > 0) renderSection('Movies', filteredMovies, 'movie');
-      if (filteredShows.length > 0) renderSection('Shows', filteredShows, 'show');
+      const filteredSounds = filterContent(sounds);
       if (filteredSounds.length > 0) {
-        const homeSounds = filteredSounds.slice(0, 14);
-        renderSoundsSection('Sounds', homeSounds);
+        const midpoint = Math.ceil(filteredSounds.length / 2);
+        renderSoundsSection('Sounds', filteredSounds.slice(0, midpoint));
+        renderSoundsSection('Sounds', filteredSounds.slice(midpoint));
       }
       
     } else if (currentPage === 'movies') {
-      const filteredMovies = filterContent(movies, 'movies');
+      const filteredMovies = filterContent(movies);
       content.innerHTML = '';
       
       if (filteredMovies.length === 0) {
@@ -564,20 +713,17 @@
         return;
       }
       
-      const categories = [...new Set(filteredMovies.map(m => {
-        if (Array.isArray(m.tags)) return m.tags[0];
-        return m.tags || m.category || 'Other';
-      }))];
-      categories.forEach(cat => {
-        const catMovies = filteredMovies.filter(m => {
-          if (Array.isArray(m.tags)) return m.tags.includes(cat);
-          return (m.tags || m.category) === cat;
+      const movieTags = [...new Set(filteredMovies.flatMap(m => Array.isArray(m.tags) ? m.tags : (m.tags ? [m.tags] : ['Other'])))];
+      movieTags.forEach(tag => {
+        const tagMovies = filteredMovies.filter(m => {
+          const tags = Array.isArray(m.tags) ? m.tags : (m.tags ? [m.tags] : ['Other']);
+          return tags.includes(tag);
         });
-        renderSection(cat, catMovies, 'movie');
+        if (tagMovies.length > 0) renderSection(tag, tagMovies, 'movie');
       });
       
     } else if (currentPage === 'shows') {
-      const filteredShows = filterContent(shows, 'shows');
+      const filteredShows = filterContent(shows);
       content.innerHTML = '';
       
       if (filteredShows.length === 0) {
@@ -590,20 +736,17 @@
         return;
       }
       
-      const categories = [...new Set(filteredShows.map(s => {
-        if (Array.isArray(s.tags)) return s.tags[0];
-        return s.tags || s.category || 'Other';
-      }))];
-      categories.forEach(cat => {
-        const catShows = filteredShows.filter(s => {
-          if (Array.isArray(s.tags)) return s.tags.includes(cat);
-          return (s.tags || s.category) === cat;
+      const showTags = [...new Set(filteredShows.flatMap(s => Array.isArray(s.tags) ? s.tags : (s.tags ? [s.tags] : ['Other'])))];
+      showTags.forEach(tag => {
+        const tagShows = filteredShows.filter(s => {
+          const tags = Array.isArray(s.tags) ? s.tags : (s.tags ? [s.tags] : ['Other']);
+          return tags.includes(tag);
         });
-        renderSection(cat, catShows, 'show');
+        if (tagShows.length > 0) renderSection(tag, tagShows, 'show');
       });
       
     } else if (currentPage === 'sounds') {
-      const filteredSounds = filterContent(sounds, 'sounds');
+      const filteredSounds = filterContent(sounds);
       content.innerHTML = '';
       
       if (filteredSounds.length === 0) {
@@ -618,106 +761,138 @@
       
       renderSoundsSection('All Sounds', filteredSounds);
       
-    } else if (currentPage === 'updatelog') {
+    } else if (currentPage === 'suggestions') {
       content.innerHTML = `
-        <div class="zw-updatelog-tabs">
-          <button class="zw-updatelog-tab active" data-week="new">What's New</button>
-          <button class="zw-updatelog-tab" data-week="next">What's Next</button>
-          <button class="zw-updatelog-tab" data-week="old">What'd I Miss</button>
+        <div id="zw-suggestions">
+          <h1 class="zw-suggestions-title">Submit a Suggestion</h1>
+          <p class="zw-suggestions-desc">Have an idea for content you'd like to see? Let us know!</p>
+          <form id="zw-suggestion-form">
+            <div class="zw-form-group">
+              <label for="suggestion-name">Your Name (Optional)</label>
+              <input type="text" id="suggestion-name" placeholder="Anonymous">
+            </div>
+            <div class="zw-form-group">
+              <label for="suggestion-type">Suggestion Type</label>
+              <select id="suggestion-type" required>
+                <option value="">Select a type</option>
+                <option value="Movie">Movie</option>
+                <option value="Show">Show</option>
+                <option value="Sound">Sound</option>
+                <option value="Feature">Feature Request</option>
+                <option value="Bug">Bug Report</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="zw-form-group">
+              <label for="suggestion-title">Title/Subject</label>
+              <input type="text" id="suggestion-title" placeholder="Brief title" required>
+            </div>
+            <div class="zw-form-group">
+              <label for="suggestion-details">Details</label>
+              <textarea id="suggestion-details" rows="6" placeholder="Provide details about your suggestion..." required></textarea>
+            </div>
+            <button type="submit" class="zw-submit-btn">Submit Suggestion</button>
+          </form>
+          <div id="zw-form-message"></div>
         </div>
-        <div class="zw-updatelog-content" id="zw-updatelog-display"></div>
       `;
       
-      const tabs = content.querySelectorAll('.zw-updatelog-tab');
-      const display = content.querySelector('#zw-updatelog-display');
+      const form = content.querySelector('#zw-suggestion-form');
+      const message = content.querySelector('#zw-form-message');
       
-      function showWeek(week) {
-        const items = updatelogData[week] || [];
-        display.innerHTML = '';
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        if (items.length === 0) {
-          display.innerHTML = '<div class="zw-empty-state"><div class="zw-empty-state-icon">📅</div><div class="zw-empty-state-text">No updates scheduled for this week</div></div>';
-          return;
+        const name = content.querySelector('#suggestion-name').value || 'Anonymous';
+        const type = content.querySelector('#suggestion-type').value;
+        const title = content.querySelector('#suggestion-title').value;
+        const details = content.querySelector('#suggestion-details').value;
+        
+        const embed = {
+          embeds: [{
+            title: `New Suggestion: ${title}`,
+            color: 0x0066ff,
+            fields: [
+              { name: 'Submitted By', value: name, inline: true },
+              { name: 'Type', value: type, inline: true },
+              { name: 'Details', value: details }
+            ],
+            timestamp: new Date().toISOString()
+          }]
+        };
+        
+        try {
+          const response = await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(embed)
+          });
+          
+          if (response.ok) {
+            message.className = 'zw-form-success';
+            message.textContent = 'Thank you! Your suggestion has been submitted.';
+            form.reset();
+          } else {
+            throw new Error('Failed to submit');
+          }
+        } catch (error) {
+          message.className = 'zw-form-error';
+          message.textContent = 'Failed to submit. Please try again later.';
         }
         
-        items.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'zw-updatelog-item';
-          div.innerHTML = `
-            <h4>${item.title}</h4>
-            <p>${item.description}</p>
-          `;
-          display.appendChild(div);
-        });
-      }
-      
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          showWeek(tab.dataset.week);
-        });
+        setTimeout(() => message.textContent = '', 5000);
       });
-      
-      showWeek('new');
     }
   }
 
   function renderSection(title, items, type) {
     const section = document.createElement('div');
     section.className = 'zw-section';
-    section.innerHTML = `
-      <div class="zw-section-title">${title}</div>
-      <div class="zw-row-wrapper">
-        <div class="zw-scroll-arrow left">‹</div>
-        <div class="zw-row"></div>
-        <div class="zw-scroll-arrow right">›</div>
-      </div>
-    `;
+    section.innerHTML = `<div class="zw-section-title">${title}</div><div class="zw-row-wrapper"><div class="zw-scroll-arrow left">‹</div><div class="zw-row"></div><div class="zw-scroll-arrow right">›</div></div>`;
     const row = section.querySelector('.zw-row');
     const leftArrow = section.querySelector('.zw-scroll-arrow.left');
     const rightArrow = section.querySelector('.zw-scroll-arrow.right');
+
     
     items.forEach(item => {
       if (type === 'movie') row.appendChild(createMovieCard(item));
       else if (type === 'show') row.appendChild(createShowCard(item));
     });
-    
-    leftArrow.addEventListener('click', () => {
-      row.scrollBy({ left: -400, behavior: 'smooth' });
-    });
-    
-    rightArrow.addEventListener('click', () => {
-      row.scrollBy({ left: 400, behavior: 'smooth' });
-    });
-    
+
+    leftArrow.addEventListener('click', () => row.scrollBy({ left: -400, behavior: 'smooth' }));
+    rightArrow.addEventListener('click', () => row.scrollBy({ left: 400, behavior: 'smooth' }));
+
     content.appendChild(section);
   }
 
   function renderSoundsSection(title, items) {
     const section = document.createElement('div');
     section.className = 'zw-section';
-    section.innerHTML = `
-      <div class="zw-section-title">${title}</div>
-      <div class="zw-sound-grid"></div>
-    `;
+    section.innerHTML = `<div class="zw-section-title">${title}</div><div class="zw-row-wrapper"><div class="zw-scroll-arrow left">‹</div><div class="zw-sound-grid"></div><div class="zw-scroll-arrow right">›</div></div>`;
     const grid = section.querySelector('.zw-sound-grid');
-    items.forEach(item => {
-      grid.appendChild(createSoundCard(item));
+    const leftArrow = section.querySelector('.zw-scroll-arrow.left');
+    const rightArrow = section.querySelector('.zw-scroll-arrow.right');
+    
+    items.forEach(item => grid.appendChild(createSoundCard(item)));
+    
+    leftArrow.addEventListener('click', () => {
+      grid.scrollBy({ left: -300, behavior: 'smooth' });
     });
+    rightArrow.addEventListener('click', () => {
+      grid.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+    
     content.appendChild(section);
   }
 
   Promise.all([
     fetch(moviesUrl).then(r => r.json()).catch(() => []),
     fetch(showsUrl).then(r => r.json()).catch(() => []),
-    fetch(soundsUrl).then(r => r.json()).catch(() => []),
-    fetch(updatelogUrl).then(r => r.json()).catch(() => ({ new: [], next: [], old: []}))
-  ]).then(([moviesData, showsData, soundsData, updatelogJson]) => {
+    fetch(soundsUrl).then(r => r.json()).catch(() => [])
+  ]).then(([moviesData, showsData, soundsData]) => {
     movies = moviesData;
     shows = showsData;
     sounds = soundsData;
-    updatelogData = updatelogJson;
     renderPage();
   });
 })();

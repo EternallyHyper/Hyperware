@@ -1,5 +1,133 @@
 [
-
+  {
+    "name": "Demon Slayer",
+    "tags": ["Action", "Popular"],
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/DemonSlayer.png",
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": 26,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Demon%20Slayer/Season%201/"
+      },
+      {
+        "season": 2,
+        "episodes": 7,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Demon%20Slayer/Season%202/"
+      },
+      {
+        "season": 3,
+        "episodes": 11,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Demon%20Slayer/Season%203/"
+      },
+      {
+        "season": 4,
+        "episodes": 11,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Demon%20Slayer/Season%204/"
+      },
+      {
+        "season": 5,
+        "episodes": 8,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Demon%20Slayer/Season%205/"
+      }
+    ]
+  }, 
+  {
+    "name": "My Hero Academia",
+    "tags": ["Action", "Popular"],
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/MHA.png",
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": 13,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%201/"
+      },
+      {
+        "season": 2,
+        "episodes": 25,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%202/"
+      },
+      {
+        "season": 3,
+        "episodes": 25,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%203/"
+      },
+      {
+        "season": 4,
+        "episodes": 25,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%204/"
+      },
+      {
+        "season": 5,
+        "episodes": 25,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%205/"
+      },
+      {
+        "season": 6,
+        "episodes": 25,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%206/"
+      },
+      {
+        "season": 7,
+        "episodes": 21,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%207/"
+      },
+      {
+        "season": 8,
+        "episodes": 11,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%208/"
+      }
+    ]
+  },
+  {
+    "name": "Black Clover",
+    "tags": ["Action", "Popular"],
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/BlackClover.png",
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": 170,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Black%20Clover/"
+      }
+    ]
+  },
+  {
+    "name": "Attack on Titan",
+    "tags": ["Action", "Popular"],
+    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/AOT.png",
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": 25,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Attack%20on%20Titan/Season%201/"
+      },
+      {
+        "season": 2,
+        "episodes": 12,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Attack%20on%20Titan/Season%202/"
+      },
+      {
+        "season": 3,
+        "episodes": 22,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Attack%20on%20Titan/Season%203/"
+      },
+      {
+        "season": 4,
+        "episodes": 28,
+        "continue": true,
+        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Attack%20on%20Titan/Season%204/"
+      }
+    ]
+  },
   {
     "name": "One Piece",
     "tags": ["Action", "Popular"],
@@ -131,72 +259,6 @@
     ]
   },
   {
-    "name": "My Hero Academia",
-    "tags": ["Action", "Popular"],
-    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/MHA.png",
-    "seasons": [
-      {
-        "season": 1,
-        "episodes": 13,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%201/"
-      },
-      {
-        "season": 2,
-        "episodes": 25,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%202/"
-      },
-      {
-        "season": 3,
-        "episodes": 25,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%203/"
-      },
-      {
-        "season": 4,
-        "episodes": 25,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%204/"
-      },
-      {
-        "season": 5,
-        "episodes": 25,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%205/"
-      },
-      {
-        "season": 6,
-        "episodes": 25,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%206/"
-      },
-      {
-        "season": 7,
-        "episodes": 21,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%207/"
-      },
-      {
-        "season": 8,
-        "episodes": 11,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/My%20Hero%20Academia/Season%208/"
-      }
-    ]
-  },
-  {
-    "name": "Black Clover",
-    "tags": ["Action", "Popular"],
-    "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/BlackClover.png",
-    "seasons": [
-      {
-        "season": 1,
-        "episodes": 170,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Black%20Clover/"
-      }
-    ]
-  },
-  {
     "name": "Gachiakuta",
     "tags": ["Action"],
     "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Gachiakuta.png",
@@ -309,7 +371,7 @@
   },
   {
     "name": "Fire Force",
-    "tags": ["Action"],
+    "tags": ["Action", "Popular"],
     "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/FireForce.png",
     "seasons": [
       {
@@ -378,7 +440,7 @@
       },
       {
         "season": 3,
-        "episodes": 14,
+        "episodes": 16,
         "dub": true,
         "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Fire%20Force/Season%203/",
         "names": [
@@ -404,7 +466,7 @@
   },
   {
     "name": "Jujutsu Kaisen",
-    "tags": ["Action"],
+    "tags": ["Action", "Popular"],
     "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/JJK.png",
     "seasons": [
       {
@@ -453,7 +515,7 @@
           { "ep": 6, "name": "It's Like That" },
           { "ep": 7, "name": "Evening Festival" },
           { "ep": 8, "name": "The Shibuya Incident" },
-          { "ep": 9, "name": "Shibuya Incident – Gate, Open" },
+          { "ep": 9, "name": "Shibuya Incident â€“ Gate, Open" },
           { "ep": 10, "name": "Pandemonium" },
           { "ep": 11, "name": "Seance" },
           { "ep": 12, "name": "Dull Knife" },
@@ -467,12 +529,12 @@
           { "ep": 20, "name": "Right and Wrong, Part 3" },
           { "ep": 21, "name": "Metamorphosis" },
           { "ep": 22, "name": "Metamorphosis, Part 2" },
-          { "ep": 23, "name": "Shibuya Incident – Gate, Close" }
+          { "ep": 23, "name": "Shibuya Incident â€“ Gate, Close" }
         ]
       },
       {
         "season": 3,
-        "episodes": 4,
+        "episodes": 6,
         "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/JJK/Season%203/",
         "names": [
           { "ep": 1, "name": "Execution" },
@@ -622,7 +684,7 @@
           { "ep": 53, "name": "Flame of Vengeance" },
           { "ep": 54, "name": "Beyond the Inferno" },
           { "ep": 55, "name": "The Adults' Way of Life" },
-          { "ep": 56, "name": "The Return of the Führer" },
+          { "ep": 56, "name": "The Return of the FÃ¼hrer" },
           { "ep": 57, "name": "Eternal Leave" },
           { "ep": 58, "name": "Sacrifices" },
           { "ep": 59, "name": "Lost Light" },
@@ -912,7 +974,7 @@
           { "ep": 5,  "name": "He Who Pulls the Strings" },
           { "ep": 6,  "name": "John Smith" },
           { "ep": 7,  "name": "Something Precious" },
-          { "ep": 8,  "name": "The Dragon’s Tears" },
+          { "ep": 8,  "name": "The Dragonâ€™s Tears" },
           { "ep": 9,  "name": "The Key" },
           { "ep": 10, "name": "Caged Bird" },
           { "ep": 11, "name": "Determination" },
@@ -944,7 +1006,7 @@
           { "ep": 10, "name": "The Scenery I Shared With You" },
           { "ep": 11, "name": "Light of Life" },
           { "ep": 12, "name": "Twinkle Little Star" },
-          { "ep": 13, "name": "Love’s Sorrow" },
+          { "ep": 13, "name": "Loveâ€™s Sorrow" },
           { "ep": 14, "name": "Footsteps" },
           { "ep": 15, "name": "Liar" },
           { "ep": 16, "name": "Two of a Kind" },
@@ -1085,6 +1147,7 @@
   },
   {
     "name": "Horimiya",
+    "highlighted": true,
     "tags": ["Romance", "Comedy", "School", "Peak"],
     "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/Horimiya.png",
     "seasons": [
@@ -1142,8 +1205,8 @@
         "episodes": 28,
         "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Frieren/Season%201/",
         "names": [
-          { "ep": 1,  "name": "The Journey’s End" },
-          { "ep": 2,  "name": "It Didn't Have to Be Magic…" },
+          { "ep": 1,  "name": "The Journeyâ€™s End" },
+          { "ep": 2,  "name": "It Didn't Have to Be Magicâ€¦" },
           { "ep": 3,  "name": "Killing Magic" },
           { "ep": 4,  "name": "The Land Where Souls Rest" },
           { "ep": 5,  "name": "Phantoms of the Dead" },
@@ -1154,13 +1217,13 @@
           { "ep": 10, "name": "A Powerful Mage" },
           { "ep": 11, "name": "Winter in the Northern Lands" },
           { "ep": 12, "name": "A Real Hero" },
-          { "ep": 13, "name": "Aversion to One’s Own Kind" },
+          { "ep": 13, "name": "Aversion to Oneâ€™s Own Kind" },
           { "ep": 14, "name": "Privilege of the Young" },
           { "ep": 15, "name": "Smells Like Trouble" },
-          { "ep": 16, "name": "Long‑Lived Friends" },
+          { "ep": 16, "name": "Longâ€‘Lived Friends" },
           { "ep": 17, "name": "Take Care" },
-          { "ep": 18, "name": "First‑Class Mage Exam" },
-          { "ep": 19, "name": "Well‑Laid Plans" },
+          { "ep": 18, "name": "Firstâ€‘Class Mage Exam" },
+          { "ep": 19, "name": "Wellâ€‘Laid Plans" },
           { "ep": 20, "name": "Necessary Killing" },
           { "ep": 21, "name": "The World of Magic" },
           { "ep": 22, "name": "Future Enemies" },

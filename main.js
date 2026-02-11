@@ -44,6 +44,13 @@ const themes = {
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Previous.png',
       waves: ['#b463ffff','#8d3ee0ff','#5a15b3ff']
    },
+   pink: {
+      color1: '#fc57e6ff',
+      color2: '#ff008cff',
+      img1: 'https://d1kusoubqqwr7w.cloudfront.net/assets/themes/pink/Current.png',
+      img2: 'https://d1kusoubqqwr7w.cloudfront.net/assets/themes/pink/Previous.png',
+      waves: ['#ff00c8ff', '#e645cbff', '#f571d4ff']
+   },
    christmas: {
       color1: '#00ff2aff',
       color2: '#ff0000ff',
@@ -433,6 +440,10 @@ const theme = themes.red;
   'Check out the GitHub: www.github.com/EternallyHyper/Hyperware - EternallyHyper',
   'How did you not type the password already - EternallyHyper',
   'Maybe ask a teacher lol - EternallyHyper',
+  'You should probably type in the password',
+  'dude this message feature cannot be this fun',
+  'hmm',
+  'who needs 67 when we got 21 lol - EternallyHyper',
   'ok ok fine the password is [Censored] - EternallyHyper',
   'screw goguardian - EternallyHyper',
   'Maybe try testing every single password known to man - EternallyHyper',
@@ -444,13 +455,36 @@ const theme = themes.red;
   'As you can see I am very hyper - EternallyHyper',
   '”Are you sure?”',
   'As one wise man once said, “Screw GoGuardian, Enjoy Hyperware” - EternallyHyper',
+  'GoGuardian shouldn’t exist, who’s with me? - EternallyHyper',
+  'This message is VERY rare, go screenshot it',
+  'lol',
+  '😭🙏',
+  'Also try Hypackel Games',
+  'Please finish your homework before using this',
+  'Hyperware was lowkey fun to make - EternallyHyper',
+  'If you use another blocker then I’m sry for you - EternallyHyper',
+  'How do i data save',
+  'Go play some games',
+  'This works on other websites somehow lol',
+  'There’s like a ton of messages here - EternallyHyper',
+  'can’t believe you are still here',
+  'Dude just type the password',
+  'Btw i know the password - EternallyHyper',
+  'If this ain’t peak idk what is',
+  'Hyperware > Zephware',
+  'What is this',
+  'ts is peak',
+  'Also try TotallyScience',
+  'Also try FreezeNova.Cloud',
+  'Also try ClassroomGames Unblocked',
+  'Did you know that the longest word is pneumonoultramicroscopicsilicovolcanoconiosis',
   'Don’t bother asking me for the password - EternallyHyper',
   'Try smth else - EternallyHyper',
   'go to sleep - EternallyHyper',
   'You probably shouldn’t be doing this rn - EternallyHyper',
-  'Also try Zephware - EternallyHyper',
+  'Also try Zephware',
   'Try “tookforeversry” for learning tools - EternallyHyper',
-  'JUST PUT THE PASSWORD ALREADY - EternallyAngy',
+  'JUST PUT THE PASSWORD ALREADY',
   'I should put the password for other stuff here - EternallyHyper',
   'These messages got to go bro 😭 - EternallyHyper',
   'If you want to access blooket hacks just use “back2schoolggs” - EternallyHyper',
@@ -1190,6 +1224,65 @@ function setButtonStatus(status) {
 
    setInterval(createhearts, 120);
 })();
+
+/* Pink Heartfall (Disabled)
+(function () {
+   if (window.__zephwareHeartfall) return;
+   window.__zephwareHeartfall = true;
+
+   const style = document.createElement("style");
+   style.textContent = `
+      #zeph-heart-container {
+         pointer-events: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         overflow: hidden;
+         z-index: 0;
+      }
+      .zeph-hearts {
+         position: absolute;
+         top: -5vh;
+         color: white;
+         font-size: 10px;
+         opacity: 0.8;
+         user-select: none;
+         animation-timing-function: linear;
+         animation-fill-mode: forwards;
+      }
+      @keyframes zeph-heartfall {
+         0% { transform: translateY(0) translateX(0); }
+         100% { transform: translateY(110vh) translateX(var(--drift)); }
+      }
+   `;
+   document.head.appendChild(style);
+
+   const container = document.createElement("div");
+   container.id = "zeph-heart-container";
+   document.body.appendChild(container);
+
+   function createhearts() {
+      const flake = document.createElement("div");
+      flake.className = "zeph-hearts";
+      flake.textContent = "❤️";
+
+      flake.style.left = Math.random() * 100 + "vw";
+      flake.style.fontSize = 8 + Math.random() * 20 + "px";
+      flake.style.opacity = 0.5 + Math.random() * 0.5;
+      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
+
+      const fallTime = 6 + Math.random() * 7;
+      flake.style.animation = `zeph-heartfall ${fallTime}s linear forwards`;
+
+      container.appendChild(flake);
+
+      setTimeout(() => flake.remove(), fallTime * 1000);
+   }
+
+   setInterval(createhearts, 120);
+})();*/
 
 /* JUMP SCARE (DISABLED)
 (function () {

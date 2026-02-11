@@ -123,7 +123,6 @@ function parseNumberSafe(str) {
     return isNaN(num) ? NaN : num;
 }
 
-
 const SESSION_EXPIRE = new Date('2026-02-28T02:00:00-04:00');
 
 function isSessionActive() {
@@ -385,10 +384,11 @@ function SessionTimer() {
             return;
             }
         } else {
-            const hours = Math.floor(diff / 3600000);
-            const mins = Math.floor((diff % 3600000) / 60000);
-            const secs = Math.floor((diff % 60000) / 1000);
-            timerDiv.textContent = `Session Expiring In: ${hours}h ${mins}m ${secs}s`;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+            timerDiv.textContent = `Session Expiring In: ${days}d ${hours}h ${mins}m ${secs}s`;
         }
     }
     updateTimer();

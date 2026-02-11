@@ -25,6 +25,21 @@
   "url": "https://d3rtzzzsiu7gdr.cloudfront.net/files/basketrandom/index.html"
  },
  {
+  "image": "https://d1kusoubqqwr7w.cloudfront.net/assets/games/GeometryDash.png",
+  "label": "Geometry Dash",
+  "url": "https://d1yh00vn2fvto7.cloudfront.net/play?gameID=game_28d8_bb38d44c326f3"
+ },
+ {
+  "image": "https://d1kusoubqqwr7w.cloudfront.net/assets/games/EscapeRoad.png",
+  "label": "Escape Road",
+  "url": "https://d1yh00vn2fvto7.cloudfront.net/play?gameID=game_5785_1561b7c94b62d"
+ },
+ {
+  "image": "https://d1kusoubqqwr7w.cloudfront.net/assets/games/FNAF.png",
+  "label": "Five Night's at Freddy's",
+  "url": "https://d1yh00vn2fvto7.cloudfront.net/play?gameID=game_de53_e3faf6a5482a1"
+ },
+ {
   "image": "https://d1kusoubqqwr7w.cloudfront.net/assets/games/WorldDomination2.png",
   "label": "World Domination 2",
   "url": "https://d1kusoubqqwr7w.cloudfront.net/swf/worlddomination2.swf"
@@ -79,8 +94,7 @@
  {
   "image": "https://d1kusoubqqwr7w.cloudfront.net/assets/games/Eaglercraft.png",
   "label": "Eaglercraft",
-  "url": "svaaps/eaglercrafthtml/main",
-  "type": "gameBuild"
+  "url": "https://d1yh00vn2fvto7.cloudfront.net/play?gameID=game_e0ad_53865671c6a04"
  },
  {
   "image": "https://d1kusoubqqwr7w.cloudfront.net/assets/games/BleachvsNaruto.jpg",
