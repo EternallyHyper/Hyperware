@@ -426,7 +426,7 @@ function showTagsModal() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'Ã—';
+  closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -470,7 +470,7 @@ function rollGame() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'Ã—';
+  closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
