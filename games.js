@@ -1,5 +1,3 @@
-
-
 // === Config ===
 let buttonConfigs = [];
 let activeTag = null;
