@@ -1,6 +1,6 @@
 <h1> Hyperware </h1>
 Hyperware is a bookmarklet on steroids for school with stuff like gimkit (work in progress) and blooket cheats along with games and other utilities.
-This project is intended to primarly bypass GoGuardian, if you have another blocker, this might not work so don't blame me
+This project is intended to primarly bypass GoGuardian, if you have another blocker, this might not work so don't blame me.
 
 
 ## How to Use:
@@ -20,7 +20,6 @@ I used <a href="https://github.com/TrulyZeph/Zephware/" target="_blank">Zephware
 
 *  Add Gimkit Hacks
 *  Add the Theme Marketplace
-*  Rework Games
 *  IXL + Hacks
 *  Learning Tools Completion
 *  Add TinyTask (Web Port)
