@@ -18,23 +18,6 @@ function preloadImage(src) {
   return promise;
 }
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAVMdl5Sp7NU_AZVhFVigLR-AC7HTKFiXw",
-  authDomain: "hyperware-saves.firebaseapp.com",
-  databaseURL: "https://hyperware-saves-default-rtdb.firebaseio.com",
-  projectId: "hyperware-saves",
-  storageBucket: "hyperware-saves.firebasestorage.app",
-  messagingSenderId: "986478439155",
-  appId: "1:986478439155:web:2839a29661c971e60d2586",
-  measurementId: "G-6M3LY8DL7S"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-const deviceId = localStorage.getItem("zw_device") || crypto.randomUUID();
-localStorage.setItem("zw_device", deviceId);
-
 function convertToRawGitHubURL(url) {
   if (typeof url !== 'string' || url.startsWith('http')) return url;
   const match = url.match(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
@@ -217,32 +200,23 @@ async function injectRuffle() {
 
 async function enableRuffleSave(player, gameUrl) {
   const saveKey = `zephware_ruffle_${gameUrl}`;
-  const dbRef = db.ref(`saves/${deviceId}/ruffle/${encodeURIComponent(gameUrl)}`);
-
+  
   try {
-    const snap = await dbRef.get();
-    if (snap.exists() && player.setLocalStorageData) {
-      player.setLocalStorageData(snap.val());
+    const savedData = localStorage.getItem(saveKey);
+    if (savedData && player.setLocalStorageData) {
+      player.setLocalStorageData(JSON.parse(savedData));
     }
   } catch (e) {
-    console.warn("Firebase load failed:", e);
+    console.warn('Could not load Ruffle save:', e);
   }
-
-  try {
-    const local = localStorage.getItem(saveKey);
-    if (local && player.setLocalStorageData) {
-      player.setLocalStorageData(JSON.parse(local));
-    }
-  } catch {}
 
   setInterval(() => {
     try {
       const saveData = player.getLocalStorageData?.();
-      if (!saveData) return;
-
-      localStorage.setItem(saveKey, JSON.stringify(saveData));
-      dbRef.set(saveData);
-    } catch {}
+      if (saveData) {
+        localStorage.setItem(saveKey, JSON.stringify(saveData));
+      }
+    } catch (e) {}
   }, 3000);
 }
 
@@ -253,18 +227,17 @@ function getGameSaveKey(config) {
 
 function saveGameState(config, iframe) {
   if (!iframe || !iframe.contentWindow) return;
-
-  const state = {
-    url: iframe.src,
-    timestamp: Date.now()
-  };
-
-  const saveKey = getGameSaveKey(config);
-
-  localStorage.setItem(saveKey, JSON.stringify(state));
-
-  const dbRef = db.ref(`saves/${deviceId}/games/${encodeURIComponent(saveKey)}`);
-  dbRef.set(state).catch(e => console.warn("Firebase save failed:", e));
+  
+  try {
+    const saveKey = getGameSaveKey(config);
+    const state = {
+      url: iframe.src,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(saveKey, JSON.stringify(state));
+  } catch (e) {
+    console.warn('Could not save game state:', e);
+  }
 }
 
 // === UI ===
