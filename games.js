@@ -25,20 +25,35 @@ function loadFirebase(cb){
    };
 }
 
-// === Firebase Save Wrapper ===
+// === Firebase Save Wrapper with sanitization ===
+function sanitizeKey(key) {
+  return key.replace(/[.#$/\[\]]/g, '_');
+}
+
 function cloudSave(key, data) {
   if (!firebaseLoaded) return;
-  return firebase.database()
-    .ref("saves/" + key)
-    .set(data);
+  try {
+    const safeKey = sanitizeKey(key);
+    return firebase.database()
+      .ref("saves/" + safeKey)
+      .set(data);
+  } catch (e) {
+    console.warn("Firebase save failed:", e);
+  }
 }
 
 function cloudLoad(key) {
   if (!firebaseLoaded) return Promise.resolve(null);
-  return firebase.database()
-    .ref("saves/" + key)
-    .once("value")
-    .then(snap => snap.val());
+  try {
+    const safeKey = sanitizeKey(key);
+    return firebase.database()
+      .ref("saves/" + safeKey)
+      .once("value")
+      .then(snap => snap.val());
+  } catch (e) {
+    console.warn("Firebase load failed:", e);
+    return Promise.resolve(null);
+  }
 }
 
 // === Config ===
@@ -240,10 +255,9 @@ async function injectRuffle() {
     document.body.appendChild(script);
   });
 }
-
+// === Ruffle save wrapper with fallback ===
 async function enableRuffleSave(player, gameUrl) {
-
-  const saveKey = `zephware_ruffle_${gameUrl}`;
+  const saveKey = `zephware_ruffle_${sanitizeKey(gameUrl)}`;
 
   try {
     const cloudData = await cloudLoad(saveKey);
@@ -252,11 +266,15 @@ async function enableRuffleSave(player, gameUrl) {
       player.setLocalStorageData(cloudData);
       console.log("☁️ Firebase save loaded");
     } else {
-      // fallback to local
-      const local = localStorage.getItem(saveKey);
-      if (local && player.setLocalStorageData) {
-        player.setLocalStorageData(JSON.parse(local));
-        console.log("💾 Local save loaded");
+      // fallback to localStorage (try/catch)
+      try {
+        const local = localStorage.getItem(saveKey);
+        if (local && player.setLocalStorageData) {
+          player.setLocalStorageData(JSON.parse(local));
+          console.log("💾 Local save loaded");
+        }
+      } catch(e) {
+        console.warn("LocalStorage blocked, using in-memory save", e);
       }
     }
   } catch (e) {
@@ -266,20 +284,23 @@ async function enableRuffleSave(player, gameUrl) {
   setInterval(async () => {
     try {
       const saveData = player.getLocalStorageData?.();
-
       if (!saveData) return;
 
       // local backup
-      localStorage.setItem(saveKey, JSON.stringify(saveData));
+      try {
+        localStorage.setItem(saveKey, JSON.stringify(saveData));
+      } catch(e) {
+        // storage blocked in blob URL, ignore
+      }
 
-      // firebase cloud save
+      // cloud save
       await cloudSave(saveKey, saveData);
-
       console.log("☁️ Firebase autosaved");
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Autosave failed:", e);
+    }
   }, 5000);
 }
-
 
 // === Game Build Saving ===
 function getGameSaveKey(config) {
@@ -294,7 +315,33 @@ function saveGameState(config, iframe) {
     timestamp: Date.now()
   };
 
-  cloudSave("game_" + (config.label || config.url), state);
+  const key = "game_" + sanitizeKey(config.label || config.url);
+
+  // Firebase save
+  cloudSave(key, state);
+
+  // Local fallback
+  try {
+    localStorage.setItem(key, JSON.stringify(state));
+  } catch(e) {
+    console.warn("LocalStorage blocked, save skipped", e);
+  }
+}
+
+function loadGameState(config, iframe){
+  const key = "game_" + sanitizeKey(config.label || config.url);
+
+  cloudLoad(key)
+    .then(data => {
+      if (data?.url) {
+        iframe.src = data.url;
+      } else {
+        try {
+          const local = localStorage.getItem(key);
+          if (local) iframe.src = JSON.parse(local).url;
+        } catch(e) {}
+      }
+    });
 }
 
 // === UI ===
