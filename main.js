@@ -1,6 +1,6 @@
-javascript:(function(){
+javascript:(function(){if(window.location.hostname.indexOf('google.com')>-1){javascript:(function(){document.open();document.write("");document.close(); 
 
-  if (!document.getElementById('fredoka-font-link')) {
+ if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
     link.id = 'fredoka-font-link';
     link.rel = 'stylesheet';
@@ -403,7 +403,7 @@ const theme = themes.red;
   disclaimer.style.fontSize = '12px';
   disclaimer.style.fontWeight = 'bold';
   disclaimer.style.color = theme.color2;
-  disclaimer.innerText = 'Only use this Bookmarklet on about:blank, otherwise the Password might not work';
+  disclaimer.innerText = 'Please use this bookmarklet on google.com, this is for data saving purposes.';
 
   var hint = document.createElement('div');
   hint.style.position = 'absolute';
@@ -601,27 +601,25 @@ hint.innerText = randomMessage;
    const newsPages = [
   {
     title: "What's New?",
-    desc: "v1.2.1 : Week of February 8th, 2026",
+    desc: "v1.2.1 : Week of February 15th, 2026",
     images: [
       { src: theme.img1 }
+    ],
+    changes: [
+      { text: "Data Saving", desc: "Games and Library save data now" }
+    ]
+  },
+  {
+    title: "What'd I Miss?",
+    desc: "v1.2.0 : Week of February 8st, 2026",
+    images: [
+      { src: theme.img2 }
     ],
     changes: [
       { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
       { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
       { text: "Games and Library", desc: "they’re back go enjoy them" },
       { text: "Inspect Element", desc: "iPad users can now enjoy the inspect tool lol" }
-    ]
-  },
-  {
-    title: "What'd I Miss?",
-    desc: "v1.2.0 : Week of February 1st, 2026",
-    images: [
-      { src: theme.img2 }
-    ],
-    changes: [
-      { text: "Theme Preparation", desc: "Added news image switching when manually editing the theme" },
-      { text: "Theme Change", desc: "red theme cause valentines" },
-      { text: "Games and Library removal", desc: "those will not be updating so use Zephware" }
     ]
   },
   {
@@ -634,6 +632,7 @@ hint.innerText = randomMessage;
     changes: [
       { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
       { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
+      { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
       { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },   
       { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
     ]
@@ -1344,3 +1343,4 @@ function setButtonStatus(status) {
   `;
   document.head.appendChild(style);
 })();
+} else {alert('This bookmarklet only works on google.com, this is for data saving purposes and for keeping the data in 1 place.');}})();

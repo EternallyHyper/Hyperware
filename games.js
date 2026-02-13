@@ -1,61 +1,3 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyAVMdl5Sp7NU_AZVhFVigLR-AC7HTKFiXw",
-  authDomain: "hyperware-saves.firebaseapp.com",
-  databaseURL: "https://hyperware-saves-default-rtdb.firebaseio.com",
-  projectId: "hyperware-saves",
-  storageBucket: "hyperware-saves.firebasestorage.app",
-  messagingSenderId: "986478439155",
-  appId: "1:986478439155:web:2839a29661c971e60d2586",
-  measurementId: "G-6M3LY8DL7S"
-};
-
-let firebaseLoaded = false;
-function loadFirebase(cb){
-   if(firebaseLoaded) return cb();
-   let s1=document.createElement('script');
-   let s2=document.createElement('script');
-   s1.src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
-   s2.src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js";
-   document.head.appendChild(s1);
-   document.head.appendChild(s2);
-   s2.onload=function(){
-      firebase.initializeApp(firebaseConfig);
-      firebaseLoaded=true;
-      cb();
-   };
-}
-
-// === Firebase Save Wrapper with sanitization ===
-function sanitizeKey(key) {
-  return key.replace(/[.#$/\[\]]/g, '_');
-}
-
-function cloudSave(key, data) {
-  if (!firebaseLoaded) return;
-  try {
-    const safeKey = sanitizeKey(key);
-    return firebase.database()
-      .ref("saves/" + safeKey)
-      .set(data);
-  } catch (e) {
-    console.warn("Firebase save failed:", e);
-  }
-}
-
-function cloudLoad(key) {
-  if (!firebaseLoaded) return Promise.resolve(null);
-  try {
-    const safeKey = sanitizeKey(key);
-    return firebase.database()
-      .ref("saves/" + safeKey)
-      .once("value")
-      .then(snap => snap.val());
-  } catch (e) {
-    console.warn("Firebase load failed:", e);
-    return Promise.resolve(null);
-  }
-}
-
 // === Config ===
 let buttonConfigs = [];
 let activeTag = null;
@@ -78,7 +20,7 @@ function preloadImage(src) {
 
 function convertToRawGitHubURL(url) {
   if (typeof url !== 'string' || url.startsWith('http')) return url;
-  const match = url.match(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
+  const match = urlmatch(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
   if (!match) return url;
   const [, username, repo, rest = 'main'] = match;
   const path = rest.endsWith('/') ? rest : rest + '/';
@@ -255,51 +197,27 @@ async function injectRuffle() {
     document.body.appendChild(script);
   });
 }
-// === Ruffle save wrapper with fallback ===
+
 async function enableRuffleSave(player, gameUrl) {
-  const saveKey = `zephware_ruffle_${sanitizeKey(gameUrl)}`;
-
+  const saveKey = `zephware_ruffle_${gameUrl}`;
+  
   try {
-    const cloudData = await cloudLoad(saveKey);
-
-    if (cloudData && player.setLocalStorageData) {
-      player.setLocalStorageData(cloudData);
-      console.log("☁️ Firebase save loaded");
-    } else {
-      // fallback to localStorage (try/catch)
-      try {
-        const local = localStorage.getItem(saveKey);
-        if (local && player.setLocalStorageData) {
-          player.setLocalStorageData(JSON.parse(local));
-          console.log("💾 Local save loaded");
-        }
-      } catch(e) {
-        console.warn("LocalStorage blocked, using in-memory save", e);
-      }
+    const savedData = localStorage.getItem(saveKey);
+    if (savedData && player.setLocalStorageData) {
+      player.setLocalStorageData(JSON.parse(savedData));
     }
   } catch (e) {
-    console.warn("Load failed:", e);
+    console.warn('Could not load Ruffle save:', e);
   }
 
-  setInterval(async () => {
+  setInterval(() => {
     try {
       const saveData = player.getLocalStorageData?.();
-      if (!saveData) return;
-
-      // local backup
-      try {
+      if (saveData) {
         localStorage.setItem(saveKey, JSON.stringify(saveData));
-      } catch(e) {
-        // storage blocked in blob URL, ignore
       }
-
-      // cloud save
-      await cloudSave(saveKey, saveData);
-      console.log("☁️ Firebase autosaved");
-    } catch (e) {
-      console.warn("Autosave failed:", e);
-    }
-  }, 5000);
+    } catch (e) {}
+  }, 3000);
 }
 
 // === Game Build Saving ===
@@ -309,39 +227,17 @@ function getGameSaveKey(config) {
 
 function saveGameState(config, iframe) {
   if (!iframe || !iframe.contentWindow) return;
-
-  const state = {
-    url: iframe.src,
-    timestamp: Date.now()
-  };
-
-  const key = "game_" + sanitizeKey(config.label || config.url);
-
-  // Firebase save
-  cloudSave(key, state);
-
-  // Local fallback
+  
   try {
-    localStorage.setItem(key, JSON.stringify(state));
-  } catch(e) {
-    console.warn("LocalStorage blocked, save skipped", e);
+    const saveKey = getGameSaveKey(config);
+    const state = {
+      url: iframe.src,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(saveKey, JSON.stringify(state));
+  } catch (e) {
+    console.warn('Could not save game state:', e);
   }
-}
-
-function loadGameState(config, iframe){
-  const key = "game_" + sanitizeKey(config.label || config.url);
-
-  cloudLoad(key)
-    .then(data => {
-      if (data?.url) {
-        iframe.src = data.url;
-      } else {
-        try {
-          const local = localStorage.getItem(key);
-          if (local) iframe.src = JSON.parse(local).url;
-        } catch(e) {}
-      }
-    });
 }
 
 // === UI ===
@@ -436,16 +332,7 @@ function renderGames(configs) {
   });
 }
 
-function loadGameState(config, iframe){
-  cloudLoad("game_" + (config.label || config.url))
-    .then(data=>{
-       if(data?.url){
-          iframe.src = data.url;
-       }
-    });
-}
 async function openGame(config) {
-
   if (!panel) return;
   panel.remove();
 
@@ -460,8 +347,6 @@ async function openGame(config) {
       return;
     }
   }
-
-  // === Flash / Ruffle ===
   if (url && url.endsWith('.swf')) {
     try {
       await injectRuffle();
@@ -478,17 +363,12 @@ async function openGame(config) {
     return;
   }
 
-  // === Normal iframe games ===
+  
   const iframe = document.createElement('iframe');
   iframe.className = 'game-player';
   iframe.src = url;
   iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
   iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals";
-
-  iframe.onload = () => {
-    loadGameState(config, iframe);
-  };
-
   document.body.appendChild(iframe);
 
   if (config.type === 'gameBuild') {
@@ -550,7 +430,7 @@ function showTagsModal() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = '×';
+  closeBtn.textContent = 'x';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -594,7 +474,7 @@ function rollGame() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = '×';
+  closeBtn.textContent = 'x';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -648,7 +528,7 @@ function createSettingsPanel() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'X';
+  closeBtn.textContent = 'x';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -668,7 +548,7 @@ function createSettingsPanel() {
 
 // === Loading ===
 function loadGameList() {
-  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/gamelist.json')
+  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/json/gamelist.json')
     .then(response => response.json())
     .then(data => {
       buttonConfigs = data;
@@ -683,7 +563,4 @@ function loadGameList() {
     });
 }
 
-loadFirebase(() => {
-  console.log("Firebase ready");
-  loadGameList();
-});
+loadGameList();
