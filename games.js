@@ -1,3 +1,46 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyAVMdl5Sp7NU_AZVhFVigLR-AC7HTKFiXw",
+  authDomain: "hyperware-saves.firebaseapp.com",
+  databaseURL: "https://hyperware-saves-default-rtdb.firebaseio.com",
+  projectId: "hyperware-saves",
+  storageBucket: "hyperware-saves.firebasestorage.app",
+  messagingSenderId: "986478439155",
+  appId: "1:986478439155:web:2839a29661c971e60d2586",
+  measurementId: "G-6M3LY8DL7S"
+};
+
+let firebaseLoaded = false;
+function loadFirebase(cb){
+   if(firebaseLoaded) return cb();
+   let s1=document.createElement('script');
+   let s2=document.createElement('script');
+   s1.src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
+   s2.src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js";
+   document.head.appendChild(s1);
+   document.head.appendChild(s2);
+   s2.onload=function(){
+      firebase.initializeApp(firebaseConfig);
+      firebaseLoaded=true;
+      cb();
+   };
+}
+
+// === Firebase Save Wrapper ===
+function cloudSave(key, data) {
+  if (!firebaseLoaded) return;
+  return firebase.database()
+    .ref("saves/" + key)
+    .set(data);
+}
+
+function cloudLoad(key) {
+  if (!firebaseLoaded) return Promise.resolve(null);
+  return firebase.database()
+    .ref("saves/" + key)
+    .once("value")
+    .then(snap => snap.val());
+}
+
 // === Config ===
 let buttonConfigs = [];
 let activeTag = null;
@@ -199,26 +242,44 @@ async function injectRuffle() {
 }
 
 async function enableRuffleSave(player, gameUrl) {
+
   const saveKey = `zephware_ruffle_${gameUrl}`;
-  
+
   try {
-    const savedData = localStorage.getItem(saveKey);
-    if (savedData && player.setLocalStorageData) {
-      player.setLocalStorageData(JSON.parse(savedData));
+    const cloudData = await cloudLoad(saveKey);
+
+    if (cloudData && player.setLocalStorageData) {
+      player.setLocalStorageData(cloudData);
+      console.log("☁️ Firebase save loaded");
+    } else {
+      // fallback to local
+      const local = localStorage.getItem(saveKey);
+      if (local && player.setLocalStorageData) {
+        player.setLocalStorageData(JSON.parse(local));
+        console.log("💾 Local save loaded");
+      }
     }
   } catch (e) {
-    console.warn('Could not load Ruffle save:', e);
+    console.warn("Load failed:", e);
   }
 
-  setInterval(() => {
+  setInterval(async () => {
     try {
       const saveData = player.getLocalStorageData?.();
-      if (saveData) {
-        localStorage.setItem(saveKey, JSON.stringify(saveData));
-      }
+
+      if (!saveData) return;
+
+      // local backup
+      localStorage.setItem(saveKey, JSON.stringify(saveData));
+
+      // firebase cloud save
+      await cloudSave(saveKey, saveData);
+
+      console.log("☁️ Firebase autosaved");
     } catch (e) {}
-  }, 3000);
+  }, 5000);
 }
+
 
 // === Game Build Saving ===
 function getGameSaveKey(config) {
@@ -227,17 +288,13 @@ function getGameSaveKey(config) {
 
 function saveGameState(config, iframe) {
   if (!iframe || !iframe.contentWindow) return;
-  
-  try {
-    const saveKey = getGameSaveKey(config);
-    const state = {
-      url: iframe.src,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(saveKey, JSON.stringify(state));
-  } catch (e) {
-    console.warn('Could not save game state:', e);
-  }
+
+  const state = {
+    url: iframe.src,
+    timestamp: Date.now()
+  };
+
+  cloudSave("game_" + (config.label || config.url), state);
 }
 
 // === UI ===
@@ -332,7 +389,16 @@ function renderGames(configs) {
   });
 }
 
+function loadGameState(config, iframe){
+  cloudLoad("game_" + (config.label || config.url))
+    .then(data=>{
+       if(data?.url){
+          iframe.src = data.url;
+       }
+    });
+}
 async function openGame(config) {
+
   if (!panel) return;
   panel.remove();
 
@@ -348,6 +414,7 @@ async function openGame(config) {
     }
   }
 
+  // === Flash / Ruffle ===
   if (url && url.endsWith('.swf')) {
     try {
       await injectRuffle();
@@ -364,11 +431,17 @@ async function openGame(config) {
     return;
   }
 
+  // === Normal iframe games ===
   const iframe = document.createElement('iframe');
   iframe.className = 'game-player';
   iframe.src = url;
   iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
   iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals";
+
+  iframe.onload = () => {
+    loadGameState(config, iframe);
+  };
+
   document.body.appendChild(iframe);
 
   if (config.type === 'gameBuild') {
@@ -563,4 +636,7 @@ function loadGameList() {
     });
 }
 
-loadGameList();
+loadFirebase(() => {
+  console.log("Firebase ready");
+  loadGameList();
+});
