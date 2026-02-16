@@ -1,7 +1,4 @@
-javascript:(function(){if (
-  window.location.hostname.includes('google.com') ||
-  window.location.hostname.includes('hyperware.vercel.app')
-){javascript:(function(){document.open();document.write("");document.close(); 
+javascript:(function(){if(window.location.hostname.indexOf('google.com')>-1){javascript:(function(){document.open();document.write("");document.close(); 
 
  if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
@@ -600,7 +597,7 @@ hint.innerText = randomMessage;
       ],
       changes: [
         { text: "Data Saving", desc: "Games and Library save data now" },
-        { text: "Themes", desc: "Themes are here! Use the themes option to choose. Seasonal Themes are included and have their corresponding features." }
+        { text: "Themes", desc: "Themes are here! Use the theme button to select themes. Seasonal Themes will have their corresponding features." }
       ]
     },
     {
@@ -623,8 +620,7 @@ hint.innerText = randomMessage;
         { src: "https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
       ],
       changes: [
-        { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, etc." },
-        { text: "IXL+ Hacks", desc: "Paid $5 for it lol" },
+        { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
         { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
         { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
         { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
@@ -642,39 +638,122 @@ function showThemePanel() {
   overlay.style.zIndex = '99999';
   overlay.style.fontFamily = "'Fredoka', sans-serif";
 
-  let themeOptionsHTML = Object.keys(themes).map(key => `
-    <div 
-      style="
-        padding:12px;
-        margin:8px;
-        border-radius:12px;
-        cursor:pointer;
-        background:linear-gradient(to right, ${themes[key].color1}, ${themes[key].color2});
-        font-weight:bold;
-        text-align:center;
-      "
-      data-theme="${key}"
-    >
-      ${key.toUpperCase()}
-    </div>
-  `).join("");
+  const current = localStorage.getItem("hyperware-theme") || "red";
 
   overlay.innerHTML = `
-    <div id="overlay-box" style="font-family:'Fredoka',sans-serif;max-height:500px;overflow-y:auto;">
-      <h1 style="color:${theme.color1};">Select Theme</h1>
-      ${themeOptionsHTML}
-      <br>
-      <button id="theme-close" style="font-family:'Fredoka',sans-serif;">Close</button>
+    <div id="overlay-box" style="
+      max-width:750px;
+      width:95%;
+      max-height:85vh;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    ">
+      <h1 style="
+        color:${theme.color1};
+        font-size:28px;
+        margin:0;
+      ">Select Theme</h1>
+
+      <div id="theme-grid" style="
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+        gap:16px;
+        overflow-y:auto;
+        padding-right:4px;
+      ">
+      </div>
+
+      <button id="theme-close"
+        style="
+          align-self:center;
+          padding:10px 26px;
+          border-radius:12px;
+          border:none;
+          font-weight:bold;
+          background:linear-gradient(to bottom, ${theme.color1}, ${theme.color2});
+          color:white;
+          cursor:pointer;
+        ">
+        Close
+      </button>
     </div>
   `;
 
   document.body.appendChild(overlay);
 
-  overlay.querySelectorAll('[data-theme]').forEach(el => {
-    el.onclick = () => {
-      const selected = el.getAttribute('data-theme');
-      applyTheme(selected);
+  const grid = overlay.querySelector('#theme-grid');
+
+  Object.keys(themes).forEach(key => {
+    const t = themes[key];
+
+    const card = document.createElement('div');
+    card.setAttribute('data-theme', key);
+
+    card.style.cssText = `
+      background:#1b1b1b;
+      border-radius:16px;
+      padding:14px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      transition:all 0.2s ease;
+      border:2px solid ${key === current ? t.color1 : 'transparent'};
+      box-shadow:${key === current ? `0 0 12px ${t.color1}` : 'none'};
+    `;
+
+    card.innerHTML = `
+      <div style="
+        height:70px;
+        border-radius:12px;
+        background:linear-gradient(135deg, ${t.color1}, ${t.color2});
+        position:relative;
+        overflow:hidden;
+      ">
+        <div style="
+          position:absolute;
+          bottom:0;
+          left:0;
+          right:0;
+          height:18px;
+          display:flex;
+        ">
+          <div style="flex:1;background:${t.waves[0]}"></div>
+          <div style="flex:1;background:${t.waves[1]}"></div>
+          <div style="flex:1;background:${t.waves[2]}"></div>
+        </div>
+      </div>
+
+      <div style="
+        text-align:center;
+        font-weight:600;
+        font-size:14px;
+        letter-spacing:0.5px;
+      ">
+        ${key.toUpperCase()}
+      </div>
+    `;
+
+    card.onmouseenter = () => {
+      card.style.transform = "translateY(-4px)";
+      card.style.boxShadow = `0 6px 18px ${t.color1}55`;
     };
+
+    card.onmouseleave = () => {
+      card.style.transform = "translateY(0)";
+      card.style.boxShadow = key === current
+        ? `0 0 12px ${t.color1}`
+        : "none";
+    };
+
+    card.onclick = () => {
+      applyTheme(key);
+      overlay.remove();
+    };
+
+    grid.appendChild(card);
   });
 
   overlay.querySelector('#theme-close').onclick = () => {
@@ -695,28 +774,17 @@ function applyThemeEffects(themeName) {
   clearThemeEffects();
 
   switch(themeName) {
-
-    /* ❄ CHRISTMAS → Snowfall */
     case "christmas":
       activeEffect = createSnowfall();
       break;
-
-    /* ❤️ RED → Red Hearts */
     case "red":
       activeEffect = createHeartfall("❤️");
       break;
-
-    /* 💗 PINK → Pink Hearts */
     case "pink":
       activeEffect = createHeartfall("💗");
       break;
-
-    /* 👻 ORANGE (Halloween) → Jumpscare Flicker */
     case "orange":
       activeEffect = createJumpScare();
-      break;
-
-    default:
       break;
   }
 }
@@ -1063,7 +1131,6 @@ if (val === 'news') {
 }
 
     if (val === 'zephware' || val === 'games' || val === 'library') {
-        clearThemeEffects();
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
@@ -1381,4 +1448,4 @@ function createJumpScare() {
   `;
   document.head.appendChild(style);
 })();
-} else {alert('This bookmarklet only works on google.com, (or hyperware.vercel.app) this is for data saving purposes and for keeping the data in 1 place.');}})();
+} else {alert('This bookmarklet only works on google.com, this is for data saving purposes and for keeping the data in 1 place.');}})();
