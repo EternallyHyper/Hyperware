@@ -597,7 +597,7 @@ hint.innerText = randomMessage;
       ],
       changes: [
         { text: "Data Saving", desc: "Games and Library save data now" },
-        { text: "Themes", desc: "Themes are here! Use the theme button to select themes. Seasonal Themes will have their corresponding features." }
+        { text: "Themes", desc: "Themes are here! Use the themes option to choose. Seasonal Themes are included and have their corresponding features." }
       ]
     },
     {
@@ -621,7 +621,7 @@ hint.innerText = randomMessage;
       ],
       changes: [
         { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, etc." },
-        { text: "IXL+ Hacks", desc: "Paid $5 for it" },
+        { text: "IXL+ Hacks", desc: "Paid $5 for it lol" },
         { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
         { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
         { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
