@@ -1,4 +1,7 @@
-javascript:(function(){if(window.location.hostname.indexOf('google.com')>-1){javascript:(function(){document.open();document.write("");document.close(); 
+javascript:(function(){if (
+  window.location.hostname.includes('google.com') ||
+  window.location.hostname.includes('hyperware.vercel.app')
+){javascript:(function(){document.open();document.write("");document.close(); 
 
  if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
@@ -1378,4 +1381,4 @@ function createJumpScare() {
   `;
   document.head.appendChild(style);
 })();
-} else {alert('This bookmarklet only works on google.com, this is for data saving purposes and for keeping the data in 1 place.');}})();
+} else {alert('This bookmarklet only works on google.com, (or hyperware.vercel.app) this is for data saving purposes and for keeping the data in 1 place.');}})();
