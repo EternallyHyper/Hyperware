@@ -1134,6 +1134,7 @@ if (val === 'news') {
 }
 
     if (val === 'zephware' || val === 'games' || val === 'library') {
+        clearThemeEffects();
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
