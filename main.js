@@ -59,7 +59,9 @@ const themes = {
       waves: ['#e0dbdbff','#f0f0f0ff','#fdfdfdff']
    }
 };
-const theme = themes.red;
+let currentTheme = localStorage.getItem("hyperware-theme") || "red";
+let theme = themes[currentTheme];
+setTimeout(() => applyThemeEffects(currentTheme), 100);
 
   const style = document.createElement('style');
   style.textContent = `
@@ -395,20 +397,10 @@ const theme = themes.red;
   passdesc.style.color = '#3D3636';
   passdesc.innerText = 'Hyperware requires a password to hide from GoGuardian';
 
-  var disclaimer = document.createElement('div');
-  disclaimer.style.position = 'absolute';
-  disclaimer.style.left = '50%';
-  disclaimer.style.top = '275px';
-  disclaimer.style.transform = 'translateX(-50%)';
-  disclaimer.style.fontSize = '12px';
-  disclaimer.style.fontWeight = 'bold';
-  disclaimer.style.color = theme.color2;
-  disclaimer.innerText = 'Please use this bookmarklet on google.com, this is for data saving purposes.';
-
   var hint = document.createElement('div');
   hint.style.position = 'absolute';
   hint.style.left = '50%';
-  hint.style.top = '335px';
+  hint.style.top = '275px';
   hint.style.transform = 'translateX(-50%)';
   hint.style.fontSize = '11px';
   hint.style.fontWeight = 'bold';
@@ -422,7 +414,7 @@ const theme = themes.red;
   randomBtn.innerText = 'New Message';
   randomBtn.style.position = 'absolute';
   randomBtn.style.left = '50%';
-  randomBtn.style.top = '390px';
+  randomBtn.style.top = '325px';
   randomBtn.style.transform = 'translateX(-50%)';
   randomBtn.style.padding = '5px 10px';
   randomBtn.style.cursor = 'pointer';
@@ -539,7 +531,6 @@ hint.innerText = randomMessage;
   guiDiv.appendChild(title);
   guiDiv.appendChild(inputBox);
   guiDiv.appendChild(passdesc);
-  guiDiv.appendChild(disclaimer);
   guiDiv.appendChild(hint);
   guiDiv.appendChild(randomBtn);
   document.body.appendChild(guiDiv);
@@ -583,7 +574,7 @@ hint.innerText = randomMessage;
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Games', 'Library', 'Zephware', 'News',  'Schoology Utilities', 'Inspect Element', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Games', 'Library', 'Zephware', 'News', 'Themes', 'Schoology Utilities', 'Inspect Element', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -596,48 +587,191 @@ hint.innerText = randomMessage;
   button.textContent = 'Go';
   inputArea.appendChild(button);
 
-   const newsPages = [
-  {
-    title: "What's New?",
-    desc: "v1.2.1 : Week of February 15th, 2026",
-    images: [
-      { src: theme.img1 }
-    ],
-    changes: [
-      { text: "Data Saving", desc: "Games and Library save data now" }
-    ]
-  },
-  {
-    title: "What'd I Miss?",
-    desc: "v1.2.0 : Week of February 8st, 2026",
-    images: [
-      { src: theme.img2 }
-    ],
-    changes: [
-      { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
-      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
-      { text: "Games and Library", desc: "they’re back go enjoy them" },
-      { text: "Inspect Element", desc: "iPad users can now enjoy the inspect tool lol" }
-    ]
-  },
-  {
-    title: "What's Next?",
-    desc: "v1.2.2 : Coming Soon!",
-    images: [
-      { src: 
-"https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
-    ],
-    changes: [
-      { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
-      { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
-      { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
-      { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },   
-      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
-    ]
-  },
-];
+   function getNewsPages() {
+  return [
+    {
+      title: "What's New?",
+      desc: "v1.2.1 : Week of February 15th, 2026",
+      images: [
+        { src: theme.img1 }
+      ],
+      changes: [
+        { text: "Data Saving", desc: "Games and Library save data now" },
+        { text: "Themes", desc: "Themes are here! Use the theme button to select themes. Seasonal Themes will have their corresponding features." }
+      ]
+    },
+    {
+      title: "What'd I Miss?",
+      desc: "v1.2.0 : Week of February 8st, 2026",
+      images: [
+        { src: theme.img2 }
+      ],
+      changes: [
+        { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
+        { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
+        { text: "Games and Library", desc: "they’re back go enjoy them" },
+        { text: "Inspect Element", desc: "iPad users can now enjoy the inspect tool lol" }
+      ]
+    },
+    {
+      title: "What's Next?",
+      desc: "v1.2.2 : Coming Soon!",
+      images: [
+        { src: "https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
+      ],
+      changes: [
+        { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, etc." },
+        { text: "IXL+ Hacks", desc: "Paid $5 for it" },
+        { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
+        { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
+        { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
+      ]
+    }
+  ];
+}
+
+function showThemePanel() {
+  const old = document.getElementById('overlay');
+  if (old) old.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'overlay';
+  overlay.style.zIndex = '99999';
+  overlay.style.fontFamily = "'Fredoka', sans-serif";
+
+  let themeOptionsHTML = Object.keys(themes).map(key => `
+    <div 
+      style="
+        padding:12px;
+        margin:8px;
+        border-radius:12px;
+        cursor:pointer;
+        background:linear-gradient(to right, ${themes[key].color1}, ${themes[key].color2});
+        font-weight:bold;
+        text-align:center;
+      "
+      data-theme="${key}"
+    >
+      ${key.toUpperCase()}
+    </div>
+  `).join("");
+
+  overlay.innerHTML = `
+    <div id="overlay-box" style="font-family:'Fredoka',sans-serif;max-height:500px;overflow-y:auto;">
+      <h1 style="color:${theme.color1};">Select Theme</h1>
+      ${themeOptionsHTML}
+      <br>
+      <button id="theme-close" style="font-family:'Fredoka',sans-serif;">Close</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelectorAll('[data-theme]').forEach(el => {
+    el.onclick = () => {
+      const selected = el.getAttribute('data-theme');
+      applyTheme(selected);
+    };
+  });
+
+  overlay.querySelector('#theme-close').onclick = () => {
+    overlay.remove();
+  };
+}
+
+let activeEffect = null;
+
+function clearThemeEffects() {
+  if (activeEffect && activeEffect.cleanup) {
+    activeEffect.cleanup();
+  }
+  activeEffect = null;
+}
+
+function applyThemeEffects(themeName) {
+  clearThemeEffects();
+
+  switch(themeName) {
+
+    /* ❄ CHRISTMAS → Snowfall */
+    case "christmas":
+      activeEffect = createSnowfall();
+      break;
+
+    /* ❤️ RED → Red Hearts */
+    case "red":
+      activeEffect = createHeartfall("❤️");
+      break;
+
+    /* 💗 PINK → Pink Hearts */
+    case "pink":
+      activeEffect = createHeartfall("💗");
+      break;
+
+    /* 👻 ORANGE (Halloween) → Jumpscare Flicker */
+    case "orange":
+      activeEffect = createJumpScare();
+      break;
+
+    default:
+      break;
+  }
+}
+
+function applyTheme(name) {
+  theme = themes[name];
+  localStorage.setItem("hyperware-theme", name);
+
+  document.querySelectorAll('.header1, .header2').forEach(el => {
+    el.style.background = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
+    el.style.webkitBackgroundClip = "text";
+    el.style.webkitTextFillColor = "transparent";
+  });
+
+  document.querySelectorAll('button').forEach(btn => {
+    if (!btn.disabled) {
+      btn.style.background = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
+    }
+  });
+
+  const select = document.querySelector('select');
+  if (select) {
+    select.style.color = theme.color1;
+  }
+
+  document.querySelectorAll('input').forEach(inp => {
+    inp.style.borderColor = theme.color2;
+    inp.style.color = theme.color2;
+  });
+
+  const waves = document.querySelectorAll('.parallax use');
+  waves.forEach((wave, i) => {
+    wave.setAttribute('fill', theme.waves[i]);
+  });
+
+  const cover = document.querySelector('div[style*="11vh"]');
+  if (cover) cover.style.backgroundColor = theme.waves[2];
+
+  document.querySelectorAll('#overlay-box h1').forEach(h1 => {
+    h1.style.color = theme.color1;
+  });
+
+const newsOverlay = document.getElementById('news-overlay');
+if (newsOverlay) {
+  const img = newsOverlay.querySelector('img');
+  if (img) {
+    let pages = getNewsPages();
+    img.src = pages[0].images[0].src;
+  }
+}
+
+document.body.style.transition = "background 0.4s ease";
+
+applyThemeEffects(name);
+}
 
 function showNewsPanel() {
+let newsPages = getNewsPages();
   let pageIdx = 0;
   let imgIdx = 0;
 
@@ -905,6 +1039,11 @@ button.addEventListener('click', () => {
         return;
     }
 
+if (val === 'themes') {
+  showThemePanel();
+  return;
+}
+
    if (val === 'schoology utilities') {
    showInstructionsOverlay('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/bridge.js');
         return;
@@ -1104,224 +1243,121 @@ function setButtonStatus(status) {
   document.body.appendChild(inputArea);
 })();
 
-/* Winter Snowfall (Disabled)
-(function () {
-   if (window.__zephwareSnowfall) return;
-   window.__zephwareSnowfall = true;
+function createSnowfall() {
+  const container = document.createElement("div");
+  container.id = "theme-effect";
+  document.body.appendChild(container);
 
-   const style = document.createElement("style");
-   style.textContent = `
-      #zeph-snow-container {
-         pointer-events: none;
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100vw;
-         height: 100vh;
-         overflow: hidden;
-         z-index: 0;
-      }
-      .zeph-snowflake {
-         position: absolute;
-         top: -5vh;
-         color: white;
-         font-size: 10px;
-         opacity: 0.8;
-         user-select: none;
-         animation-timing-function: linear;
-         animation-fill-mode: forwards;
-      }
-      @keyframes zeph-snowfall {
-         0% { transform: translateY(0) translateX(0); }
-         100% { transform: translateY(110vh) translateX(var(--drift)); }
-      }
-   `;
-   document.head.appendChild(style);
+  const interval = setInterval(() => {
+    const flake = document.createElement("div");
+    flake.textContent = "❄";
+    flake.style.position = "fixed";
+    flake.style.top = "-10px";
+    flake.style.left = Math.random() * 100 + "vw";
+    flake.style.color = "white";
+    flake.style.fontSize = (8 + Math.random() * 20) + "px";
+    flake.style.pointerEvents = "none";
+    flake.style.zIndex = "0";
+    flake.style.transition = "transform 8s linear";
 
-   const container = document.createElement("div");
-   container.id = "zeph-snow-container";
-   document.body.appendChild(container);
+    document.body.appendChild(flake);
 
-   function createSnowflake() {
-      const flake = document.createElement("div");
-      flake.className = "zeph-snowflake";
-      flake.textContent = "❄";
+    requestAnimationFrame(() => {
+      flake.style.transform = `translateY(110vh)`;
+    });
 
-      flake.style.left = Math.random() * 100 + "vw";
-      flake.style.fontSize = 8 + Math.random() * 20 + "px";
-      flake.style.opacity = 0.5 + Math.random() * 0.5;
-      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
+    setTimeout(() => flake.remove(), 8000);
+  }, 150);
 
-      const fallTime = 6 + Math.random() * 7;
-      flake.style.animation = `zeph-snowfall ${fallTime}s linear forwards`;
+  return {
+    cleanup() {
+      clearInterval(interval);
+      container.remove();
+    }
+  };
+}
 
-      container.appendChild(flake);
+function createHeartfall(emoji) {
+  const interval = setInterval(() => {
+    const heart = document.createElement("div");
+    heart.textContent = emoji;
+    heart.style.position = "fixed";
+    heart.style.top = "-10px";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (10 + Math.random() * 20) + "px";
+    heart.style.pointerEvents = "none";
+    heart.style.zIndex = "0";
+    heart.style.transition = "transform 7s linear";
 
-      setTimeout(() => flake.remove(), fallTime * 1000);
-   }
+    document.body.appendChild(heart);
 
-   setInterval(createSnowflake, 120);
-})();
-*/
+    requestAnimationFrame(() => {
+      heart.style.transform = `translateY(110vh)`;
+    });
 
-(function () {
-   if (window.__zephwareHeartfall) return;
-   window.__zephwareHeartfall = true;
+    setTimeout(() => heart.remove(), 7000);
+  }, 120);
 
-   const style = document.createElement("style");
-   style.textContent = `
-      #zeph-heart-container {
-         pointer-events: none;
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100vw;
-         height: 100vh;
-         overflow: hidden;
-         z-index: 0;
-      }
-      .zeph-hearts {
-         position: absolute;
-         top: -5vh;
-         color: white;
-         font-size: 10px;
-         opacity: 0.8;
-         user-select: none;
-         animation-timing-function: linear;
-         animation-fill-mode: forwards;
-      }
-      @keyframes zeph-heartfall {
-         0% { transform: translateY(0) translateX(0); }
-         100% { transform: translateY(110vh) translateX(var(--drift)); }
-      }
-   `;
-   document.head.appendChild(style);
+  return {
+    cleanup() {
+      clearInterval(interval);
+    }
+  };
+}
 
-   const container = document.createElement("div");
-   container.id = "zeph-heart-container";
-   document.body.appendChild(container);
-
-   function createhearts() {
-      const flake = document.createElement("div");
-      flake.className = "zeph-hearts";
-      flake.textContent = "❤️";
-
-      flake.style.left = Math.random() * 100 + "vw";
-      flake.style.fontSize = 8 + Math.random() * 20 + "px";
-      flake.style.opacity = 0.5 + Math.random() * 0.5;
-      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
-
-      const fallTime = 6 + Math.random() * 7;
-      flake.style.animation = `zeph-heartfall ${fallTime}s linear forwards`;
-
-      container.appendChild(flake);
-
-      setTimeout(() => flake.remove(), fallTime * 1000);
-   }
-
-   setInterval(createhearts, 120);
-})();
-
-/* Pink Heartfall (Disabled)
-(function () {
-   if (window.__zephwareHeartfall) return;
-   window.__zephwareHeartfall = true;
-
-   const style = document.createElement("style");
-   style.textContent = `
-      #zeph-heart-container {
-         pointer-events: none;
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100vw;
-         height: 100vh;
-         overflow: hidden;
-         z-index: 0;
-      }
-      .zeph-hearts {
-         position: absolute;
-         top: -5vh;
-         color: white;
-         font-size: 10px;
-         opacity: 0.8;
-         user-select: none;
-         animation-timing-function: linear;
-         animation-fill-mode: forwards;
-      }
-      @keyframes zeph-heartfall {
-         0% { transform: translateY(0) translateX(0); }
-         100% { transform: translateY(110vh) translateX(var(--drift)); }
-      }
-   `;
-   document.head.appendChild(style);
-
-   const container = document.createElement("div");
-   container.id = "zeph-heart-container";
-   document.body.appendChild(container);
-
-   function createhearts() {
-      const flake = document.createElement("div");
-      flake.className = "zeph-hearts";
-      flake.textContent = "❤️";
-
-      flake.style.left = Math.random() * 100 + "vw";
-      flake.style.fontSize = 8 + Math.random() * 20 + "px";
-      flake.style.opacity = 0.5 + Math.random() * 0.5;
-      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
-
-      const fallTime = 6 + Math.random() * 7;
-      flake.style.animation = `zeph-heartfall ${fallTime}s linear forwards`;
-
-      container.appendChild(flake);
-
-      setTimeout(() => flake.remove(), fallTime * 1000);
-   }
-
-   setInterval(createhearts, 120);
-})();*/
-
-/* JUMP SCARE (DISABLED)
-(function () {
-
+function createJumpScare() {
    const img = document.createElement("img");
-   img.src = "https://www.indiatimes.com/thumb/123963169.cms?imgsize=46526&width=616&resizemode=4"
+   img.src = "https://www.indiatimes.com/thumb/123963169.cms?imgsize=46526&width=616&resizemode=4";
    img.style.position = "fixed";
    img.style.top = "0";
    img.style.left = "0";
    img.style.width = "110vw";
    img.style.height = "100vh";
-   img.style.opacity = 0.1;
-   img.style.zIndex = 1;
+   img.style.opacity = "0.1";
+   img.style.zIndex = "9999";
    img.style.display = "none";
    img.style.pointerEvents = "none";
    document.body.appendChild(img);
 
+   let flickerInterval = null;
+   let timeoutId = null;
+   let stopped = false;
+
    function showFlicker() {
+      if (stopped) return;
+
       let flickerCount = 0;
       img.style.display = "block";
 
-      const flicker = setInterval(() => {
-         img.style.visibility = (
-           img.style.visibility === "hidden"
-           ? "visible"
-           : "hidden"
-         );
+      flickerInterval = setInterval(() => {
+         img.style.visibility =
+           img.style.visibility === "hidden" ? "visible" : "hidden";
+
          flickerCount++;
 
          if (flickerCount >= 20) {
-            clearInterval(flicker);
+            clearInterval(flickerInterval);
             img.style.display = "none";
             img.style.visibility = "visible";
+
+            if (!stopped) {
+              timeoutId = setTimeout(showFlicker, Math.random() * 10000 + 5000);
+            }
          }
       }, 150);
-
-      const nextDelay = Math.random() * (15000 - 5000) + 5000;
-      setTimeout(showFlicker, nextDelay);
    }
 
-   setTimeout(showFlicker, Math.random() * (15000 - 5000) + 5000);
-})();*/
+   timeoutId = setTimeout(showFlicker, Math.random() * 10000 + 5000);
+
+   return {
+     cleanup() {
+       stopped = true;
+       clearInterval(flickerInterval);
+       clearTimeout(timeoutId);
+       img.remove();
+     }
+   };
+}
 
 (function() {
   const style = document.createElement('style');
