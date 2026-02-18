@@ -281,7 +281,7 @@
     card.className = 'zw-sound-card';
     card.innerHTML = `
       <div class="zw-sound-title">${sound.name}</div>
-      <div class="zw-sound-icon">ðŸ”Š</div>
+      <div class="zw-sound-icon">🔊</div>
     `;
     card.addEventListener('click', () => {
       const audio = new Audio(sound.url);
@@ -673,7 +673,7 @@
       content.innerHTML = `
         <div id="zw-hero">
           ${highlightedShow ? `
-            <div class="zw-hero-banner" style="background-image: url('../assets/Banner.png');">
+            <div class="zw-hero-banner" style="background-image: url('https://d1kusoubqqwr7w.cloudfront.net/assets/Banner.png');">
               <div class="zw-hero-overlay"></div>
               <div class="zw-hero-content">
                 <h1 class="zw-hero-title">${highlightedShow.name}</h1>
@@ -683,7 +683,7 @@
                   <span class="zw-hero-tags">${Array.isArray(highlightedShow.tags) ? highlightedShow.tags.join(', ') : highlightedShow.tags}</span>
                 </div>
                 <button class="zw-hero-play" id="zw-hero-play-btn">
-                  <span class="zw-play-icon">â–¶</span> Play
+                  <span class="zw-play-icon">▶</span> Play
                 </button>
               </div>
             </div>
@@ -1000,7 +1000,7 @@
       currentPage = link.dataset.page;
       searchQuery = '';
       searchInput.value = '';
-      setRoute('');
+      history.pushState({}, '', '/');
       renderPage();
     });
   });
