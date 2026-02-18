@@ -667,7 +667,7 @@
 
   function renderPage() {
     if (currentPage === 'home') {
-      document.title = 'Library | Zephware';
+      document.title = 'Google';
       const highlightedShow = shows.find(s => s.highlighted === 'true' || s.highlighted === true);
       
       content.innerHTML = `
@@ -797,7 +797,7 @@
       }
       
     } else if (currentPage === 'movies') {
-       document.title = 'Movies | Zephware';
+       document.title = '';
       const filteredMovies = filterContent(movies);
       content.innerHTML = '';
       
@@ -821,7 +821,7 @@
       });
       
     } else if (currentPage === 'shows') {
-      document.title = 'Shows | Zephware';
+      document.title = 'Google';
       const filteredShows = filterContent(shows);
       content.innerHTML = '';
       
@@ -845,7 +845,7 @@
       });
       
     } else if (currentPage === 'sounds') {
-      document.title = 'Sounds | Zephware';
+      document.title = 'Google';
       const filteredSounds = filterContent(sounds);
       content.innerHTML = '';
       
@@ -862,7 +862,7 @@
       renderSoundsSection('All Sounds', filteredSounds);
       
     } else if (currentPage === 'suggestions') {
-      document.title = 'Suggestions | Zephware';
+      document.title = 'Google';
       content.innerHTML = `
         <div id="zw-suggestions">
           <h1 class="zw-suggestions-title">Submit a Suggestion</h1>
