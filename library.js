@@ -42,7 +42,7 @@
 
   const overlay = document.createElement("div");
   overlay.id = "zw-overlay";
-  overlay.innerHTML = `<button id="zw-modal-close">×/button>`;
+  overlay.innerHTML = `<button id="zw-modal-close">×</button>`;
   document.body.appendChild(overlay);
 
   let movies = [];
@@ -89,56 +89,6 @@
     const movie = movies.find(m => getItemId(m) === id);
     return show || movie;
   }
-
-  const navLinks = navbar.querySelectorAll('.zw-nav-link');
-  const searchInput = navbar.querySelector('#zw-search');
-  const modalClose = overlay.querySelector('#zw-modal-close');
-  const logo = navbar.querySelector('#zw-logo');
-
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      const video = content.querySelector('#zw-show-video') || overlay.querySelector('#zw-movie-video');
-      if (video) video.pause();
-      
-      navLinks.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      currentPage = link.dataset.page;
-      searchQuery = '';
-      searchInput.value = '';
-      renderPage();
-    });
-  });
-
-  logo.addEventListener('click', () => {
-    const video = content.querySelector('#zw-show-video') || overlay.querySelector('#zw-movie-video');
-    if (video) video.pause();
-    
-    navLinks.forEach(l => l.classList.remove('active'));
-    navLinks[0].classList.add('active');
-    currentPage = 'home';
-    searchQuery = '';
-    searchInput.value = '';
-    renderPage();
-  });
-
-  searchInput.addEventListener('input', (e) => {
-    searchQuery = e.target.value.toLowerCase();
-    renderPage();
-  });
-
-  modalClose.addEventListener('click', () => {
-    overlay.classList.remove('active');
-    const video = overlay.querySelector('#zw-movie-video');
-    if (video) video.pause();
-  });
-
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      overlay.classList.remove('active');
-      const video = overlay.querySelector('#zw-movie-video');
-      if (video) video.pause();
-    }
-  });
 
   function parseEpisodeRange(eps) {
     if (typeof eps === 'number') return { start: 1, end: eps };
@@ -188,26 +138,122 @@
            progress.time + 120 >= 3600;
   }
 
+  // Movie duration auto-calculation
+  async function calculateMovieDuration(movie) {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      
+      video.addEventListener('loadedmetadata', () => {
+        const durationInMinutes = Math.round(video.duration / 60);
+        resolve(durationInMinutes);
+      });
+      
+      video.addEventListener('error', () => {
+        resolve(null);
+      });
+      
+      video.src = movie.url;
+    });
+  }
+
+  async function loadMovieDurations() {
+    const cachedDurations = localStorage.getItem('zw-movie-durations');
+    let durations = cachedDurations ? JSON.parse(cachedDurations) : {};
+    
+    for (const movie of movies) {
+      const movieId = getItemId(movie);
+      
+      if (durations[movieId]) {
+        movie.duration = durations[movieId];
+      } else if (!movie.duration) {
+        const duration = await calculateMovieDuration(movie);
+        if (duration) {
+          movie.duration = duration;
+          durations[movieId] = duration;
+          
+          const movieCard = document.querySelector(`[data-movie-id="${movieId}"]`);
+          if (movieCard) {
+            const hours = Math.floor(duration / 60);
+            const minutes = duration % 60;
+            const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+            const categoryDiv = movieCard.querySelector('.zw-card-category');
+            if (categoryDiv) {
+              const tags = Array.isArray(movie.tags) ? movie.tags.join(' • ') : '';
+              categoryDiv.textContent = `${durationText}${tags ? ' • ' + tags : ''}`;
+            }
+          }
+        }
+      }
+    }
+    
+    localStorage.setItem('zw-movie-durations', JSON.stringify(durations));
+  }
+
+  function setPageTitle(itemName) {
+    document.title = `${itemName} | Zephware`;
+  }
+
+  function getRoute() {
+    return location.pathname.replace(/^\//,'').replace(/\/$/, '');
+  }
+
+  function setRoute(route) {
+    history.pushState({route}, '', route ? '/' + route : '/');
+    handleRouteChange();
+  }
+
+  function handleRouteChange() {
+    const route = getRoute();
+    
+    if (route === '') {
+      navLinks.forEach(l => l.classList.remove('active'));
+      navLinks[0].classList.add('active');
+      currentPage = 'home';
+      searchQuery = '';
+      searchInput.value = '';
+      renderPage();
+    } else {
+      const show = shows.find(s => getItemId(s) === route);
+      if (show) {
+        openShowModal(show);
+        return;
+      }
+
+      const movie = movies.find(m => getItemId(m) === route);
+      if (movie) {
+        openMovieModal(movie);
+        return;
+      }
+
+      setRoute('');
+    }
+  }
+
   function createMovieCard(movie) {
     const card = document.createElement('div');
     card.className = 'zw-card';
+    card.dataset.movieId = getItemId(movie);
     const thumbStyle = movie.cover ? `background-image: url('${movie.cover}');` : '';
     const tags = Array.isArray(movie.tags) ? movie.tags.join(' • ') : '';
     
-    const hours = Math.floor(movie.duration / 60);
-    const minutes = movie.duration % 60;
-    const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    let durationText = 'Loading...';
+    if (movie.duration) {
+      const hours = Math.floor(movie.duration / 60);
+      const minutes = movie.duration % 60;
+      durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    }
     
     card.innerHTML = `
       <div class="zw-card-thumbnail" style="${thumbStyle}">
-        ${!movie.cover ? 'ðŸŽ¬' : ''}
+        ${!movie.cover ? '🎬' : ''}
       </div>
       <div class="zw-card-info">
         <div class="zw-card-title">${movie.name}</div>
         <div class="zw-card-category">${durationText}${tags ? ' • ' + tags : ''}</div>
       </div>
     `;
-    card.addEventListener('click', () => openMovieModal(movie));
+    card.addEventListener('click', () => setRoute(getItemId(movie)));
     return card;
   }
 
@@ -219,14 +265,14 @@
     
     card.innerHTML = `
       <div class="zw-card-thumbnail" style="${thumbStyle}">
-        ${!show.cover ? 'ðŸ“º' : ''}
+        ${!show.cover ? '🔊' : ''}
       </div>
       <div class="zw-card-info">
         <div class="zw-card-title">${show.name}</div>
         <div class="zw-card-category">${show.seasons.length} Season${show.seasons.length > 1 ? 's' : ''} • ${totalEpisodes} Episodes</div>
       </div>
     `;
-    card.addEventListener('click', () => openShowModal(show));
+    card.addEventListener('click', () => setRoute(getItemId(show)));
     return card;
   }
 
@@ -235,7 +281,7 @@
     card.className = 'zw-sound-card';
     card.innerHTML = `
       <div class="zw-sound-title">${sound.name}</div>
-      <div class="zw-sound-icon">🔊</div>
+      <div class="zw-sound-icon">ðŸ”Š</div>
     `;
     card.addEventListener('click', () => {
       const audio = new Audio(sound.url);
@@ -247,78 +293,112 @@
   function openMovieModal(movie) {
     const movieId = getItemId(movie);
     const progress = watchProgress[movieId];
+    const inMyList = myList.includes(movieId);
+    setPageTitle(movie.name);
     
     const tags = Array.isArray(movie.tags) ? movie.tags.join(' • ') : '';
-    const hours = Math.floor(movie.duration / 60);
-    const minutes = movie.duration % 60;
-    const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    let durationText = '';
+    if (movie.duration) {
+      const hours = Math.floor(movie.duration / 60);
+      const minutes = movie.duration % 60;
+      durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    }
     
-    overlay.innerHTML = `
-      <button id="zw-modal-close">Ã—</button>
+    content.innerHTML = `
       <div id="zw-movie-modal">
-        <div id="zw-movie-player">
-          <div id="zw-movie-video-container">
-            <video id="zw-movie-video" controls autoplay>
-              <source src="${movie.url}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          ${movie.dub ? `
-            <div id="zw-movie-audio-selector">
-              <button class="zw-audio-btn active" data-audio="sub">Sub</button>
-              <button class="zw-audio-btn" data-audio="dub">Dub</button>
+        <div id="zw-show-layout" style="display: block;">
+          <div id="zw-show-video-area">
+            <div id="zw-show-video-container">
+              <video id="zw-movie-video" controls autoplay>
+                <source src="${movie.url}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
             </div>
-          ` : ''}
-        </div>
-        <div id="zw-movie-info">
-          <h2 id="zw-movie-title">${movie.name}</h2>
-          <div id="zw-movie-meta">${durationText}${tags ? ' • ' + tags : ''}</div>
+            <div id="zw-movie-description">
+              <h3>${movie.name}</h3>
+              <div class="zw-show-meta">${durationText}${tags ? ' • ' + tags : ''}</div>
+              ${movie.description ? `<div class="zw-movie-description-text">${movie.description}</div>` : ''}
+              ${movie.dub ? `
+                <div class="zw-audio-selector-movie">
+                  <label for="zw-movie-audio-select">Audio:</label>
+                  <select id="zw-movie-audio-select" class="zw-audio-select-dropdown">
+                    <option value="sub">Sub</option>
+                    <option value="dub">Dub</option>
+                  </select>
+                </div>
+              ` : ''}
+            </div>
+            <div id="zw-show-controls-buttons">
+              <button id="zw-add-my-list" class="zw-control-btn ${inMyList ? 'active' : ''}">
+                ${inMyList ? '✓ In My List' : '+ Add to My List'}
+              </button>
+              <button id="zw-remove-continue" class="zw-control-btn" style="display: ${progress ? 'block' : 'none'};">
+                Remove from Continue Watching
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     `;
-    
-    const newClose = overlay.querySelector('#zw-modal-close');
-    newClose.addEventListener('click', () => {
-      overlay.classList.remove('active');
-      const video = overlay.querySelector('#zw-movie-video');
-      if (video) video.pause();
-    });
-    
-    const video = overlay.querySelector('#zw-movie-video');
-    
+
+    const video = content.querySelector('#zw-movie-video');
+    const addMyListBtn = content.querySelector('#zw-add-my-list');
+    const removeContBtn = content.querySelector('#zw-remove-continue');
+    let currentAudioType = 'sub';
+
+    // Audio selection
     if (movie.dub) {
-      const audioBtns = overlay.querySelectorAll('.zw-audio-btn');
-      audioBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          audioBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const currentTime = video.currentTime;
-          video.src = btn.dataset.audio === 'dub' ? movie.dub : movie.url;
-          video.load();
-          video.currentTime = currentTime;
-          video.play();
-        });
+      const audioSelect = content.querySelector('#zw-movie-audio-select');
+      audioSelect.addEventListener('change', () => {
+        const currentTime = video.currentTime;
+        currentAudioType = audioSelect.value;
+        video.src = currentAudioType === 'dub' ? movie.dub : movie.url;
+        video.load();
+        video.currentTime = currentTime;
+        video.play();
       });
     }
-    
+
+    // Resume progress
     if (progress && progress.time) {
       video.addEventListener('loadedmetadata', () => {
         video.currentTime = progress.time;
       }, { once: true });
     }
-    
+
+    // Track progress
     video.addEventListener('timeupdate', () => {
       if (video.currentTime > 0) {
-        updateWatchProgress(movieId, null, null, video.currentTime);
+        updateWatchProgress(movieId, null, null, video.currentTime, currentAudioType === 'dub');
       }
     });
-    
-    overlay.classList.add('active');
+
+    // My List button
+    addMyListBtn.addEventListener('click', () => {
+      if (myList.includes(movieId)) {
+        myList = myList.filter(id => id !== movieId);
+        addMyListBtn.textContent = '+ Add to My List';
+        addMyListBtn.classList.remove('active');
+      } else {
+        myList.push(movieId);
+        addMyListBtn.textContent = '✓ In My List';
+        addMyListBtn.classList.add('active');
+      }
+      saveMyList();
+    });
+
+    // Remove from continue watching
+    removeContBtn.addEventListener('click', () => {
+      delete watchProgress[movieId];
+      saveWatchProgress();
+      removeContBtn.style.display = 'none';
+    });
   }
 
   function openShowModal(show) {
     const showId = getItemId(show);
     const progress = watchProgress[showId];
+    setPageTitle(show.name);
     
     let initialSeason = show.seasons[0];
     let initialSeasonIndex = 0;
@@ -364,7 +444,7 @@
             </div>
             <div id="zw-show-controls-buttons">
               <button id="zw-add-my-list" class="zw-control-btn ${inMyList ? 'active' : ''}">
-                ${inMyList ? '✓“ In My List' : '+ Add to My List'}
+                ${inMyList ? '✓ In My List' : '+ Add to My List'}
               </button>
               <button id="zw-remove-continue" class="zw-control-btn" style="display: ${progress ? 'block' : 'none'};">
                 Remove from Continue Watching
@@ -445,7 +525,7 @@
         addMyListBtn.classList.remove('active');
       } else {
         myList.push(showId);
-        addMyListBtn.textContent = '✓“ In My List';
+        addMyListBtn.textContent = '✓ In My List';
         addMyListBtn.classList.add('active');
       }
       saveMyList();
@@ -464,10 +544,16 @@
     });
 
     function loadEpisode(season, seasonIdx, episodeNum, isDub, seekTime = 0) {
-      const range = parseEpisodeRange(season.episodes);
-      const offset = getEpisodeOffset(show.seasons, seasonIdx);
-      const actualEpisode = season.continue ? episodeNum - offset : episodeNum;
-      const fileNumber = actualEpisode - range.start + 1;
+      const prevSeasonHasContinue = seasonIdx > 0 && show.seasons[seasonIdx - 1].continue;
+      
+      let fileNumber;
+      if (prevSeasonHasContinue) {
+        fileNumber = episodeNum;
+      } else {
+        const range = parseEpisodeRange(season.episodes);
+        fileNumber = episodeNum - range.start + 1;
+      }
+      
       const url = `${season.url}${isDub ? 'Dub/' : ''}${fileNumber}.mp4`;
       video.src = url;
       video.load();
@@ -483,7 +569,7 @@
       const offset = getEpisodeOffset(show.seasons, seasonIdx);
       
       for (let i = range.start; i <= range.end; i++) {
-        const displayNumber = season.continue ? offset + (i - range.start + 1) : i;
+        const displayNumber = season.continue || (seasonIdx > 0 && show.seasons[seasonIdx - 1].continue) ? offset + (i - range.start + 1) : i;
         const episodeInfo = season.names && season.names.find(e => e.ep === displayNumber);
         const episodeName = episodeInfo ? episodeInfo.name : `Episode ${displayNumber}`;
         
@@ -506,11 +592,17 @@
 
     renderEpisodes(initialSeason, initialSeasonIndex);
     
-    const range = parseEpisodeRange(initialSeason.episodes);
-    const offset = getEpisodeOffset(show.seasons, initialSeasonIndex);
-    const actualEpisode = initialSeason.continue ? initialEpisode - offset : initialEpisode;
-    const fileNumber = actualEpisode - range.start + 1;
-    video.src = `${initialSeason.url}${initialIsDub ? 'Dub/' : ''}${fileNumber}.mp4`;
+    const prevSeasonHasContinue = initialSeasonIndex > 0 && show.seasons[initialSeasonIndex - 1].continue;
+    let initialFileNumber;
+    
+    if (prevSeasonHasContinue) {
+      initialFileNumber = initialEpisode;
+    } else {
+      const range = parseEpisodeRange(initialSeason.episodes);
+      initialFileNumber = initialEpisode - range.start + 1;
+    }
+    
+    video.src = `${initialSeason.url}${initialIsDub ? 'Dub/' : ''}${initialFileNumber}.mp4`;
 
     video.addEventListener('loadedmetadata', () => {
       if (initialTime > 0) {
@@ -575,12 +667,13 @@
 
   function renderPage() {
     if (currentPage === 'home') {
+      document.title = 'Library | Zephware';
       const highlightedShow = shows.find(s => s.highlighted === 'true' || s.highlighted === true);
       
       content.innerHTML = `
         <div id="zw-hero">
           ${highlightedShow ? `
-            <div class="zw-hero-banner" style="background-image: url('${highlightedShow.cover}');">
+            <div class="zw-hero-banner" style="background-image: url('../assets/Banner.png');">
               <div class="zw-hero-overlay"></div>
               <div class="zw-hero-content">
                 <h1 class="zw-hero-title">${highlightedShow.name}</h1>
@@ -590,7 +683,7 @@
                   <span class="zw-hero-tags">${Array.isArray(highlightedShow.tags) ? highlightedShow.tags.join(', ') : highlightedShow.tags}</span>
                 </div>
                 <button class="zw-hero-play" id="zw-hero-play-btn">
-                  <span class="zw-play-icon">▶</span> Play
+                  <span class="zw-play-icon">â–¶</span> Play
                 </button>
               </div>
             </div>
@@ -605,7 +698,7 @@
       
       if (highlightedShow) {
         const playBtn = content.querySelector('#zw-hero-play-btn');
-        playBtn.addEventListener('click', () => openShowModal(highlightedShow));
+        playBtn.addEventListener('click', () => setRoute(getItemId(highlightedShow)));
       }
       
       const continueWatching = getContinueWatching();
@@ -704,6 +797,7 @@
       }
       
     } else if (currentPage === 'movies') {
+       document.title = 'Movies | Zephware';
       const filteredMovies = filterContent(movies);
       content.innerHTML = '';
       
@@ -727,6 +821,7 @@
       });
       
     } else if (currentPage === 'shows') {
+      document.title = 'Shows | Zephware';
       const filteredShows = filterContent(shows);
       content.innerHTML = '';
       
@@ -750,6 +845,7 @@
       });
       
     } else if (currentPage === 'sounds') {
+      document.title = 'Sounds | Zephware';
       const filteredSounds = filterContent(sounds);
       content.innerHTML = '';
       
@@ -766,6 +862,7 @@
       renderSoundsSection('All Sounds', filteredSounds);
       
     } else if (currentPage === 'suggestions') {
+      document.title = 'Suggestions | Zephware';
       content.innerHTML = `
         <div id="zw-suggestions">
           <h1 class="zw-suggestions-title">Submit a Suggestion</h1>
@@ -856,7 +953,6 @@
     const row = section.querySelector('.zw-row');
     const leftArrow = section.querySelector('.zw-scroll-arrow.left');
     const rightArrow = section.querySelector('.zw-scroll-arrow.right');
-
     
     items.forEach(item => {
       if (type === 'movie') row.appendChild(createMovieCard(item));
@@ -888,6 +984,58 @@
     
     content.appendChild(section);
   }
+  
+  const navLinks = navbar.querySelectorAll('.zw-nav-link');
+  const searchInput = navbar.querySelector('#zw-search');
+  const modalClose = overlay.querySelector('#zw-modal-close');
+  const logo = navbar.querySelector('#zw-logo');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const video = content.querySelector('#zw-show-video') || content.querySelector('#zw-movie-video');
+      if (video) video.pause();
+      
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      currentPage = link.dataset.page;
+      searchQuery = '';
+      searchInput.value = '';
+      setRoute('');
+      renderPage();
+    });
+  });
+
+  logo.addEventListener('click', () => {
+    const video = content.querySelector('#zw-show-video') || content.querySelector('#zw-movie-video');
+    if (video) video.pause();
+    
+    navLinks.forEach(l => l.classList.remove('active'));
+    navLinks[0].classList.add('active');
+    currentPage = 'home';
+    searchQuery = '';
+    searchInput.value = '';
+    setRoute('');
+    renderPage();
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase();
+    renderPage();
+  });
+
+  modalClose.addEventListener('click', () => {
+    const video = content.querySelector('#zw-movie-video');
+    if (video) video.pause();
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      const video = overlay.querySelector('#zw-movie-video');
+      if (video) video.pause();
+    }
+  });
+
+  window.addEventListener('popstate', handleRouteChange);
 
   Promise.all([
     fetch(moviesUrl).then(r => r.json()).catch(() => []),
@@ -897,6 +1045,15 @@
     movies = moviesData;
     shows = showsData;
     sounds = soundsData;
-    renderPage();
+    
+    const route = getRoute();
+    if (route) {
+      handleRouteChange();
+    } else {
+      renderPage();
+    }
+    
+    // Load movie durations in background
+    loadMovieDurations();
   });
 })();
