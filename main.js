@@ -1,4 +1,7 @@
-javascript:(function(){if(window.location.hostname.indexOf('google.com')>-1){javascript:(function(){document.open();document.write("");document.close(); 
+javascript:(function(){if (
+  window.location.hostname.includes('google.com') ||
+  window.location.hostname.includes('hyperware.vercel.app')
+){javascript:(function(){document.open();document.write("");document.close(); 
 
  if (!document.getElementById('fredoka-font-link')) {
     const link = document.createElement('link');
@@ -59,7 +62,9 @@ const themes = {
       waves: ['#e0dbdbff','#f0f0f0ff','#fdfdfdff']
    }
 };
-const theme = themes.red;
+let currentTheme = localStorage.getItem("hyperware-theme") || "red";
+let theme = themes[currentTheme];
+setTimeout(() => applyThemeEffects(currentTheme), 100);
 
   const style = document.createElement('style');
   style.textContent = `
@@ -395,20 +400,10 @@ const theme = themes.red;
   passdesc.style.color = '#3D3636';
   passdesc.innerText = 'Hyperware requires a password to hide from GoGuardian';
 
-  var disclaimer = document.createElement('div');
-  disclaimer.style.position = 'absolute';
-  disclaimer.style.left = '50%';
-  disclaimer.style.top = '275px';
-  disclaimer.style.transform = 'translateX(-50%)';
-  disclaimer.style.fontSize = '12px';
-  disclaimer.style.fontWeight = 'bold';
-  disclaimer.style.color = theme.color2;
-  disclaimer.innerText = 'Please use this bookmarklet on google.com, this is for data saving purposes.';
-
   var hint = document.createElement('div');
   hint.style.position = 'absolute';
   hint.style.left = '50%';
-  hint.style.top = '335px';
+  hint.style.top = '275px';
   hint.style.transform = 'translateX(-50%)';
   hint.style.fontSize = '11px';
   hint.style.fontWeight = 'bold';
@@ -422,7 +417,7 @@ const theme = themes.red;
   randomBtn.innerText = 'New Message';
   randomBtn.style.position = 'absolute';
   randomBtn.style.left = '50%';
-  randomBtn.style.top = '390px';
+  randomBtn.style.top = '325px';
   randomBtn.style.transform = 'translateX(-50%)';
   randomBtn.style.padding = '5px 10px';
   randomBtn.style.cursor = 'pointer';
@@ -463,9 +458,7 @@ const theme = themes.red;
   'Please finish your homework before using this',
   'Hyperware was lowkey fun to make - EternallyHyper',
   'If you use another blocker then I’m sry for you - EternallyHyper',
-  'How do i data save',
   'Go play some games',
-  'This works on other websites somehow lol',
   'There’s like a ton of messages here - EternallyHyper',
   'can’t believe you are still here',
   'Dude just type the password',
@@ -541,7 +534,6 @@ hint.innerText = randomMessage;
   guiDiv.appendChild(title);
   guiDiv.appendChild(inputBox);
   guiDiv.appendChild(passdesc);
-  guiDiv.appendChild(disclaimer);
   guiDiv.appendChild(hint);
   guiDiv.appendChild(randomBtn);
   document.body.appendChild(guiDiv);
@@ -585,7 +577,7 @@ hint.innerText = randomMessage;
   const select = document.createElement('select');
   select.id = 'selector';
   select.setAttribute('title', '');
-  const options = ['Games', 'Library', 'Zephware', 'News',  'Schoology Utilities', 'Inspect Element', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
+  const options = ['Games', 'Library', 'Zephware', 'News', 'Themes', 'Schoology Utilities', 'Inspect Element', 'Learning Tools', 'Marketplace', 'Blooket Hacks', 'Gimkit Hacks'];
   options.forEach(opt => {
     const option = document.createElement('option');
     option.value = opt.toLowerCase();
@@ -598,48 +590,265 @@ hint.innerText = randomMessage;
   button.textContent = 'Go';
   inputArea.appendChild(button);
 
-   const newsPages = [
-  {
-    title: "What's New?",
-    desc: "v1.2.1 : Week of February 15th, 2026",
-    images: [
-      { src: theme.img1 }
-    ],
-    changes: [
-      { text: "Data Saving", desc: "Games and Library save data now" }
-    ]
-  },
-  {
-    title: "What'd I Miss?",
-    desc: "v1.2.0 : Week of February 8st, 2026",
-    images: [
-      { src: theme.img2 }
-    ],
-    changes: [
-      { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
-      { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
-      { text: "Games and Library", desc: "they’re back go enjoy them" },
-      { text: "Inspect Element", desc: "iPad users can now enjoy the inspect tool lol" }
-    ]
-  },
-  {
-    title: "What's Next?",
-    desc: "v1.2.2 : Coming Soon!",
-    images: [
-      { src: 
-"https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
-    ],
-    changes: [
-      { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
-      { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
-      { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
-      { text: "Themes", desc: "Pick from blue, orange, red, and purple! Seasonal Themes Included!" },   
-      { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
-    ]
-  },
-];
+   function getNewsPages() {
+  return [
+    {
+      title: "What's New?",
+      desc: "v1.2.1 : Week of February 15th, 2026",
+      images: [
+        { src: theme.img1 }
+      ],
+      changes: [
+        { text: "Data Saving", desc: "Games and Library save data now" },
+        { text: "Themes", desc: "Themes are here! Use the theme button to select themes. Seasonal Themes will have their corresponding features." }
+      ]
+    },
+    {
+      title: "What'd I Miss?",
+      desc: "v1.2.0 : Week of February 8st, 2026",
+      images: [
+        { src: theme.img2 }
+      ],
+      changes: [
+        { text: "Lock Screen Additions", desc: "added funni messages, a disclaimer and extended the gui" },
+        { text: "Drop Down Menu Extension", desc: "Options like Schoology utilities fully appear now" },
+        { text: "Games and Library", desc: "they’re back go enjoy them" },
+        { text: "Inspect Element", desc: "iPad users can now enjoy the inspect tool lol" }
+      ]
+    },
+    {
+      title: "What's Next?",
+      desc: "v1.2.2 : Coming Soon!",
+      images: [
+        { src: "https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
+      ],
+      changes: [
+        { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, etc." },
+        { text: "IXL + Hacks", desc: "Paid $5 for IXL+" },
+        { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
+        { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
+        { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
+      ]
+    }
+  ];
+}
+
+function showThemePanel() {
+  const old = document.getElementById('overlay');
+  if (old) old.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'overlay';
+  overlay.style.zIndex = '99999';
+  overlay.style.fontFamily = "'Fredoka', sans-serif";
+
+  const current = localStorage.getItem("hyperware-theme") || "red";
+
+  overlay.innerHTML = `
+    <div id="overlay-box" style="
+      max-width:750px;
+      width:95%;
+      max-height:85vh;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    ">
+      <h1 style="
+        color:${theme.color1};
+        font-size:28px;
+        margin:0;
+      ">Select Theme</h1>
+
+      <div id="theme-grid" style="
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+        gap:16px;
+        overflow-y:auto;
+        padding-right:4px;
+      ">
+      </div>
+
+      <button id="theme-close"
+        style="
+          align-self:center;
+          padding:10px 26px;
+          border-radius:12px;
+          border:none;
+          font-weight:bold;
+          background:linear-gradient(to bottom, ${theme.color1}, ${theme.color2});
+          color:white;
+          cursor:pointer;
+        ">
+        Close
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const grid = overlay.querySelector('#theme-grid');
+
+  Object.keys(themes).forEach(key => {
+    const t = themes[key];
+
+    const card = document.createElement('div');
+    card.setAttribute('data-theme', key);
+
+    card.style.cssText = `
+      background:#1b1b1b;
+      border-radius:16px;
+      padding:14px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      transition:all 0.2s ease;
+      border:2px solid ${key === current ? t.color1 : 'transparent'};
+      box-shadow:${key === current ? `0 0 12px ${t.color1}` : 'none'};
+    `;
+
+    card.innerHTML = `
+      <div style="
+        height:70px;
+        border-radius:12px;
+        background:linear-gradient(135deg, ${t.color1}, ${t.color2});
+        position:relative;
+        overflow:hidden;
+      ">
+        <div style="
+          position:absolute;
+          bottom:0;
+          left:0;
+          right:0;
+          height:18px;
+          display:flex;
+        ">
+          <div style="flex:1;background:${t.waves[0]}"></div>
+          <div style="flex:1;background:${t.waves[1]}"></div>
+          <div style="flex:1;background:${t.waves[2]}"></div>
+        </div>
+      </div>
+
+        <div style="
+          text-align:center;
+          font-weight:600;
+          font-size:14px;
+          letter-spacing:0.5px;
+          color:white;
+        ">
+          ${key.toUpperCase()}
+        </div>
+
+    `;
+
+    card.onmouseenter = () => {
+      card.style.transform = "translateY(-4px)";
+      card.style.boxShadow = `0 6px 18px ${t.color1}55`;
+    };
+
+    card.onmouseleave = () => {
+      card.style.transform = "translateY(0)";
+      card.style.boxShadow = key === current
+        ? `0 0 12px ${t.color1}`
+        : "none";
+    };
+
+    card.onclick = () => {
+      applyTheme(key);
+      overlay.remove();
+    };
+
+    grid.appendChild(card);
+  });
+
+  overlay.querySelector('#theme-close').onclick = () => {
+    overlay.remove();
+  };
+}
+
+let activeEffect = null;
+
+function clearThemeEffects() {
+  if (activeEffect && activeEffect.cleanup) {
+    activeEffect.cleanup();
+  }
+  activeEffect = null;
+}
+
+function applyThemeEffects(themeName) {
+  clearThemeEffects();
+
+  switch(themeName) {
+    case "christmas":
+      activeEffect = createSnowfall();
+      break;
+    case "red":
+      activeEffect = createHeartfall("❤️");
+      break;
+    case "pink":
+      activeEffect = createHeartfall("🩷");
+      break;
+    case "orange":
+      activeEffect = createJumpScare();
+      break;
+  }
+}
+
+function applyTheme(name) {
+  theme = themes[name];
+  localStorage.setItem("hyperware-theme", name);
+
+  document.querySelectorAll('.header1, .header2').forEach(el => {
+    el.style.background = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
+    el.style.webkitBackgroundClip = "text";
+    el.style.webkitTextFillColor = "transparent";
+  });
+
+  document.querySelectorAll('button').forEach(btn => {
+    if (!btn.disabled) {
+      btn.style.background = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
+    }
+  });
+
+  const select = document.querySelector('select');
+  if (select) {
+    select.style.color = theme.color1;
+  }
+
+  document.querySelectorAll('input').forEach(inp => {
+    inp.style.borderColor = theme.color2;
+    inp.style.color = theme.color2;
+  });
+
+  const waves = document.querySelectorAll('.parallax use');
+  waves.forEach((wave, i) => {
+    wave.setAttribute('fill', theme.waves[i]);
+  });
+
+  const cover = document.querySelector('div[style*="11vh"]');
+  if (cover) cover.style.backgroundColor = theme.waves[2];
+
+  document.querySelectorAll('#overlay-box h1').forEach(h1 => {
+    h1.style.color = theme.color1;
+  });
+
+const newsOverlay = document.getElementById('news-overlay');
+if (newsOverlay) {
+  const img = newsOverlay.querySelector('img');
+  if (img) {
+    let pages = getNewsPages();
+    img.src = pages[0].images[0].src;
+  }
+}
+
+document.body.style.transition = "background 0.4s ease";
+
+applyThemeEffects(name);
+}
 
 function showNewsPanel() {
+let newsPages = getNewsPages();
   let pageIdx = 0;
   let imgIdx = 0;
 
@@ -907,6 +1116,11 @@ button.addEventListener('click', () => {
         return;
     }
 
+if (val === 'themes') {
+  showThemePanel();
+  return;
+}
+
    if (val === 'schoology utilities') {
    showInstructionsOverlay('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/bridge.js');
         return;
@@ -923,6 +1137,7 @@ if (val === 'news') {
 }
 
     if (val === 'zephware' || val === 'games' || val === 'library') {
+        clearThemeEffects();
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
@@ -1106,13 +1321,9 @@ function setButtonStatus(status) {
   document.body.appendChild(inputArea);
 })();
 
-/* Winter Snowfall (Disabled)
-(function () {
-   if (window.__zephwareSnowfall) return;
-   window.__zephwareSnowfall = true;
-
-   const style = document.createElement("style");
-   style.textContent = `
+function createSnowfall() {
+  const style = document.createElement("style");
+  style.textContent = `
       #zeph-snow-container {
          pointer-events: none;
          position: fixed;
@@ -1121,57 +1332,66 @@ function setButtonStatus(status) {
          width: 100vw;
          height: 100vh;
          overflow: hidden;
-         z-index: 0;
+         z-index: 1;
+         transition: opacity 3s ease-out; /* Smooth fade for the group */
       }
       .zeph-snowflake {
          position: absolute;
          top: -5vh;
          color: white;
-         font-size: 10px;
-         opacity: 0.8;
          user-select: none;
-         animation-timing-function: linear;
-         animation-fill-mode: forwards;
+         animation: zeph-snowfall var(--fall-duration) linear forwards, 
+                    zeph-wobble var(--wobble-duration) ease-in-out infinite;
       }
       @keyframes zeph-snowfall {
-         0% { transform: translateY(0) translateX(0); }
-         100% { transform: translateY(110vh) translateX(var(--drift)); }
+         0% { top: -5vh; }
+         100% { top: 110vh; }
+      }
+      @keyframes zeph-wobble {
+         0%, 100% { transform: translateX(0); }
+         50% { transform: translateX(var(--drift)); }
       }
    `;
-   document.head.appendChild(style);
+  document.head.appendChild(style);
 
-   const container = document.createElement("div");
-   container.id = "zeph-snow-container";
-   document.body.appendChild(container);
+  const container = document.createElement("div");
+  container.id = "zeph-snow-container";
+  document.body.insertBefore(container, document.body.firstChild);
 
-   function createSnowflake() {
-      const flake = document.createElement("div");
-      flake.className = "zeph-snowflake";
-      flake.textContent = "❄";
+  function createSnowflake() {
+    const flake = document.createElement("div");
+    flake.className = "zeph-snowflake";
+    flake.textContent = "❄️";
+    flake.style.left = Math.random() * 100 + "vw";
+    flake.style.fontSize = (8 + Math.random() * 20) + "px";
+    flake.style.opacity = 0.5 + Math.random() * 0.5;
+    
+    const fallTime = 5 + Math.random() * 10;
+    const wobbleTime = 2 + Math.random() * 2;
+    flake.style.setProperty("--drift", (Math.random() * 40 + 20) + "px");
+    flake.style.setProperty("--fall-duration", fallTime + "s");
+    flake.style.setProperty("--wobble-duration", wobbleTime + "s");
 
-      flake.style.left = Math.random() * 100 + "vw";
-      flake.style.fontSize = 8 + Math.random() * 20 + "px";
-      flake.style.opacity = 0.5 + Math.random() * 0.5;
-      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
+    container.appendChild(flake);
+    setTimeout(() => flake.remove(), fallTime * 1000);
+  }
 
-      const fallTime = 6 + Math.random() * 7;
-      flake.style.animation = `zeph-snowfall ${fallTime}s linear forwards`;
+  const intervalId = setInterval(createSnowflake, 200);
 
-      container.appendChild(flake);
+  return {
+    cleanup() {
+      clearInterval(intervalId);
+      setTimeout(() => {
+        container.remove();
+        style.remove();
+      }, 15000);
+    }
+  };
+}
 
-      setTimeout(() => flake.remove(), fallTime * 1000);
-   }
-
-   setInterval(createSnowflake, 120);
-})();
-*/
-
-(function () {
-   if (window.__zephwareHeartfall) return;
-   window.__zephwareHeartfall = true;
-
-   const style = document.createElement("style");
-   style.textContent = `
+function createHeartfall(emoji) {
+  const style = document.createElement("style");
+  style.textContent = `
       #zeph-heart-container {
          pointer-events: none;
          position: fixed;
@@ -1180,150 +1400,109 @@ function setButtonStatus(status) {
          width: 100vw;
          height: 100vh;
          overflow: hidden;
-         z-index: 0;
+         z-index: 1;
+         transition: opacity 3s ease-out;
       }
       .zeph-hearts {
          position: absolute;
-         top: -5vh;
-         color: white;
-         font-size: 10px;
-         opacity: 0.8;
+         top: -10vh;
          user-select: none;
-         animation-timing-function: linear;
-         animation-fill-mode: forwards;
+         animation: zeph-heartfall var(--fall-duration) linear forwards;
       }
       @keyframes zeph-heartfall {
          0% { transform: translateY(0) translateX(0); }
-         100% { transform: translateY(110vh) translateX(var(--drift)); }
+         100% { transform: translateY(140vh) translateX(var(--drift)); }
       }
    `;
-   document.head.appendChild(style);
+  document.head.appendChild(style);
 
-   const container = document.createElement("div");
-   container.id = "zeph-heart-container";
-   document.body.appendChild(container);
+  const container = document.createElement("div");
+  container.id = "zeph-heart-container";
+  document.body.insertBefore(container, document.body.firstChild);
 
-   function createhearts() {
-      const flake = document.createElement("div");
-      flake.className = "zeph-hearts";
-      flake.textContent = "❤️";
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "zeph-hearts";
+    heart.textContent = emoji;
 
-      flake.style.left = Math.random() * 100 + "vw";
-      flake.style.fontSize = 8 + Math.random() * 20 + "px";
-      flake.style.opacity = 0.5 + Math.random() * 0.5;
-      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (10 + Math.random() * 20) + "px";
+    heart.style.opacity = 0.6 + Math.random() * 0.4;
+    
+    const fallTime = 5 + Math.random() * 5;
+    heart.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
+    heart.style.setProperty("--fall-duration", fallTime + "s");
 
-      const fallTime = 6 + Math.random() * 7;
-      flake.style.animation = `zeph-heartfall ${fallTime}s linear forwards`;
+    container.appendChild(heart);
+    setTimeout(() => heart.remove(), fallTime * 1000);
+  }
 
-      container.appendChild(flake);
+  const intervalId = setInterval(createHeart, 250);
 
-      setTimeout(() => flake.remove(), fallTime * 1000);
-   }
+  return {
+    cleanup() {
+      clearInterval(intervalId);
+      setTimeout(() => {
+        container.remove();
+        style.remove();
+      }, 11000);
+    }
+  };
+}
 
-   setInterval(createhearts, 120);
-})();
-
-/* Pink Heartfall (Disabled)
-(function () {
-   if (window.__zephwareHeartfall) return;
-   window.__zephwareHeartfall = true;
-
-   const style = document.createElement("style");
-   style.textContent = `
-      #zeph-heart-container {
-         pointer-events: none;
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100vw;
-         height: 100vh;
-         overflow: hidden;
-         z-index: 0;
-      }
-      .zeph-hearts {
-         position: absolute;
-         top: -5vh;
-         color: white;
-         font-size: 10px;
-         opacity: 0.8;
-         user-select: none;
-         animation-timing-function: linear;
-         animation-fill-mode: forwards;
-      }
-      @keyframes zeph-heartfall {
-         0% { transform: translateY(0) translateX(0); }
-         100% { transform: translateY(110vh) translateX(var(--drift)); }
-      }
-   `;
-   document.head.appendChild(style);
-
-   const container = document.createElement("div");
-   container.id = "zeph-heart-container";
-   document.body.appendChild(container);
-
-   function createhearts() {
-      const flake = document.createElement("div");
-      flake.className = "zeph-hearts";
-      flake.textContent = "❤️";
-
-      flake.style.left = Math.random() * 100 + "vw";
-      flake.style.fontSize = 8 + Math.random() * 20 + "px";
-      flake.style.opacity = 0.5 + Math.random() * 0.5;
-      flake.style.setProperty("--drift", (Math.random() * 50 - 25) + "px");
-
-      const fallTime = 6 + Math.random() * 7;
-      flake.style.animation = `zeph-heartfall ${fallTime}s linear forwards`;
-
-      container.appendChild(flake);
-
-      setTimeout(() => flake.remove(), fallTime * 1000);
-   }
-
-   setInterval(createhearts, 120);
-})();*/
-
-/* JUMP SCARE (DISABLED)
-(function () {
-
+function createJumpScare() {
    const img = document.createElement("img");
-   img.src = "https://www.indiatimes.com/thumb/123963169.cms?imgsize=46526&width=616&resizemode=4"
+   img.src = "https://www.indiatimes.com/thumb/123963169.cms?imgsize=46526&width=616&resizemode=4";
    img.style.position = "fixed";
    img.style.top = "0";
    img.style.left = "0";
    img.style.width = "110vw";
    img.style.height = "100vh";
-   img.style.opacity = 0.1;
-   img.style.zIndex = 1;
+   img.style.opacity = "0.1";
+   img.style.zIndex = "9999";
    img.style.display = "none";
    img.style.pointerEvents = "none";
    document.body.appendChild(img);
 
+   let flickerInterval = null;
+   let timeoutId = null;
+   let stopped = false;
+
    function showFlicker() {
+      if (stopped) return;
+
       let flickerCount = 0;
       img.style.display = "block";
 
-      const flicker = setInterval(() => {
-         img.style.visibility = (
-           img.style.visibility === "hidden"
-           ? "visible"
-           : "hidden"
-         );
+      flickerInterval = setInterval(() => {
+         img.style.visibility =
+           img.style.visibility === "hidden" ? "visible" : "hidden";
+
          flickerCount++;
 
          if (flickerCount >= 20) {
-            clearInterval(flicker);
+            clearInterval(flickerInterval);
             img.style.display = "none";
             img.style.visibility = "visible";
+
+            if (!stopped) {
+              timeoutId = setTimeout(showFlicker, Math.random() * 10000 + 5000);
+            }
          }
       }, 150);
-
-      const nextDelay = Math.random() * (15000 - 5000) + 5000;
-      setTimeout(showFlicker, nextDelay);
    }
 
-   setTimeout(showFlicker, Math.random() * (15000 - 5000) + 5000);
-})();*/
+   timeoutId = setTimeout(showFlicker, Math.random() * 10000 + 5000);
+
+   return {
+     cleanup() {
+       stopped = true;
+       clearInterval(flickerInterval);
+       clearTimeout(timeoutId);
+       img.remove();
+     }
+   };
+}
 
 (function() {
   const style = document.createElement('style');
@@ -1343,4 +1522,4 @@ function setButtonStatus(status) {
   `;
   document.head.appendChild(style);
 })();
-} else {alert('This bookmarklet only works on google.com, this is for data saving purposes and for keeping the data in 1 place.');}})();
+} else {alert('This bookmarklet only works on google.com, (or hyperware.vercel.app) this is for data saving purposes and for keeping the data in 1 place.');}})();

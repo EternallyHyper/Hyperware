@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Demon Slayer: Infinity Castle",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/InfinityCastle.mp4",
+    "cover": "../assets/covers/movies/InfinityCastle.png",
+    "tags": ["Anime", "Action"]
+  },
+  {
+    "name": "Demon Slayer: Mugen Train",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/MugenTrain.mp4",
+    "cover": "../assets/covers/movies/MugenTrain.png",
+    "tags": ["Anime", "Action"]
+  },
+  {
+    "name": "Chainsaw Man: Reze Arc",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/Reze.mp4",
+    "dub": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/Dub/RezeDub.mp4",
+    "cover": "../assets/covers/movies/Reze.png",
+    "tags": ["Anime", "Action"]
+  },
+  {
+    "name": "A Silent Voice",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/SilentVoice.mp4",
+    "cover": "../assets/covers/movies/SilentVoice.png",
+    "tags": ["Anime", "Romance"]
+  },
+  {
+    "name": "Akira",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/Akira.mp4",
+    "cover": "../assets/covers/movies/Akira.png",
+    "tags": ["Anime", "Action"]
+  },
+  {
+    "name": "Howl's Moving Castle",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/HowlsMovingCastle.mp4",
+    "cover": "../assets/covers/movies/MovingCastle.png",
+    "tags": ["Anime", "Chill"]
+  },
+  {
+    "name": "Spirited Away",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/SpiritedAway.mp4",
+    "cover": "../assets/covers/movies/SpiritedAway.png",
+    "tags": ["Anime", "Chill"]
+  },
+  {
+    "name": "My Neighbor Totoro",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/NeighborTotoro.mp4",
+    "cover": "../assets/covers/movies/NeighborTotoro.png",
+    "tags": ["Anime", "Chill"]
+  },
+  {
+    "name": "Your Name",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/YourName.mp4",
+    "dub": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/Dub/YourName.mp4",
+    "cover": "../assets/covers/movies/YourName.png",
+    "tags": ["Anime", "Romance"]
+  },
+  {
+    "name": "Princess Mononoke",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/PrincessMononoke.mp4",
+    "cover": "../assets/covers/movies/PrincessMononoke.png",
+    "tags": ["Anime", "Action"]
+  },
+  {
+    "name": "The Boy and the Heron",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/BoyHeron.mp4",
+    "cover": "../assets/covers/movies/BoyHeron.png",
+    "tags": ["Anime", "Chill"]
+  },
+  {
+    "name": "Weathering With You",
+    "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/WeatheringWithYou.mp4",
+    "cover": "../assets/covers/movies/WeatheringWithYou.png",
+    "tags": ["Anime", "Romance"]
+  }
+]
