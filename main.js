@@ -623,7 +623,8 @@ hint.innerText = randomMessage;
         { src: "https://placehold.co/600x400/000000/FFF?text=Coming+Soon" }
       ],
       changes: [
-        { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, IXL+ (Paid $5 for it), etc." },
+        { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, etc." },
+        { text: "IXL + Hacks", desc: "Paid $5 for IXL+" },
         { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
         { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
         { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
@@ -729,14 +730,16 @@ function showThemePanel() {
         </div>
       </div>
 
-      <div style="
-        text-align:center;
-        font-weight:600;
-        font-size:14px;
-        letter-spacing:0.5px;
-      ">
-        ${key.toUpperCase()}
-      </div>
+        <div style="
+          text-align:center;
+          font-weight:600;
+          font-size:14px;
+          letter-spacing:0.5px;
+          color:white;
+        ">
+          ${key.toUpperCase()}
+        </div>
+
     `;
 
     card.onmouseenter = () => {
@@ -784,7 +787,7 @@ function applyThemeEffects(themeName) {
       activeEffect = createHeartfall("❤️");
       break;
     case "pink":
-      activeEffect = createHeartfall("💗");
+      activeEffect = createHeartfall("🩷");
       break;
     case "orange":
       activeEffect = createJumpScare();
@@ -1319,63 +1322,130 @@ function setButtonStatus(status) {
 })();
 
 function createSnowfall() {
+  const style = document.createElement("style");
+  style.textContent = `
+      #zeph-snow-container {
+         pointer-events: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         overflow: hidden;
+         z-index: 1;
+         transition: opacity 3s ease-out; /* Smooth fade for the group */
+      }
+      .zeph-snowflake {
+         position: absolute;
+         top: -5vh;
+         color: white;
+         user-select: none;
+         animation: zeph-snowfall var(--fall-duration) linear forwards, 
+                    zeph-wobble var(--wobble-duration) ease-in-out infinite;
+      }
+      @keyframes zeph-snowfall {
+         0% { top: -5vh; }
+         100% { top: 110vh; }
+      }
+      @keyframes zeph-wobble {
+         0%, 100% { transform: translateX(0); }
+         50% { transform: translateX(var(--drift)); }
+      }
+   `;
+  document.head.appendChild(style);
+
   const container = document.createElement("div");
-  container.id = "theme-effect";
-  document.body.appendChild(container);
+  container.id = "zeph-snow-container";
+  document.body.insertBefore(container, document.body.firstChild);
 
-  const interval = setInterval(() => {
+  function createSnowflake() {
     const flake = document.createElement("div");
+    flake.className = "zeph-snowflake";
     flake.textContent = "❄️";
-    flake.style.position = "fixed";
-    flake.style.top = "-10px";
     flake.style.left = Math.random() * 100 + "vw";
-    flake.style.color = "white";
     flake.style.fontSize = (8 + Math.random() * 20) + "px";
-    flake.style.pointerEvents = "none";
-    flake.style.zIndex = "0";
-    flake.style.transition = "transform 8s linear";
+    flake.style.opacity = 0.5 + Math.random() * 0.5;
+    
+    const fallTime = 5 + Math.random() * 10;
+    const wobbleTime = 2 + Math.random() * 2;
+    flake.style.setProperty("--drift", (Math.random() * 40 + 20) + "px");
+    flake.style.setProperty("--fall-duration", fallTime + "s");
+    flake.style.setProperty("--wobble-duration", wobbleTime + "s");
 
-    document.body.appendChild(flake);
+    container.appendChild(flake);
+    setTimeout(() => flake.remove(), fallTime * 1000);
+  }
 
-    requestAnimationFrame(() => {
-      flake.style.transform = `translateY(110vh)`;
-    });
-
-    setTimeout(() => flake.remove(), 8000);
-  }, 150);
+  const intervalId = setInterval(createSnowflake, 200);
 
   return {
     cleanup() {
-      clearInterval(interval);
-      container.remove();
+      clearInterval(intervalId);
+      setTimeout(() => {
+        container.remove();
+        style.remove();
+      }, 15000);
     }
   };
 }
 
 function createHeartfall(emoji) {
-  const interval = setInterval(() => {
+  const style = document.createElement("style");
+  style.textContent = `
+      #zeph-heart-container {
+         pointer-events: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         overflow: hidden;
+         z-index: 1;
+         transition: opacity 3s ease-out;
+      }
+      .zeph-hearts {
+         position: absolute;
+         top: -10vh;
+         user-select: none;
+         animation: zeph-heartfall var(--fall-duration) linear forwards;
+      }
+      @keyframes zeph-heartfall {
+         0% { transform: translateY(0) translateX(0); }
+         100% { transform: translateY(140vh) translateX(var(--drift)); }
+      }
+   `;
+  document.head.appendChild(style);
+
+  const container = document.createElement("div");
+  container.id = "zeph-heart-container";
+  document.body.insertBefore(container, document.body.firstChild);
+
+  function createHeart() {
     const heart = document.createElement("div");
+    heart.className = "zeph-hearts";
     heart.textContent = emoji;
-    heart.style.position = "fixed";
-    heart.style.top = "-10px";
+
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.fontSize = (10 + Math.random() * 20) + "px";
-    heart.style.pointerEvents = "none";
-    heart.style.zIndex = "0";
-    heart.style.transition = "transform 7s linear";
+    heart.style.opacity = 0.6 + Math.random() * 0.4;
+    
+    const fallTime = 5 + Math.random() * 5;
+    heart.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
+    heart.style.setProperty("--fall-duration", fallTime + "s");
 
-    document.body.appendChild(heart);
+    container.appendChild(heart);
+    setTimeout(() => heart.remove(), fallTime * 1000);
+  }
 
-    requestAnimationFrame(() => {
-      heart.style.transform = `translateY(110vh)`;
-    });
-
-    setTimeout(() => heart.remove(), 7000);
-  }, 120);
+  const intervalId = setInterval(createHeart, 250);
 
   return {
     cleanup() {
-      clearInterval(interval);
+      clearInterval(intervalId);
+      setTimeout(() => {
+        container.remove();
+        style.remove();
+      }, 11000);
     }
   };
 }
@@ -1452,4 +1522,4 @@ function createJumpScare() {
   `;
   document.head.appendChild(style);
 })();
-} else {alert('This bookmarklet only works on google.com, this is for data saving purposes and for keeping the data in 1 place.');}})();
+} else {alert('This bookmarklet only works on google.com, (or hyperware.vercel.app) this is for data saving purposes and for keeping the data in 1 place.');}})();
