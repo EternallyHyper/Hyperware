@@ -797,7 +797,7 @@
       }
       
     } else if (currentPage === 'movies') {
-       document.title = '';
+       document.title = 'Google';
       const filteredMovies = filterContent(movies);
       content.innerHTML = '';
       
