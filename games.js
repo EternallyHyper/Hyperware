@@ -20,7 +20,7 @@ function preloadImage(src) {
 
 function convertToRawGitHubURL(url) {
   if (typeof url !== 'string' || url.startsWith('http')) return url;
-  const match = urlmatch(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
+  const match = url.match(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
   if (!match) return url;
   const [, username, repo, rest = 'main'] = match;
   const path = rest.endsWith('/') ? rest : rest + '/';
@@ -347,6 +347,7 @@ async function openGame(config) {
       return;
     }
   }
+
   if (url && url.endsWith('.swf')) {
     try {
       await injectRuffle();
@@ -363,7 +364,6 @@ async function openGame(config) {
     return;
   }
 
-  
   const iframe = document.createElement('iframe');
   iframe.className = 'game-player';
   iframe.src = url;
@@ -430,7 +430,7 @@ function showTagsModal() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'x';
+  closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -474,7 +474,7 @@ function rollGame() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'x';
+  closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -528,7 +528,7 @@ function createSettingsPanel() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'x';
+  closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -548,7 +548,7 @@ function createSettingsPanel() {
 
 // === Loading ===
 function loadGameList() {
-  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/json/gamelist.json')
+  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/gamelist.json')
     .then(response => response.json())
     .then(data => {
       buttonConfigs = data;
