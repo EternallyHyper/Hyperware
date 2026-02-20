@@ -690,6 +690,15 @@ function createSettingsPanel() {
 }
 
 function createPanel() {
+  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css')
+    .then(r => r.text())
+    .then(css => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.appendChild(style);
+    })
+    .catch(err => console.error('CSS failed to load:', err));
+    
   panel = document.createElement('div');
   panel.className = 'games-panel custom-scroll';
 
