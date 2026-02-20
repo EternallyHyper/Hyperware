@@ -242,6 +242,143 @@ body {
   background: #015AFD;
 }
 
+
+.game-back-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  height: 44px;
+  background: rgba(15, 15, 20, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  font-family: 'Fredoka', sans-serif;
+}
+
+.game-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.game-back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.game-back-title {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-player {
+  position: fixed;
+  top: 44px !important;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: calc(100% - 44px) !important;
+  border: none;
+  z-index: 9998;
+}
+
+.report-modal {
+  max-width: 480px;
+  width: 90%;
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.report-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.report-form-group label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Fredoka', sans-serif;
+}
+
+.report-form-group input,
+.report-form-group select,
+.report-form-group textarea {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 14px;
+  padding: 8px 12px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.report-form-group input:focus,
+.report-form-group select:focus,
+.report-form-group textarea:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.report-form-group select option {
+  background: #1a1a2e;
+}
+
+.report-submit-btn {
+  background: #4488ff;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.report-submit-btn:hover {
+  background: #3377ee;
+}
+
+.report-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#report-message {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px;
+  min-height: 18px;
+  text-align: center;
+}
+
 .roller-modal {
   width: 240px;
   height: 300px;

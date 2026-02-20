@@ -474,11 +474,11 @@ body {
   transform: rotate(90deg);
 }
 
-/* Movie Modal */
 #zw-movie-modal {
   padding: 100px 50px 50px;
   max-width: 1200px;
   margin: 0 auto;
+  overflow-y: auto;
 }
 
 #zw-movie-player {
@@ -547,20 +547,19 @@ body {
   color: #01AEFD;
 }
 
-/* Show Modal */
 #zw-show-modal {
   padding: 50px 50px 50px;
   max-width: 100%;
   margin: 0 auto;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 #zw-show-layout {
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 30px;
-  height: calc(100vh - 120px);
+  min-height: calc(100vh - 120px);
   max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
@@ -570,8 +569,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
-  overflow: hidden;
+  min-height: 0;
 }
 
 #zw-show-video-container {
@@ -665,8 +663,8 @@ body {
   border: 2px solid rgba(1, 174, 253, 0.2);
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .zw-episode-controls {
@@ -759,7 +757,6 @@ body {
   line-height: 1.3;
 }
 
-/* Suggestions Form */
 #zw-suggestions {
   max-width: 700px;
   margin: 0 auto;
@@ -878,7 +875,6 @@ body {
   color: #f87171;
 }
 
-/* Empty State */
 .zw-empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -895,7 +891,78 @@ body {
   font-size: 20px;
 }
 
-/* Mobile Responsive */
+#zw-movie-modal {
+  padding: 50px 50px 50px;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+#zw-movie-description {
+  background: linear-gradient(135deg, rgba(1, 174, 253, 0.1) 0%, rgba(1, 90, 253, 0.1) 100%);
+  border-radius: 15px;
+  padding: 25px;
+  border: 2px solid rgba(1, 174, 253, 0.2);
+  margin: 20px 0;
+  width: 100%;
+}
+
+#zw-movie-description h3 {
+  font-size: 24px;
+  color: #01AEFD;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+#zw-movie-description .zw-show-meta {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 15px;
+}
+
+.zw-movie-description-text {
+  font-size: 14px;
+  color: #e0e0e0;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.zw-audio-selector-movie {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zw-audio-selector-movie label {
+  font-size: 14px;
+  color: #01AEFD;
+  font-weight: 600;
+}
+
+.zw-audio-select-dropdown {
+  padding: 8px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(1, 174, 253, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Fredoka', sans-serif;
+}
+
+.zw-audio-select-dropdown:hover {
+  background: rgba(1, 174, 253, 0.2);
+  border-color: #01AEFD;
+}
+
+.zw-audio-select-dropdown option {
+  background: #1a1a2e;
+  color: white;
+}
+
 @media (max-width: 1024px) {
   #zw-show-layout {
     grid-template-columns: 1fr;
