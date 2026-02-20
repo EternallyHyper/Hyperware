@@ -671,7 +671,7 @@ function createSettingsPanel() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'Ã—';
+  closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -690,7 +690,7 @@ function createSettingsPanel() {
 }
 
 function createPanel() {
-  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css')
+    fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css')
     .then(r => r.text())
     .then(css => {
       const style = document.createElement('style');
@@ -698,7 +698,12 @@ function createPanel() {
       document.head.appendChild(style);
     })
     .catch(err => console.error('CSS failed to load:', err));
-    
+
+  const fontLink = document.createElement('link');
+  fontLink.rel = 'stylesheet';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap';
+  document.head.appendChild(fontLink);
+
   panel = document.createElement('div');
   panel.className = 'games-panel custom-scroll';
 
