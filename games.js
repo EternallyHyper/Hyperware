@@ -1,9 +1,11 @@
-// === Config ===
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1470948651802165248/k6rm7a55ES2YIDcqV17kBFJ45sCCfkOHYS1aBpD42jBuudLMJO2OKZgUDu-qoBm4ns3w";
+
 let buttonConfigs = [];
 let activeTag = null;
 let panel = null;
+let slugMap = new Map();
+let slugToConfig = new Map();
 
-// === Utility Functions ===
 const imageCache = new Map();
 
 function preloadImage(src) {
@@ -34,7 +36,62 @@ function makeAbsoluteURL(baseUrl, resourcePath) {
   return baseUrl + path;
 }
 
-// === Game Loading Functions ===
+function buildSlugMaps(configs) {
+  slugMap = new Map();
+  slugToConfig = new Map();
+
+  const baseCount = {};
+
+  configs.forEach(cfg => {
+    const base = (cfg.label || 'game')
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+    baseCount[base] = (baseCount[base] || 0) + 1;
+  });
+
+  const seen = {};
+  configs.forEach(cfg => {
+    const base = (cfg.label || 'game')
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    let slug;
+    if (baseCount[base] > 1) {
+      seen[base] = (seen[base] || 0) + 1;
+      slug = `${base}-${seen[base]}`;
+    } else {
+      slug = base;
+    }
+
+    slugMap.set(cfg, slug);
+    slugToConfig.set(slug, cfg);
+  });
+}
+
+function getRoute() {
+  const hash = window.location.hash.slice(1);
+  return hash.startsWith('/') ? hash.slice(1) : '';
+}
+
+function setRoute(slug) {
+  window.location.hash = slug ? `#/${slug}` : '';
+}
+
+function handleRouteChange() {
+  const slug = getRoute();
+  if (slug && slugToConfig.has(slug)) {
+    openGame(slugToConfig.get(slug), true);
+  } else {
+    closeGame();
+  }
+}
+
 async function loadGameBuild(rawOrShorthandUrl) {
   try {
     let baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
@@ -85,19 +142,16 @@ async function loadGameBuild(rawOrShorthandUrl) {
     for (const link of linkEls) {
       const href = link.getAttribute('href') || '';
       const absHref = makeAbsoluteURL(baseUrl, href);
-
       try {
         const cssResp = await cachedFetch(absHref);
         if (!cssResp.ok) throw new Error('CSS fetch failed');
         let cssText = await cssResp.text();
         const cssDir = absHref.substring(0, absHref.lastIndexOf('/') + 1);
-
         cssText = cssText.replace(/url\(([^)]+)\)/gi, (match, p1) => {
           const clean = p1.trim().replace(/^['"]|['"]$/g, '');
           if (/^(data:|https?:|\/\/)/i.test(clean)) return match;
           return `url("${makeAbsoluteURL(cssDir, clean)}")`;
         });
-
         const styleEl = doc.createElement('style');
         styleEl.textContent = cssText;
         link.replaceWith(styleEl);
@@ -110,7 +164,6 @@ async function loadGameBuild(rawOrShorthandUrl) {
     for (const script of scriptEls) {
       const src = script.getAttribute('src') || '';
       const absSrc = makeAbsoluteURL(baseUrl, src);
-
       try {
         const jsResp = await cachedFetch(absSrc);
         if (!jsResp.ok) throw new Error('JS fetch failed');
@@ -186,10 +239,7 @@ async function loadGameBuild(rawOrShorthandUrl) {
 
 async function injectRuffle() {
   return new Promise((resolve) => {
-    if (window.RufflePlayer) {
-      resolve();
-      return;
-    }
+    if (window.RufflePlayer) { resolve(); return; }
     const script = document.createElement('script');
     script.src = "https://unpkg.com/@ruffle-rs/ruffle";
     script.onload = () => resolve();
@@ -200,7 +250,6 @@ async function injectRuffle() {
 
 async function enableRuffleSave(player, gameUrl) {
   const saveKey = `zephware_ruffle_${gameUrl}`;
-  
   try {
     const savedData = localStorage.getItem(saveKey);
     if (savedData && player.setLocalStorageData) {
@@ -209,38 +258,108 @@ async function enableRuffleSave(player, gameUrl) {
   } catch (e) {
     console.warn('Could not load Ruffle save:', e);
   }
-
   setInterval(() => {
     try {
       const saveData = player.getLocalStorageData?.();
-      if (saveData) {
-        localStorage.setItem(saveKey, JSON.stringify(saveData));
-      }
+      if (saveData) localStorage.setItem(saveKey, JSON.stringify(saveData));
     } catch (e) {}
   }, 3000);
 }
 
-// === Game Build Saving ===
 function getGameSaveKey(config) {
   return `zephware_game_${config.label || config.url}`;
 }
 
 function saveGameState(config, iframe) {
   if (!iframe || !iframe.contentWindow) return;
-  
   try {
     const saveKey = getGameSaveKey(config);
-    const state = {
-      url: iframe.src,
-      timestamp: Date.now()
-    };
+    const state = { url: iframe.src, timestamp: Date.now() };
     localStorage.setItem(saveKey, JSON.stringify(state));
   } catch (e) {
     console.warn('Could not save game state:', e);
   }
 }
 
-// === UI ===
+async function openGame(config, fromRoute = false) {
+  if (panel) panel.style.display = 'none';
+
+  document.querySelectorAll('.game-player, .game-back-bar').forEach(el => el.remove());
+
+  if (!fromRoute) {
+    setRoute(slugMap.get(config) || '');
+  }
+
+  const backBar = document.createElement('div');
+  backBar.className = 'game-back-bar';
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'game-back-btn';
+  backBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+    Back to Games
+  `;
+  backBtn.addEventListener('click', () => {
+    setRoute('');
+  });
+
+  const gameTitle = document.createElement('div');
+  gameTitle.className = 'game-back-title';
+  gameTitle.textContent = config.label || '';
+
+  backBar.appendChild(backBtn);
+  backBar.appendChild(gameTitle);
+  document.body.appendChild(backBar);
+
+  let url = config.url;
+
+  if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
+    try {
+      url = await loadGameBuild(url);
+    } catch (e) {
+      console.error('Failed to load game build:', e);
+      alert('Failed to load game. Please try again.');
+      closeGame();
+      return;
+    }
+  }
+
+  if (url && url.endsWith('.swf')) {
+    try {
+      await injectRuffle();
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
+      player.className = 'game-player';
+      document.body.appendChild(player);
+      await enableRuffleSave(player, config.url || url);
+      player.load(url);
+    } catch (e) {
+      console.error('Ruffle error:', e);
+      alert('Could not run Flash game.');
+      closeGame();
+    }
+    return;
+  }
+
+  const iframe = document.createElement('iframe');
+  iframe.className = 'game-player';
+  iframe.src = url;
+  iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
+  iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals";
+  document.body.appendChild(iframe);
+
+  if (config.type === 'gameBuild') {
+    setInterval(() => saveGameState(config, iframe), 5000);
+  }
+}
+
+function closeGame() {
+  document.querySelectorAll('.game-player, .game-back-bar').forEach(el => el.remove());
+  if (panel) panel.style.display = '';
+}
+
 function createTitleBar() {
   const bar = document.createElement('div');
   bar.className = 'title-bar';
@@ -280,7 +399,7 @@ function createTitleBar() {
     {
       title: 'Report',
       svg: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>',
-      handler: () => window.open('https://forms.gle/h5DHdt5EnsT3bwqP7', '_blank')
+      handler: showReportModal
     },
     {
       title: 'Settings',
@@ -301,7 +420,7 @@ function createTitleBar() {
   bar.appendChild(left);
   bar.appendChild(searchBar);
   bar.appendChild(right);
-  
+
   bar._searchBar = searchBar;
   return bar;
 }
@@ -311,7 +430,7 @@ function renderGames(configs) {
   if (!container) return;
 
   container.innerHTML = '';
-  
+
   configs.forEach(config => {
     const card = document.createElement('button');
     card.className = 'game-card';
@@ -327,98 +446,14 @@ function renderGames(configs) {
     label.textContent = config.label || '';
     card.appendChild(label);
 
-    card.addEventListener('click', () => openGame(config));
+    card.addEventListener('click', () => {
+      setRoute(slugMap.get(config) || '');
+    });
+
     container.appendChild(card);
   });
 }
 
-async function openGame(config) {
-  if (!panel) return;
-  panel.remove();
-
-  let url = config.url;
-
-  if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
-    try {
-      url = await loadGameBuild(url);
-    } catch (e) {
-      console.error('Failed to load game build:', e);
-      alert('Failed to load game. Please try again.');
-      return;
-    }
-  }
-
-  if (url && url.endsWith('.swf')) {
-    try {
-      await injectRuffle();
-      const ruffle = window.RufflePlayer.newest();
-      const player = ruffle.createPlayer();
-      player.className = 'game-player';
-      document.body.appendChild(player);
-      await enableRuffleSave(player, config.url || url);
-      player.load(url);
-    } catch (e) {
-      console.error('Ruffle error:', e);
-      alert('Could not run Flash game.');
-    }
-    return;
-  }
-
-  const iframe = document.createElement('iframe');
-  iframe.className = 'game-player';
-  iframe.src = url;
-  iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
-  iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals";
-  document.body.appendChild(iframe);
-
-  if (config.type === 'gameBuild') {
-    setInterval(() => saveGameState(config, iframe), 5000);
-  }
-}
-
-function createPanel() {
-  fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css')
-    .then(r => r.text())
-    .then(css => {
-      const style = document.createElement('style');
-      style.textContent = css;
-      document.head.appendChild(style);
-    })
-    .catch(err => console.error('CSS failed to load:', err));
-
-  const fontLink = document.createElement('link');
-  fontLink.rel = 'stylesheet';
-  fontLink.href = 'https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap';
-  document.head.appendChild(fontLink);
-
-  panel = document.createElement('div');
-  panel.className = 'games-panel custom-scroll';
-
-  const titleBar = createTitleBar();
-  panel.appendChild(titleBar);
-
-  const container = document.createElement('div');
-  container.className = 'game-grid';
-  panel.appendChild(container);
-
-  let filteredConfigs = buttonConfigs.filter(cfg => !cfg.highlighted);
-
-  titleBar._searchBar.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase();
-    filteredConfigs = buttonConfigs.filter(cfg =>
-      !cfg.highlighted &&
-      cfg.label?.toLowerCase().includes(query) &&
-      (!activeTag || (Array.isArray(cfg.tag) ? cfg.tag.includes(activeTag) : cfg.tag === activeTag))
-    );
-    renderGames(filteredConfigs);
-  });
-
-  window.zwRenderGames = renderGames;
-  document.body.appendChild(panel);
-  renderGames(filteredConfigs);
-}
-
-// === Modal Functions ===
 function showTagsModal() {
   if (document.querySelector('.modal-overlay')) return;
 
@@ -451,7 +486,7 @@ function showTagsModal() {
     btn.onclick = () => {
       activeTag = activeTag === tag ? null : tag;
       const filtered = buttonConfigs.filter(cfg =>
-        !cfg.highlighted && 
+        !cfg.highlighted &&
         (!activeTag || (Array.isArray(cfg.tag) ? cfg.tag.includes(activeTag) : cfg.tag === activeTag))
       );
       window.zwRenderGames?.(filtered);
@@ -478,7 +513,6 @@ function rollGame() {
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
-  let rolling = true;
   let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
   let cycles = 0;
 
@@ -506,10 +540,9 @@ function rollGame() {
     updateGame();
     if (++cycles >= 30) {
       clearInterval(interval);
-      rolling = false;
       gameBtn.onclick = () => {
         overlay.remove();
-        openGame(buttonConfigs[currentIdx]);
+        setRoute(slugMap.get(buttonConfigs[currentIdx]) || '');
       };
     }
   }, 100);
@@ -517,6 +550,116 @@ function rollGame() {
   modal.appendChild(gameBtn);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
+}
+
+function showReportModal() {
+  if (document.querySelector('.modal-overlay')) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  const modal = document.createElement('div');
+  modal.className = 'modal report-modal';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'modal-close';
+  closeBtn.textContent = '×';
+  closeBtn.onclick = () => overlay.remove();
+  modal.appendChild(closeBtn);
+
+  const title = document.createElement('div');
+  title.className = 'modal-title';
+  title.textContent = 'Report / Suggest';
+  modal.appendChild(title);
+
+  modal.innerHTML += `
+    <div class="report-form">
+      <div class="report-form-group">
+        <label>Your Name (Optional)</label>
+        <input type="text" id="report-name" placeholder="Anonymous">
+      </div>
+      <div class="report-form-group">
+        <label>Type</label>
+        <select id="report-type">
+          <option value="Bug Report">Bug Report</option>
+          <option value="Suggestion">Suggestion</option>
+          <option value="Missing Game">Missing Game</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="report-form-group">
+        <label>Title</label>
+        <input type="text" id="report-title" placeholder="Brief title...">
+      </div>
+      <div class="report-form-group">
+        <label>Details</label>
+        <textarea id="report-details" rows="4" placeholder="Describe the issue or suggestion..."></textarea>
+      </div>
+      <button class="report-submit-btn" id="report-submit">Submit</button>
+      <div id="report-message"></div>
+    </div>
+  `;
+
+  modal.querySelector('.modal-close').onclick = () => overlay.remove();
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  modal.querySelector('#report-submit').addEventListener('click', async () => {
+    const name    = modal.querySelector('#report-name').value.trim() || 'Anonymous';
+    const type    = modal.querySelector('#report-type').value;
+    const rtitle  = modal.querySelector('#report-title').value.trim();
+    const details = modal.querySelector('#report-details').value.trim();
+    const msgEl   = modal.querySelector('#report-message');
+
+    if (!rtitle || !details) {
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Please fill in the title and details.';
+      return;
+    }
+
+    const submitBtn = modal.querySelector('#report-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    const payload = {
+      embeds: [{
+        title: `${type}: ${rtitle}`,
+        color: type === 'Bug Report' ? 0xff4444 : type === 'Suggestion' ? 0x4488ff : 0xffaa00,
+        fields: [
+          { name: 'Submitted By', value: name, inline: true },
+          { name: 'Type', value: type, inline: true },
+          { name: 'Details', value: details }
+        ],
+        footer: { text: 'Zephware Games' },
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    try {
+      const res = await fetch(DISCORD_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        msgEl.style.color = '#4ade80';
+        msgEl.textContent = 'Submitted! Thank you.';
+        modal.querySelector('#report-title').value = '';
+        modal.querySelector('#report-details').value = '';
+        setTimeout(() => overlay.remove(), 2000);
+      } else {
+        throw new Error('Bad response');
+      }
+    } catch {
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Failed to send. Please try again.';
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit';
+  });
 }
 
 function createSettingsPanel() {
@@ -528,7 +671,7 @@ function createSettingsPanel() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = '×';
+  closeBtn.textContent = 'Ã—';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
@@ -546,16 +689,50 @@ function createSettingsPanel() {
   document.body.appendChild(overlay);
 }
 
-// === Loading ===
+function createPanel() {
+  panel = document.createElement('div');
+  panel.className = 'games-panel custom-scroll';
+
+  const titleBar = createTitleBar();
+  panel.appendChild(titleBar);
+
+  const container = document.createElement('div');
+  container.className = 'game-grid';
+  panel.appendChild(container);
+
+  let filteredConfigs = buttonConfigs.filter(cfg => !cfg.highlighted);
+
+  titleBar._searchBar.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    filteredConfigs = buttonConfigs.filter(cfg =>
+      !cfg.highlighted &&
+      cfg.label?.toLowerCase().includes(query) &&
+      (!activeTag || (Array.isArray(cfg.tag) ? cfg.tag.includes(activeTag) : cfg.tag === activeTag))
+    );
+    renderGames(filteredConfigs);
+  });
+
+  window.zwRenderGames = renderGames;
+  document.body.appendChild(panel);
+  renderGames(filteredConfigs);
+}
+
 function loadGameList() {
   fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/data/json/gamelist.json')
     .then(response => response.json())
     .then(data => {
       buttonConfigs = data;
+      buildSlugMaps(data);
       data.slice(0, 10).forEach(cfg => {
         if (cfg.image) preloadImage(cfg.image);
       });
       createPanel();
+
+      window.addEventListener('hashchange', handleRouteChange);
+      const initialRoute = getRoute();
+      if (initialRoute) {
+        handleRouteChange();
+      }
     })
     .catch(error => {
       console.error('Error loading game list:', error);

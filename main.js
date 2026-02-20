@@ -626,7 +626,7 @@ hint.innerText = randomMessage;
         { text: "Learning Tools Completion", desc: "Adding Calculator, Marker Tool, etc." },
         { text: "IXL + Hacks", desc: "Paid $5 for IXL+" },
         { text: "Gimkit Hacks", desc: "Working on it, might be patched though." },
-        { text: "Games Rework", desc: "Will be branded with Hyperware soon" },
+        { text: "Games and Library Rework", desc: "Will be branded with Hyperware soon" },
         { text: "TinyTask Web Port", desc: "still trying to incorporate tinytask for browsers" }
       ]
     }
