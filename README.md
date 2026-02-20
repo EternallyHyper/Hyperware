@@ -11,7 +11,7 @@ This project is intended to primarly bypass GoGuardian, if you have another bloc
 
 ## Contributors
 
-I used <a href="https://github.com/TrulyZeph/Zephware/" target="_blank">Zephware</a> as a starting point, go give that a star. I make the rest of the updates so they WILL take time
+I used <a href="https://github.com/TrulyZeph/Zephware/" target="_blank">Zephware</a> as a starting point, go give that a star. I make the rest of the updates so they WILL take time.
 
 [![Contributors](https://contrib.rocks/image?repo=EternallyHyper/Hyperware)](https://github.com/EternallyHyper/Hyperware/graphs/contributors)
 
@@ -19,7 +19,8 @@ I used <a href="https://github.com/TrulyZeph/Zephware/" target="_blank">Zephware
 ## To Do:
 
 *  Add Gimkit Hacks
-*  Add the Theme Marketplace
+*  Add Marketplace
 *  IXL + Hacks
 *  Learning Tools Completion
 *  Add TinyTask (Web Port)
+*  Rework Library and Games (I will brand them as Hyperware soon)
