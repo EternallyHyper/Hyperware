@@ -1,0 +1,1 @@
+javascript:(function(){fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/msg.js').then(r=>r.text()).then(s=>eval(s)).catch(e=>console.error('Error loading script:',e));})();
