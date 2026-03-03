@@ -29,6 +29,11 @@
   "label": "Geometry Dash",
   "url": "https://d1yh00vn2fvto7.cloudfront.net/play?gameID=game_28d8_bb38d44c326f3"
  },
+  {
+  "image": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/games/Balatro.png",
+  "label": "Balatro",
+  "url": "https://d3rtzzzsiu7gdr.cloudfront.net/files/balatro/index.html"
+ },
  {
   "image": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/games/EscapeRoad.png",
   "label": "Escape Road",

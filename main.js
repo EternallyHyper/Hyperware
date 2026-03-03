@@ -592,6 +592,8 @@ guiDiv.appendChild(gloss);
   'Please finish your homework before using this',
   'Hyperware was lowkey fun to make - EternallyHyper',
   'If you use another blocker then I’m sry for you - EternallyHyper',
+  'pls don’t ask me to delete this zephware - EternallyHyper',
+  'this almost got taken down because of zephware - EternallyHyper',
   'Go play some games',
   'There’s like a ton of messages here - EternallyHyper',
   'can’t believe you are still here',
@@ -1504,8 +1506,8 @@ document.body.appendChild(overlay);
 const box = overlay.querySelector('#overlay-box');
 
 document.getElementById('password-x-close').onclick = () => {
-  overlay.style.animation = 'overlayFadeOut 0.3s ease-in forwards';
-  box.style.animation = 'panelShrink 0.25s ease-in forwards';
+    overlay.style.animation = 'overlayFadeOut 0.3s ease-in forwards';
+    box.style.animation = 'panelShrinkFlex 0.25s ease-in forwards';
 
   box.addEventListener('animationend', () => {
     overlay.remove();
@@ -1591,7 +1593,7 @@ const box = overlay.querySelector('#overlay-box');
 
 closeBtn.onclick = () => {
     overlay.style.animation = 'overlayFadeOut 0.3s ease-in forwards';
-    box.style.animation = 'panelShrink 0.25s ease-in forwards';
+    box.style.animation = 'panelShrinkFlex 0.25s ease-in forwards';
     
     box.addEventListener('animationend', () => {
         overlay.remove();
