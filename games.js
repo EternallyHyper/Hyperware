@@ -1,4 +1,4 @@
-const ZEPHWARE_URL = "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/index.html";
+const ZEPHWARE_URL = "javascript:(()=>{fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/main.js').then(r=>r.text()).then(t=>{eval(t);console.log('Hyperware Loaded!')}).catch(e=>console.error('Error loading script:',e))})();";
 
 document.title = "Games | Hyperware";
 
