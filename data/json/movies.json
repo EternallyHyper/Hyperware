@@ -1,51 +1,5 @@
 [
   {
-    "name": "The Boondocks",
-    "tags": ["Sitcom", "Comedy"],
-    "cover": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/covers/shows/TheBoondocks.png",
-    "seasons": [
-      {
-        "season": 1,
-        "episodes": 15,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/The%20Boondocks/Season%201/"
-      },
-      {
-        "season": 2,
-        "episodes": 15,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/The%20Boondocks/Season%202/"
-      },
-      {
-        "season": 3,
-        "episodes": 15,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/The%20Boondocks/Season%203/"
-      },
-      {
-        "season": 4,
-        "episodes": 10,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/The%20Boondocks/Season%204/"
-      }
-    ]
-  },
-  {
-    "name": "Blue Lock",
-    "tags": ["Action", "Popular", "Sports"],
-    "cover": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/covers/shows/BlueLock.png",
-    "seasons": [
-      {
-        "season": 1,
-        "episodes": 24,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Blue%20Lock/Season%201/"
-      },
-      {
-        "season": 2,
-        "episodes": 14,
-        "dub": true,
-        "continue": true,
-        "url": "https://pub-e2ee947ccd7e42deaa601503e637d760.r2.dev/Blue%20Lock/Season%202/"
-      }
-    ]
-  },
-  {
     "name": "Demon Slayer: Infinity Castle",
     "url": "https://pub-d320f07561184cca9e1fb76c4e2a5d4c.r2.dev/InfinityCastle.mp4",
     "cover": "https://d1kusoubqqwr7w.cloudfront.net/assets/covers/movies/InfinityCastle.png",
