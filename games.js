@@ -1,4 +1,4 @@
-const ZEPHWARE_URL = "javascript:(()=>{fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/main.js').then(r=>r.text()).then(t=>{eval(t);console.log('Hyperware Loaded!')}).catch(e=>console.error('Error loading script:',e))})();";
+var ZEPHWARE_URL = "javascript:(()=>{fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/main.js').then(r=>r.text()).then(t=>{eval(t);console.log('Hyperware Loaded!')}).catch(e=>console.error('Error loading script:',e))})();";
 
 document.title = "Games | Hyperware";
 
@@ -15,18 +15,18 @@ function setFavicon(url) {
 
 setFavicon("https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/icon.png");
 
-let buttonConfigs = [];
-let activeTag = null;
-let panel = null;
-let slugMap = new Map();
-let slugToConfig = new Map();
+var buttonConfigs = [];
+var activeTag = null;
+var panel = null;
+var slugMap = new Map();
+var slugToConfig = new Map();
 
-const imageCache = new Map();
+var imageCache = new Map();
 
 function preloadImage(src) {
   if (imageCache.has(src)) return imageCache.get(src);
-  const promise = new Promise((resolve, reject) => {
-    const img = new Image();
+  var promise = new Promise((resolve, reject) => {
+    var img = new Image();
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = src;
@@ -37,17 +37,17 @@ function preloadImage(src) {
 
 function convertToRawGitHubURL(url) {
   if (typeof url !== 'string' || url.startsWith('http')) return url;
-  const match = url.match(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
+  var match = url.match(/^([^\/]+)\/([^\/]+)(?:\/(.+))?$/);
   if (!match) return url;
-  const [, username, repo, rest = 'main'] = match;
-  const path = rest.endsWith('/') ? rest : rest + '/';
+  var [, username, repo, rest = 'main'] = match;
+  var path = rest.endsWith('/') ? rest : rest + '/';
   return `https://raw.githubusercontent.com/${username}/${repo}/${path}`;
 }
 
 function makeAbsoluteURL(baseUrl, resourcePath) {
   if (!resourcePath) return resourcePath;
   if (/^(https?:|\/\/|data:|mailto:|javascript:|#)/i.test(resourcePath)) return resourcePath;
-  const path = resourcePath.startsWith('/') ? resourcePath.slice(1) : resourcePath;
+  var path = resourcePath.startsWith('/') ? resourcePath.slice(1) : resourcePath;
   return baseUrl + path;
 }
 
@@ -55,10 +55,10 @@ function buildSlugMaps(configs) {
   slugMap = new Map();
   slugToConfig = new Map();
 
-  const baseCount = {};
+  var baseCount = {};
 
   configs.forEach(cfg => {
-    const base = (cfg.label || 'game')
+    var base = (cfg.label || 'game')
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
@@ -67,16 +67,16 @@ function buildSlugMaps(configs) {
     baseCount[base] = (baseCount[base] || 0) + 1;
   });
 
-  const seen = {};
+  var seen = {};
   configs.forEach(cfg => {
-    const base = (cfg.label || 'game')
+    var base = (cfg.label || 'game')
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
 
-    let slug;
+    var slug;
     if (baseCount[base] > 1) {
       seen[base] = (seen[base] || 0) + 1;
       slug = `${base}-${seen[base]}`;
@@ -90,7 +90,7 @@ function buildSlugMaps(configs) {
 }
 
 function getRoute() {
-  const hash = window.location.hash.slice(1);
+  var hash = window.location.hash.slice(1);
   return hash.startsWith('/') ? hash.slice(1) : '';
 }
 
@@ -99,7 +99,7 @@ function setRoute(slug) {
 }
 
 function handleRouteChange() {
-  const slug = getRoute();
+  var slug = getRoute();
   if (slug && slugToConfig.has(slug)) {
     openGame(slugToConfig.get(slug), true);
   } else {
@@ -109,42 +109,42 @@ function handleRouteChange() {
 
 async function loadGameBuild(rawOrShorthandUrl) {
   try {
-    let baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
+    var baseUrl = convertToRawGitHubURL(rawOrShorthandUrl);
     if (!baseUrl.endsWith('/')) baseUrl += '/';
 
-    const fetchCache = new Map();
-    const cachedFetch = (url) => {
+    var fetchCache = new Map();
+    var cachedFetch = (url) => {
       if (fetchCache.has(url)) return fetchCache.get(url);
-      const p = fetch(url);
+      var p = fetch(url);
       fetchCache.set(url, p);
       return p;
     };
 
-    const resp = await cachedFetch(baseUrl + 'index.html');
+    var resp = await cachedFetch(baseUrl + 'index.html');
     if (!resp.ok) throw new Error(`Failed to fetch Hyperware: ${resp.status}`);
-    let htmlText = await resp.text();
+    var htmlText = await resp.text();
 
-    const externalScriptPatterns = [
+    var externalScriptPatterns = [
       /https:\/\/apis\.google\.com/gi,
       /https?:\/\/connect\.facebook\.net/gi,
       /https?:\/\/cdn\.ravenjs\.com/gi,
       /https:\/\/.*doorbell\.io/gi,
-      /https?:\/\/.*googletagmanager/gi,
+      /https?:\/\/.*googvaragmanager/gi,
       /https?:\/\/.*analytics/gi,
       /https?:\/\/static\.addtoany/gi
     ];
 
     htmlText = htmlText.replace(/<script[\s\S]*?<\/script>/gi, (match) => {
-      for (const pattern of externalScriptPatterns) {
+      for (var pattern of externalScriptPatterns) {
         if (pattern.test(match)) return '';
       }
       return match;
     });
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlText, 'text/html');
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlText, 'text/html');
 
-    let baseEl = doc.querySelector('base');
+    var baseEl = doc.querySelector('base');
     if (!baseEl) {
       baseEl = doc.createElement('base');
       baseEl.href = baseUrl;
@@ -153,21 +153,21 @@ async function loadGameBuild(rawOrShorthandUrl) {
       baseEl.href = baseUrl;
     }
 
-    const linkEls = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'));
-    for (const link of linkEls) {
-      const href = link.getAttribute('href') || '';
-      const absHref = makeAbsoluteURL(baseUrl, href);
+    var linkEls = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'));
+    for (var link of linkEls) {
+      var href = link.getAttribute('href') || '';
+      var absHref = makeAbsoluteURL(baseUrl, href);
       try {
-        const cssResp = await cachedFetch(absHref);
+        var cssResp = await cachedFetch(absHref);
         if (!cssResp.ok) throw new Error('CSS fetch failed');
-        let cssText = await cssResp.text();
-        const cssDir = absHref.substring(0, absHref.lastIndexOf('/') + 1);
+        var cssText = await cssResp.text();
+        var cssDir = absHref.substring(0, absHref.lastIndexOf('/') + 1);
         cssText = cssText.replace(/url\(([^)]+)\)/gi, (match, p1) => {
-          const clean = p1.trim().replace(/^['"]|['"]$/g, '');
+          var clean = p1.trim().replace(/^['"]|['"]$/g, '');
           if (/^(data:|https?:|\/\/)/i.test(clean)) return match;
           return `url("${makeAbsoluteURL(cssDir, clean)}")`;
         });
-        const styleEl = doc.createElement('style');
+        var styleEl = doc.createElement('style');
         styleEl.textContent = cssText;
         link.replaceWith(styleEl);
       } catch {
@@ -175,15 +175,15 @@ async function loadGameBuild(rawOrShorthandUrl) {
       }
     }
 
-    const scriptEls = Array.from(doc.querySelectorAll('script[src]'));
-    for (const script of scriptEls) {
-      const src = script.getAttribute('src') || '';
-      const absSrc = makeAbsoluteURL(baseUrl, src);
+    var scriptEls = Array.from(doc.querySelectorAll('script[src]'));
+    for (var script of scriptEls) {
+      var src = script.getAttribute('src') || '';
+      var absSrc = makeAbsoluteURL(baseUrl, src);
       try {
-        const jsResp = await cachedFetch(absSrc);
+        var jsResp = await cachedFetch(absSrc);
         if (!jsResp.ok) throw new Error('JS fetch failed');
-        const jsText = await jsResp.text();
-        const inline = doc.createElement('script');
+        var jsText = await jsResp.text();
+        var inline = doc.createElement('script');
         inline.textContent = jsText;
         script.replaceWith(inline);
       } catch {
@@ -191,7 +191,7 @@ async function loadGameBuild(rawOrShorthandUrl) {
       }
     }
 
-    const resourceAttrs = [
+    var resourceAttrs = [
       { sel: 'img', attr: 'src' },
       { sel: 'audio', attr: 'src' },
       { sel: 'video', attr: 'src' },
@@ -201,19 +201,19 @@ async function loadGameBuild(rawOrShorthandUrl) {
       { sel: 'link[rel="icon"]', attr: 'href' }
     ];
 
-    for (const { sel, attr } of resourceAttrs) {
-      for (const node of doc.querySelectorAll(sel)) {
-        const val = node.getAttribute(attr);
+    for (var { sel, attr } of resourceAttrs) {
+      for (var node of doc.querySelectorAll(sel)) {
+        var val = node.getAttribute(attr);
         if (!val || /^(https?:|\/\/|data:|mailto:|javascript:)/i.test(val)) continue;
         node.setAttribute(attr, makeAbsoluteURL(baseUrl, val));
       }
     }
 
-    const runtimeFix = doc.createElement('script');
+    var runtimeFix = doc.createElement('script');
     runtimeFix.textContent = `
       (function() {
-        const base = ${JSON.stringify(baseUrl)};
-        const origFetch = window.fetch;
+        var base = ${JSON.stringify(baseUrl)};
+        var origFetch = window.fetch;
         window.fetch = function(input, init) {
           try {
             if (typeof input === 'string' && !/^(https?:|data:|blob:)/i.test(input)) {
@@ -223,7 +223,7 @@ async function loadGameBuild(rawOrShorthandUrl) {
           return origFetch.call(this, input, init);
         };
 
-        const origXHROpen = XMLHttpRequest.prototype.open;
+        var origXHROpen = XMLHttpRequest.prototype.open;
         XMLHttpRequest.prototype.open = function(method, url) {
           try {
             if (url && !/^(https?:|data:|blob:)/i.test(url)) {
@@ -233,7 +233,7 @@ async function loadGameBuild(rawOrShorthandUrl) {
           return origXHROpen.apply(this, arguments);
         };
 
-        const origWorker = window.Worker;
+        var origWorker = window.Worker;
         window.Worker = function(url, options) {
           if (!/^(https?:|blob:)/i.test(url)) {
             url = new URL(url, base).href;
@@ -244,7 +244,7 @@ async function loadGameBuild(rawOrShorthandUrl) {
     `;
     (doc.head || doc.documentElement).appendChild(runtimeFix);
 
-    const finalHtml = '<!doctype html>\n' + doc.documentElement.outerHTML;
+    var finalHtml = '<!doctype html>\n' + doc.documentElement.outerHTML;
     return URL.createObjectURL(new Blob([finalHtml], { type: 'text/html' }));
   } catch (e) {
     console.error('Error building game:', e);
@@ -255,7 +255,7 @@ async function loadGameBuild(rawOrShorthandUrl) {
 async function injectRuffle() {
   return new Promise((resolve) => {
     if (window.RufflePlayer) { resolve(); return; }
-    const script = document.createElement('script');
+    var script = document.createElement('script');
     script.src = "https://unpkg.com/@ruffle-rs/ruffle";
     script.onload = () => resolve();
     script.onerror = () => resolve();
@@ -264,9 +264,9 @@ async function injectRuffle() {
 }
 
 async function enableRuffleSave(player, gameUrl) {
-  const saveKey = `zephware_ruffle_${gameUrl}`;
+  var saveKey = `zephware_ruffle_${gameUrl}`;
   try {
-    const savedData = localStorage.getItem(saveKey);
+    var savedData = localStorage.getItem(saveKey);
     if (savedData && player.setLocalStorageData) {
       player.setLocalStorageData(JSON.parse(savedData));
     }
@@ -275,7 +275,7 @@ async function enableRuffleSave(player, gameUrl) {
   }
   setInterval(() => {
     try {
-      const saveData = player.getLocalStorageData?.();
+      var saveData = player.getLocalStorageData?.();
       if (saveData) localStorage.setItem(saveKey, JSON.stringify(saveData));
     } catch (e) {}
   }, 3000);
@@ -288,8 +288,8 @@ function getGameSaveKey(config) {
 function saveGameState(config, iframe) {
   if (!iframe || !iframe.contentWindow) return;
   try {
-    const saveKey = getGameSaveKey(config);
-    const state = { url: iframe.src, timestamp: Date.now() };
+    var saveKey = getGameSaveKey(config);
+    var state = { url: iframe.src, timestamp: Date.now() };
     localStorage.setItem(saveKey, JSON.stringify(state));
   } catch (e) {
     console.warn('Could not save game state:', e);
@@ -305,10 +305,10 @@ async function openGame(config, fromRoute = false) {
     setRoute(slugMap.get(config) || '');
   }
 
-  const backBar = document.createElement('div');
+  var backBar = document.createElement('div');
   backBar.className = 'game-back-bar';
 
-  const backBtn = document.createElement('button');
+  var backBtn = document.createElement('button');
   backBtn.className = 'game-back-btn';
   backBtn.innerHTML = `
     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -320,7 +320,7 @@ async function openGame(config, fromRoute = false) {
     setRoute('');
   });
 
-  const gameTitle = document.createElement('div');
+  var gameTitle = document.createElement('div');
   gameTitle.className = 'game-back-title';
   gameTitle.textContent = config.label || '';
 
@@ -328,7 +328,7 @@ async function openGame(config, fromRoute = false) {
   backBar.appendChild(gameTitle);
   document.body.appendChild(backBar);
 
-  let url = config.url;
+  var url = config.url;
 
   if (config.type === 'gameBuild' || (/gameBuilds|github|raw.githubusercontent.com/i.test(url) && !url.endsWith('.swf'))) {
     try {
@@ -344,8 +344,8 @@ async function openGame(config, fromRoute = false) {
   if (url && url.endsWith('.swf')) {
     try {
       await injectRuffle();
-      const ruffle = window.RufflePlayer.newest();
-      const player = ruffle.createPlayer();
+      var ruffle = window.RufflePlayer.newest();
+      var player = ruffle.createPlayer();
       player.className = 'game-player';
       document.body.appendChild(player);
       await enableRuffleSave(player, config.url || url);
@@ -358,7 +358,7 @@ async function openGame(config, fromRoute = false) {
     return;
   }
 
-  const iframe = document.createElement('iframe');
+  var iframe = document.createElement('iframe');
   iframe.className = 'game-player';
   iframe.src = url;
   iframe.allow = "autoplay; fullscreen; gamepad; microphone; camera";
@@ -376,31 +376,31 @@ function closeGame() {
 }
 
 function createTitleBar() {
-  const bar = document.createElement('div');
+  var bar = document.createElement('div');
   bar.className = 'title-bar';
 
-  const left = document.createElement('div');
+  var left = document.createElement('div');
   left.className = 'title-bar-left';
 
-  const logo = document.createElement('img');
+  var logo = document.createElement('img');
   logo.className = 'title-bar-logo';
   logo.src = 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/icon.png';
   left.appendChild(logo);
 
-  const title = document.createElement('div');
+  var title = document.createElement('div');
   title.className = 'title-bar-title';
   title.textContent = 'Hyperware';
   left.appendChild(title);
 
-  const searchBar = document.createElement('input');
+  var searchBar = document.createElement('input');
   searchBar.className = 'title-bar-search';
   searchBar.type = 'text';
   searchBar.placeholder = 'Search games...';
 
-  const right = document.createElement('div');
+  var right = document.createElement('div');
   right.className = 'title-bar-right';
 
-  const buttons = [
+  var buttons = [
     {
       title: 'Zephware',
       svg: '<svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>',
@@ -424,7 +424,7 @@ function createTitleBar() {
   ];
 
   buttons.forEach(btn => {
-    const button = document.createElement('button');
+    var button = document.createElement('button');
     button.className = 'icon-button';
     button.title = btn.title;
     button.innerHTML = btn.svg;
@@ -441,22 +441,22 @@ function createTitleBar() {
 }
 
 function renderGames(configs) {
-  const container = document.querySelector('.game-grid');
+  var container = document.querySelector('.game-grid');
   if (!container) return;
 
   container.innerHTML = '';
 
   configs.forEach(config => {
-    const card = document.createElement('button');
+    var card = document.createElement('button');
     card.className = 'game-card';
 
-    const img = document.createElement('img');
+    var img = document.createElement('img');
     img.className = 'game-card-image';
     img.src = config.image;
     img.alt = config.label || '';
     card.appendChild(img);
 
-    const label = document.createElement('div');
+    var label = document.createElement('div');
     label.className = 'game-card-label';
     label.textContent = config.label || '';
     card.appendChild(label);
@@ -472,35 +472,35 @@ function renderGames(configs) {
 function showTagsModal() {
   if (document.querySelector('.modal-overlay')) return;
 
-  const overlay = document.createElement('div');
+  var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
 
-  const modal = document.createElement('div');
+  var modal = document.createElement('div');
   modal.className = 'modal';
 
-  const closeBtn = document.createElement('button');
+  var closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
   closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
-  const title = document.createElement('div');
+  var title = document.createElement('div');
   title.className = 'modal-title';
   title.textContent = 'Filter by Tag';
   modal.appendChild(title);
 
-  const tagsContainer = document.createElement('div');
+  var tagsContainer = document.createElement('div');
   tagsContainer.className = 'tags-container';
 
-  const tags = ['Simulator', 'Fighting', 'RPG', 'Puzzle', 'Action', 'Strategy'];
+  var tags = ['Simulator', 'Fighting', 'RPG', 'Puzzle', 'Action', 'Strategy'];
   tags.forEach(tag => {
-    const btn = document.createElement('button');
+    var btn = document.createElement('button');
     btn.className = 'tag-button';
     if (activeTag === tag) btn.classList.add('active');
     btn.textContent = tag;
     btn.onclick = () => {
       activeTag = activeTag === tag ? null : tag;
-      const filtered = buttonConfigs.filter(cfg =>
+      var filtered = buttonConfigs.filter(cfg =>
         !cfg.highlighted &&
         (!activeTag || (Array.isArray(cfg.tag) ? cfg.tag.includes(activeTag) : cfg.tag === activeTag))
       );
@@ -516,41 +516,41 @@ function showTagsModal() {
 }
 
 function rollGame() {
-  const overlay = document.createElement('div');
+  var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
 
-  const modal = document.createElement('div');
+  var modal = document.createElement('div');
   modal.className = 'modal roller-modal';
 
-  const closeBtn = document.createElement('button');
+  var closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
   closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
-  let currentIdx = Math.floor(Math.random() * buttonConfigs.length);
-  let cycles = 0;
+  var currentIdx = Math.floor(Math.random() * buttonConfigs.length);
+  var cycles = 0;
 
-  const gameBtn = document.createElement('button');
+  var gameBtn = document.createElement('button');
   gameBtn.className = 'roller-game';
 
-  const img = document.createElement('img');
+  var img = document.createElement('img');
   img.className = 'roller-image';
   gameBtn.appendChild(img);
 
-  const label = document.createElement('div');
+  var label = document.createElement('div');
   label.className = 'roller-label';
   gameBtn.appendChild(label);
 
   function updateGame() {
-    const cfg = buttonConfigs[currentIdx];
+    var cfg = buttonConfigs[currentIdx];
     img.src = cfg.image;
     label.textContent = cfg.label || '';
   }
 
   updateGame();
 
-  const interval = setInterval(() => {
+  var interval = setInterval(() => {
     currentIdx = Math.floor(Math.random() * buttonConfigs.length);
     updateGame();
     if (++cycles >= 30) {
@@ -568,24 +568,24 @@ function rollGame() {
 }
 
 function createSettingsPanel() {
-  const overlay = document.createElement('div');
+  var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
 
-  const modal = document.createElement('div');
+  var modal = document.createElement('div');
   modal.className = 'modal settings-panel';
 
-  const closeBtn = document.createElement('button');
+  var closeBtn = document.createElement('button');
   closeBtn.className = 'modal-close';
   closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   modal.appendChild(closeBtn);
 
-  const title = document.createElement('div');
+  var title = document.createElement('div');
   title.className = 'modal-title';
   title.textContent = 'Settings';
   modal.appendChild(title);
 
-  const content = document.createElement('div');
+  var content = document.createElement('div');
   content.className = 'settings-content';
   content.innerHTML = '<h3>Miscellaneous</h3><p>No settings available yet.</p>';
   modal.appendChild(content);
@@ -598,13 +598,13 @@ function createPanel() {
     fetch('https://raw.githubusercontent.com/EternallyHyper/Hyperware/main/data/css/games.css')
     .then(r => r.text())
     .then(css => {
-      const style = document.createElement('style');
+      var style = document.createElement('style');
       style.textContent = css;
       document.head.appendChild(style);
     })
     .catch(err => console.error('CSS failed to load:', err));
 
-const fontLink = document.createElement('link');
+var fontLink = document.createElement('link');
   fontLink.rel = 'stylesheet';
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap';
   document.head.appendChild(fontLink);
@@ -612,17 +612,17 @@ const fontLink = document.createElement('link');
   panel = document.createElement('div');
   panel.className = 'games-panel custom-scroll';
 
-  const titleBar = createTitleBar();
+  var titleBar = createTitleBar();
   panel.appendChild(titleBar);
 
-  const container = document.createElement('div');
+  var container = document.createElement('div');
   container.className = 'game-grid';
   panel.appendChild(container);
 
-  let filteredConfigs = buttonConfigs.filter(cfg => !cfg.highlighted);
+  var filteredConfigs = buttonConfigs.filter(cfg => !cfg.highlighted);
 
   titleBar._searchBar.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase();
+    var query = e.target.value.toLowerCase();
     filteredConfigs = buttonConfigs.filter(cfg =>
       !cfg.highlighted &&
       cfg.label?.toLowerCase().includes(query) &&
@@ -648,7 +648,7 @@ function loadGameList() {
       createPanel();
 
       window.addEventListener('hashchange', handleRouteChange);
-      const initialRoute = getRoute();
+      var initialRoute = getRoute();
       if (initialRoute) {
         handleRouteChange();
       }
