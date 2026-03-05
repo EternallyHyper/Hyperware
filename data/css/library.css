@@ -85,7 +85,7 @@ body {
 #zw-search {
   padding: 10px 20px;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(1, 174, 253, 0.3);
+  border: 1px solid rgba(1, 253, 5, 0.3);
   border-radius: 25px;
   color: white;
   font-size: 14px;
@@ -118,7 +118,7 @@ body {
   align-items: flex-end;
   position: relative;
   overflow: hidden;
-  border: 2px solid rgba(1, 174, 253, 0.3);
+  border: 2px solid rgba(43, 253, 1, 0.3);
 }
 
 .zw-hero-banner {
@@ -186,12 +186,12 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 5px 20px rgba(1, 174, 253, 0.4);
+  box-shadow: 0 5px 20px rgba(77, 253, 1, 0.4);
 }
 
 .zw-hero-play:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 30px rgba(1, 174, 253, 0.6);
+  box-shadow: 0 8px 30px rgba(18, 253, 1, 0.6);
 }
 
 .zw-play-icon {
@@ -214,7 +214,7 @@ body {
   font-size: 64px;
   font-weight: 600;
   margin-bottom: 20px;
-  background: linear-gradient(135deg, #63fd01 0%, #63baff 50%, #25fd01 100%);
+  background: linear-gradient(135deg, #63fd01 0%, #80ff63 50%, #25fd01 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -281,7 +281,7 @@ body {
   width: 50px;
   height: 50px;
   background: linear-gradient(135deg, rgba(5, 253, 1, 0.9) 0%, rgba(43, 253, 1, 0.9) 100%);
-  border: 2px solid rgba(1, 174, 253, 0.5);
+  border: 2px solid rgba(1, 253, 35, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -302,7 +302,7 @@ body {
 .zw-scroll-arrow:hover {
   background: linear-gradient(135deg, #63fd01 0%, #25fd01 100%);
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 5px 20px rgba(1, 174, 253, 0.5);
+  box-shadow: 0 5px 20px rgba(1, 253, 18, 0.5);
 }
 
 .zw-scroll-arrow.left {
