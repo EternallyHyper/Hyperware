@@ -29,7 +29,8 @@ setFavicon("https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/head
 const themes = {
    default: {
       color1: '#63fd01',
-      color2: '#25fd01',   
+      color2: '#25fd01',
+      bg: "linear-gradient(180deg,#0f2027,#203a43,#2c5364)",   
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Current.jpg',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/default/Previous.png',
       waves: ['#87ff63ff','#72f73eff','#3ee029ff']
@@ -37,6 +38,7 @@ const themes = {
    blue: {
       color1: '#01AEFD',
       color2: '#015AFD',
+      bg: "linear-gradient(180deg,#0f2027,#134e5e,#1e90ff)",
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/blue/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/blue/Previous.png',
       waves: ['#63baff','#3ea7f7','#298ee0']
@@ -44,6 +46,7 @@ const themes = {
   orange: {
       color1: '#f7ab1d',
       color2: '#eb6c04',
+      bg: "linear-gradient(180deg,#1a0f00,#3d1d00,#ff7a00)",
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/halloween/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/halloween/Previous.png',
       waves: ['#fdba01','#f77e1d','#e26817']
@@ -51,6 +54,7 @@ const themes = {
    red: {
       color1: '#ff6363',
       color2: '#e03e3e',
+      bg: "linear-gradient(180deg,#2b0000,#5c0a0a,#b31212)",
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/red/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/red/Previous.png',
       waves: ['#ff6363','#e03e3e','#b31515']
@@ -58,6 +62,7 @@ const themes = {
    purple: {
       color1: '#b463ff',
       color2: '#8d3ee0',
+      bg: "linear-gradient(180deg,#1a0033,#3c1053,#ad5389)",
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/purple/Previous.png',
       waves: ['#b463ff','#8d3ee0','#5a15b3']
@@ -65,6 +70,7 @@ const themes = {
    pink: {
       color1: '#fc57e6',
       color2: '#ff008c',
+      bg: "linear-gradient(180deg,#2b0030,#5c005a,#ff00c8)",
       img1: 'https://d1kusoubqqwr7w.cloudfront.net/assets/themes/pink/Current.png',
       img2: 'https://d1kusoubqqwr7w.cloudfront.net/assets/themes/pink/Previous.png',
       waves: ['#ff00c8', '#e645cb', '#f571d4']
@@ -72,6 +78,7 @@ const themes = {
    christmas: {
       color1: '#00ff2a',
       color2: '#ff0000',
+      bg: "linear-gradient(180deg,#002b00,#004d00,#0c8f0c)",
       img1: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/christmas/Current.png',
       img2: 'https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/themes/christmas/Previous.png',
       waves: ['#e0dbdb','#f0f0f0','#fdfdfd']
@@ -103,53 +110,53 @@ setTimeout(() => applyThemeEffects(currentTheme), 100);
       0%{transform: translate(-90px , 0%)}
       100%{transform: translate(85px , 0%)}
     }
-  @keyframes panelPop {
-    0% { transform: scale(0.8); opacity: 0; }
-    70% { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  @keyframes overlayFade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes panelShrink {
-    0% {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
+    @keyframes panelPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      70% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
     }
-    100% {
-      transform: translate(-50%, -50%) scale(0.8);
-      opacity: 0;
+    @keyframes overlayFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-  }
-  @keyframes panelShrinkFlex {
-    0% {
-      transform: scale(1);
-      opacity: 1;
+    @keyframes panelShrink {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+      }
     }
-    100% {
-      transform: scale(0.8);
-      opacity: 0;
+    @keyframes panelShrinkFlex {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
     }
-  }
-  @keyframes overlayFadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-  }
-    .editorial {
-      display: block;
-      width: 100%;
-      height: 10em;
-      max-height: 100vh;
-      margin: 0;
-      position: fixed;
-      bottom: 10vh;
-      left: 0;
-      z-index: 10;
+    @keyframes overlayFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
     }
+      .editorial {
+        display: block;
+        width: 100%;
+        height: 10em;
+        max-height: 100vh;
+        margin: 0;
+        position: fixed;
+        bottom: 10vh;
+        left: 0;
+        z-index: 10;
+      }
 
     body {
-      background-color: #234;
+      background:var(--theme-bg);
       margin: 0;    
       max-height: 100vh;
       overflow: hidden;
@@ -258,8 +265,8 @@ setTimeout(() => applyThemeEffects(currentTheme), 100);
     .input-area button:hover {
       transform: translateY(-3px);
        box-shadow:
-           0 12px 28px var(--theme-glow-strong),
-           inset 0 1px 0 rgba(255,255,255,0.4);
+          0 12px 28px var(--theme-glow-strong),
+          inset 0 1px 0 rgba(255,255,255,0.4);
        }
     .input-area button:disabled {
       box-shadow: none !important;
@@ -737,9 +744,8 @@ hint.innerText = randomMessage;
         { src: theme.img1 }
       ],
       changes: [
-        { text: "Rerelease!", desc: "Made it more original" },
-        { text: "Games Expansion", desc: "Added some games, might be blocked though" },
-        { text: "UI Revamp", desc: "Made the interface look more glossy lol" }
+        { text: "Theme Revamp", desc: "Themes look better now" },
+        { text: "Library Expansion", desc: "Added Blue lock and The Boondocks" }
       ]
     },
     {
@@ -749,10 +755,9 @@ hint.innerText = randomMessage;
         { src: theme.img2 }
       ],
       changes: [
-        { text: "Theme Fixes", desc: "Fixed some themes, you won't even notice a thing" },
-        { text: "Messages", desc: "Hyperware messages are here, only works on google.com" },
-        { text: "Lock Screen Additions", desc: "added new messages for a lil smth to fidget with while you guess the password" }
-
+        { text: "Rerelease!", desc: "Made it more original" },
+        { text: "Games Expansion", desc: "Added some games, might be blocked though" },
+        { text: "UI Revamp", desc: "Made the interface look more glossy lol" }
       ]
     },
     {
@@ -916,21 +921,18 @@ function showThemePanel() {
         color:white;
       }
 
-      .hw-selected::after {
-        content:"";
-        position:absolute;
-        inset:0;
-        border-radius:20px;
-        border:2px solid white;
-        box-shadow:0 0 18px rgba(255,255,255,.7);
-        pointer-events:none;
-        animation:hwPulse 1.5s infinite;
-      }
-
       @keyframes hwPulse {
         0% { box-shadow:0 0 10px rgba(255,255,255,.6); }
         50% { box-shadow:0 0 24px rgba(255,255,255,1); }
         100% { box-shadow:0 0 10px rgba(255,255,255,.6); }
+      }
+      
+      .hw-preview {
+        height:90px;
+        border-radius:14px;
+        background-size:cover;
+        background-position:center;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
       }
 
       .hw-footer {
@@ -939,6 +941,34 @@ function showThemePanel() {
         color:#aaa;
         opacity:.7;
       }
+
+      @keyframes hwGlow {
+        0% { box-shadow: 0 0 6px var(--glow), 0 0 12px var(--glow); }
+        50% { box-shadow: 0 0 14px var(--glow), 0 0 28px var(--glow); }
+        100% { box-shadow: 0 0 6px var(--glow), 0 0 12px var(--glow); }
+      }
+
+      .hw-card {
+        position:relative;
+        border-radius:20px;
+        padding:14px;
+        cursor:pointer;
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        background:rgba(255,255,255,.05);
+        border:1px solid rgba(255,255,255,.08);
+        transition:.25s cubic-bezier(.2,.8,.2,1);
+      }
+
+      .hw-card:hover {
+        transform:translateY(-6px) scale(1.03);
+      }
+
+      .hw-selected {
+        border:2px solid var(--glow);
+        animation: hwGlow 2s ease-in-out infinite;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -946,22 +976,41 @@ function showThemePanel() {
   const grid = overlay.querySelector(".hw-grid");
 
   Object.keys(themes).forEach(key => {
+
     const t = themes[key];
 
     const card = document.createElement("div");
     card.className = "hw-card";
-    if (key === currentTheme) card.classList.add("hw-selected");
+    card.style.setProperty("--glow", t.color1);
 
-    card.innerHTML = `
-      <div class="hw-preview"
-        style="background:linear-gradient(135deg, ${t.color1}, ${t.color2});">
-      </div>
-      <div class="hw-name">${key.toUpperCase()}</div>
-    `;
+    if (key === currentTheme) {
+      card.classList.add("hw-selected");
+    }
+
+    const preview = document.createElement("div");
+    preview.className = "hw-preview";
+    preview.style.backgroundImage = `url(${t.img1})`;
+    preview.style.backgroundSize = "cover";
+    preview.style.backgroundPosition = "center";
+
+    const name = document.createElement("div");
+    name.className = "hw-name";
+    name.textContent = key.toUpperCase();
+
+    card.appendChild(preview);
+    card.appendChild(name);
 
     card.onclick = () => {
+
+      localStorage.setItem("hyperware-theme", key);
       applyTheme(key);
-      overlay.remove();
+      applyThemeEffects(key);
+
+      document.querySelectorAll(".hw-card").forEach(c=>{
+        c.classList.remove("hw-selected");
+      });
+
+      card.classList.add("hw-selected");
     };
 
     grid.appendChild(card);
@@ -1010,6 +1059,8 @@ function applyThemeEffects(themeName) {
 function applyTheme(name) {
   theme = themes[name];
   localStorage.setItem("hyperware-theme", name);
+
+  document.body.style.background = theme.bg;
 
   document.querySelectorAll('.header1, .header2').forEach(el => {
     el.style.background = `linear-gradient(to bottom, ${theme.color1}, ${theme.color2})`;
