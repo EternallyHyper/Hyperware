@@ -745,7 +745,8 @@ hint.innerText = randomMessage;
       ],
       changes: [
         { text: "Theme Revamp", desc: "Themes look better now" },
-        { text: "Library Expansion", desc: "Added Blue lock and The Boondocks" }
+        { text: "Library Expansion", desc: "Added Blue lock and The Boondocks" },
+        { text: "New Games!", desc: "Added Stick War 2 and Stick Empires (elite ball knowledge)" }
       ]
     },
     {

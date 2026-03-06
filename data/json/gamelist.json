@@ -19,6 +19,16 @@
   "label": "Commando 2",
   "url": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/swf/commando2.swf"
  },
+  {
+  "image": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/games/StickWar2.png",
+  "label": "Stick War 2",
+  "url": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/swf/stickwar2.swf"
+ },
+  {
+  "image": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/assets/games/StickEmpires.png",
+  "label": "Commando 2",
+  "url": "https://raw.githubusercontent.com/EternallyHyper/Hyperware/refs/heads/main/swf/stickempires.swf"
+ },
  {
   "image": "https://tse3.mm.bing.net/th/id/OIP.Mnn3DuxS17bBpOcgIf6bSQHaHa?w=185&h=186&c=7&r=0&o=5&dpr=1.3&pid=1.7",
   "label": "Basketball Random",
