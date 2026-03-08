@@ -1117,6 +1117,11 @@ document.body.style.transition = "background 0.4s ease";
 applyThemeEffects(name);
 }
 
+function clearBackgroundGradient() {
+  document.body.style.background = "";
+  document.body.style.backgroundImage = "";
+}
+
 function showNewsPanel() {
   let newsPages = getNewsPages();
   let pageIdx = 0;
@@ -1440,6 +1445,7 @@ if (val === 'news') {
 
     if (val === 'zephware' || val === 'games' || val === 'library') {
         clearThemeEffects();
+        clearBackgroundGradient();
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         let file;
